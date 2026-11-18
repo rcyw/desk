@@ -10,7 +10,12 @@ interface Props {
 const blogHtml = await Astro.slots.render('default');
 ---
 
-<Desk {...Astro.props} blogHtml={blogHtml} client:load transition:persist="platinum-desktop" />
+<Desk
+  {...Astro.props}
+  blogHtml={blogHtml}
+  client:load
+  transition:persist="platinum-desktop"
+/>
 
 <script is:inline>
   document.addEventListener('astro:before-preparation', (event) => {

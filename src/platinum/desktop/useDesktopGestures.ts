@@ -131,7 +131,8 @@ export function useDesktopGestures({
           !selection.length &&
           event.target instanceof HTMLElement &&
           event.target.dataset.iconId
-        ) return;
+        )
+          return;
         event.preventDefault();
         props.icons
           .filter((icon) => selection.includes(icon.id))
@@ -343,7 +344,10 @@ export function useDesktopGestures({
 
     // Wait for click before opening a window over the tapped coordinates.
     const now = Date.now();
-    if (lastTouch.current?.id === icon.id && now - lastTouch.current.time < 450) {
+    if (
+      lastTouch.current?.id === icon.id &&
+      now - lastTouch.current.time < 450
+    ) {
       lastTouch.current = null;
       lastTouchActivation.current = { id: icon.id, time: now };
       openIcon(icon);

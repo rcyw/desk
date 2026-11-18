@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, MouseEvent, PointerEvent, ReactNode, Ref } from 'react';
+import type {
+  KeyboardEvent,
+  MouseEvent,
+  PointerEvent,
+  ReactNode,
+  Ref,
+} from 'react';
 import { PixelIcon } from '../controls';
 import type { AppDefinition, MenuGroup } from '../types';
 import './menu-bar.css';

@@ -54,11 +54,14 @@ export async function readBlog() {
     (a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id),
   );
 
-  const postsByTopic = new Map(topics.map((topic) => [topic.id, [] as BlogPost[]]));
+  const postsByTopic = new Map(
+    topics.map((topic) => [topic.id, [] as BlogPost[]]),
+  );
   for (const post of posts) {
     for (const topic of new Set(post.data.topics.map(({ id }) => id))) {
       const topicPosts = postsByTopic.get(topic);
-      if (!topicPosts) throw new Error(`${post.id} references an unknown topic: ${topic}`);
+      if (!topicPosts)
+        throw new Error(`${post.id} references an unknown topic: ${topic}`);
       topicPosts.push(post);
     }
   }

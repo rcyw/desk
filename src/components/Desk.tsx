@@ -13,9 +13,15 @@ function blogBounds(viewport: DesktopViewport, blogHeight: number) {
   const horizontalRoom = wide ? 176 : 132;
   const width = Math.min(1064, Math.max(1, viewport.width - horizontalRoom));
   const menu = viewport.menuHeight ?? 20;
-  const availableHeight = Math.max(1, viewport.height - menu - (viewport.stripHeight ?? 24) - 32);
+  const availableHeight = Math.max(
+    1,
+    viewport.height - menu - (viewport.stripHeight ?? 24) - 32,
+  );
   const height = Math.min(blogHeight, availableHeight);
-  const offset = Math.max(8, Math.min(84, Math.round((availableHeight - height) / 2)));
+  const offset = Math.max(
+    8,
+    Math.min(84, Math.round((availableHeight - height) / 2)),
+  );
   return {
     x: Math.round((viewport.width - width) / 2 - 18),
     y: menu + offset,

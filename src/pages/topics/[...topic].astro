@@ -20,10 +20,17 @@ interface Props {
 }
 
 const { topic, page } = Astro.props;
-const title = page.current > 1 ? `${topic.data.title} · Page ${page.current}` : topic.data.title;
+const title =
+  page.current > 1
+    ? `${topic.data.title} · Page ${page.current}`
+    : topic.data.title;
 ---
 
-<SiteLayout title={title} description={topic.data.description} pagination={page}>
+<SiteLayout
+  title={title}
+  description={topic.data.description}
+  pagination={page}
+>
   <header class="blog-heading">
     <h1 lang={topic.data.lang}>{topic.data.title}</h1>
   </header>

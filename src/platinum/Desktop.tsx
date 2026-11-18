@@ -91,7 +91,9 @@ export function Desktop(props: DesktopProps) {
       style={
         viewport === initialViewport
           ? undefined
-          : ({ '--p9-viewport-height': `${viewport.height}px` } as CSSProperties)
+          : ({
+              '--p9-viewport-height': `${viewport.height}px`,
+            } as CSSProperties)
       }
     >
       <MenuBar

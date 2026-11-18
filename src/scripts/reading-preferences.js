@@ -10,7 +10,11 @@
     try {
       const saved = JSON.parse(localStorage.getItem(key) ?? 'null');
       const size = saved?.size;
-      const validSize = Number.isInteger(size) && size >= minimum && size <= maximum && size % step === 0;
+      const validSize =
+        Number.isInteger(size) &&
+        size >= minimum &&
+        size <= maximum &&
+        size % step === 0;
       return {
         size: validSize ? size : defaults.size,
         theme: saved?.theme === 'dark' ? 'dark' : defaults.theme,
@@ -57,14 +61,23 @@
     }
 
     sync = () => {
-      this.querySelector('[data-size-step="-1"]').setAttribute('aria-disabled', String(preferences.size === minimum));
-      this.querySelector('[data-size-step="1"]').setAttribute('aria-disabled', String(preferences.size === maximum));
+      this.querySelector('[data-size-step="-1"]').setAttribute(
+        'aria-disabled',
+        String(preferences.size === minimum),
+      );
+      this.querySelector('[data-size-step="1"]').setAttribute(
+        'aria-disabled',
+        String(preferences.size === maximum),
+      );
       const status = this.querySelector('[data-size-status]');
       const label = `Text size ${preferences.size}%`;
       if (status.textContent !== label) status.textContent = label;
 
       for (const button of this.querySelectorAll('[data-theme-option]')) {
-        button.setAttribute('aria-pressed', String(button.dataset.themeOption === preferences.theme));
+        button.setAttribute(
+          'aria-pressed',
+          String(button.dataset.themeOption === preferences.theme),
+        );
       }
     };
 
@@ -89,7 +102,11 @@
     };
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    customElements.define('reading-controls', ReadingControls);
-  }, { once: true });
+  document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+      customElements.define('reading-controls', ReadingControls);
+    },
+    { once: true },
+  );
 })();

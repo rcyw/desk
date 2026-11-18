@@ -11,7 +11,8 @@ html[data-surface='document'] {
   height: auto;
   min-height: 100dvh;
   overflow: visible;
-  padding: clamp(15px, 4vw, 50px) max(8px, env(safe-area-inset-right)) 50px max(8px, env(safe-area-inset-left));
+  padding: clamp(15px, 4vw, 50px) max(8px, env(safe-area-inset-right)) 50px
+    max(8px, env(safe-area-inset-left));
 }
 
 .document-frame {
@@ -20,7 +21,11 @@ html[data-surface='document'] {
   padding: 3px;
   border: 1px solid #262626;
   background: #ccc;
-  box-shadow: inset 1px 1px white, inset -1px -1px #666, 1px 1px #262626, 2px 2px #262626;
+  box-shadow:
+    inset 1px 1px white,
+    inset -1px -1px #666,
+    1px 1px #262626,
+    2px 2px #262626;
 }
 
 .document-titlebar.p9-window-titlebar {
@@ -66,7 +71,8 @@ html[data-surface='document'] {
 
 .document-main {
   min-width: 0;
-  padding: clamp(16px, 3.5vw, 38px) clamp(14px, 4.5vw, 50px) clamp(24px, 5vw, 50px);
+  padding: clamp(16px, 3.5vw, 38px) clamp(14px, 4.5vw, 50px)
+    clamp(24px, 5vw, 50px);
   color: var(--reading-ink);
   color-scheme: var(--reading-scheme);
   outline-offset: -3px;
@@ -162,7 +168,9 @@ html[data-surface='document'] {
 .document-outline summary {
   padding: 4px 8px;
   background: var(--p9-face);
-  box-shadow: inset 1px 1px white, inset -1px -1px #bbb;
+  box-shadow:
+    inset 1px 1px white,
+    inset -1px -1px #bbb;
   color: var(--p9-text);
   cursor: pointer;
   font: 12px/1.5 var(--p9-font);

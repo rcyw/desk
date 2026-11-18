@@ -1,5 +1,7 @@
 function mountDiagrams(prose: HTMLElement) {
-  const diagrams = [...prose.querySelectorAll<HTMLPreElement>('pre[data-language="mermaid"]')]
+  const diagrams = [
+    ...prose.querySelectorAll<HTMLPreElement>('pre[data-language="mermaid"]'),
+  ]
     .map((block) => ({
       block,
       source: block.textContent?.trim() ?? '',
@@ -24,7 +26,9 @@ function mountDiagrams(prose: HTMLElement) {
     const background = styles.getPropertyValue('--reading-panel').trim();
 
     const { default: mermaid } = await import('mermaid');
-    await document.fonts.load(`${fontSize}px ${fontFamily}`, diagramText).catch(() => {});
+    await document.fonts
+      .load(`${fontSize}px ${fontFamily}`, diagramText)
+      .catch(() => {});
 
     mermaid.initialize({
       startOnLoad: false,
@@ -62,17 +66,24 @@ function mountDiagrams(prose: HTMLElement) {
 
     for (const { block, source, figure } of diagrams) {
       try {
-        const { svg } = await mermaid.render(`desk-mermaid-${++nextId}`, source);
+        const { svg } = await mermaid.render(
+          `desk-mermaid-${++nextId}`,
+          source,
+        );
         const scrollLeft = figure.scrollLeft;
         figure.innerHTML = svg;
 
         const graphic = figure.querySelector('svg');
         const width = graphic?.viewBox.baseVal.width;
-        if (graphic && width) graphic.style.inlineSize = `${Math.ceil(width)}px`;
+        if (graphic && width)
+          graphic.style.inlineSize = `${Math.ceil(width)}px`;
 
         figure.className = 'mermaid-diagram';
         figure.tabIndex = 0;
-        figure.setAttribute('aria-label', graphic?.querySelector('title')?.textContent || 'Diagram');
+        figure.setAttribute(
+          'aria-label',
+          graphic?.querySelector('title')?.textContent || 'Diagram',
+        );
         if (block.isConnected) block.replaceWith(figure);
         figure.scrollLeft = scrollLeft;
       } catch (error) {

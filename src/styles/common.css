@@ -1,6 +1,8 @@
 :root {
   color-scheme: light;
-  --p9-cjk: 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC';
+  --p9-cjk:
+    'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei',
+    'Noto Sans CJK SC';
   --p9-font: 'Chicago Kare', 'Inter', var(--p9-cjk), sans-serif;
   --p9-body-font: 'Inter', var(--p9-cjk), sans-serif;
   --p9-cjk-body-font: var(--p9-cjk), 'Inter', sans-serif;
@@ -109,20 +111,26 @@
 
 .surface-button.p9-button[aria-current] {
   background: #d1d1d1;
-  box-shadow: inset 1px 1px #8a8a8a, inset -1px -1px #f2f2f2;
+  box-shadow:
+    inset 1px 1px #8a8a8a,
+    inset -1px -1px #f2f2f2;
 }
 
 .surface-button.p9-button:active:not(:disabled, [aria-disabled='true']) {
   color: var(--p9-text);
   background: #c6c6c6;
-  box-shadow: inset 1px 1px #777, inset -1px -1px #eee;
+  box-shadow:
+    inset 1px 1px #777,
+    inset -1px -1px #eee;
 }
 
 .surface-button.p9-button:is(:disabled, [aria-disabled='true']) {
   color: #707070;
   background: #ddd;
   border-color: #949494;
-  box-shadow: inset 1px 1px #f0f0f0, inset -1px -1px #bbb;
+  box-shadow:
+    inset 1px 1px #f0f0f0,
+    inset -1px -1px #bbb;
 }
 
 .surface-button.p9-button:focus-visible {

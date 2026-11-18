@@ -65,11 +65,13 @@ export function useDesktopController(
   const propsRef = useRef(props);
   propsRef.current = props;
   useEffect(() => {
-    if (viewport === initialViewport || !layoutBeforeMeasurement.current) return;
+    if (viewport === initialViewport || !layoutBeforeMeasurement.current)
+      return;
     const startingLayout = layoutBeforeMeasurement.current;
     layoutBeforeMeasurement.current = null;
     const config = propsRef.current;
-    if (config.initialLayout || !config.apps.some((app) => app.defaultBounds)) return;
+    if (config.initialLayout || !config.apps.some((app) => app.defaultBounds))
+      return;
     setLayout((current) =>
       current === startingLayout ? initialState(config, viewport) : current,
     );

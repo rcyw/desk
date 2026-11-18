@@ -1,9 +1,15 @@
 /* Match the static window to the measured desktop geometry. */
 .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='blog'] {
   --blog-start-width: min(1064px, calc(100% - 176px));
-  --blog-room: calc(100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) - 32px);
+  --blog-room: calc(
+    100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) - 32px
+  );
   --blog-start-height: min(var(--desk-opening-height), var(--blog-room));
-  --blog-offset: clamp(8px, calc((var(--blog-room) - var(--blog-start-height)) / 2), 84px);
+  --blog-offset: clamp(
+    8px,
+    calc((var(--blog-room) - var(--blog-start-height)) / 2),
+    84px
+  );
   left: calc((100% - var(--blog-start-width)) / 2 - 18px) !important;
   top: calc(var(--p9-menubar-height) + var(--blog-offset)) !important;
   width: var(--blog-start-width) !important;
@@ -23,13 +29,18 @@
 
 @media (max-width: 599px) {
   .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='blog'] {
-    --blog-start-width: calc(100% - 8px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    --blog-start-width: calc(
+      100% - 8px - env(safe-area-inset-left, 0px) -
+        env(safe-area-inset-right, 0px)
+    );
     --blog-start-height: calc(
-      100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) - 16px -
-        env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+      100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) -
+        16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
     );
     left: calc(4px + env(safe-area-inset-left, 0px)) !important;
-    top: calc(var(--p9-menubar-height) + 6px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(
+      var(--p9-menubar-height) + 6px + env(safe-area-inset-top, 0px)
+    ) !important;
   }
 }
 

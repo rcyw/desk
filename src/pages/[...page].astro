@@ -19,7 +19,10 @@ interface Props {
 const { page } = Astro.props;
 ---
 
-<SiteLayout title={page.current > 1 ? `Posts · Page ${page.current}` : undefined} pagination={page}>
+<SiteLayout
+  title={page.current > 1 ? `Posts · Page ${page.current}` : undefined}
+  pagination={page}
+>
   <h1 class="visually-hidden">Posts</h1>
   {page.posts.length ? <PostList posts={page.posts} /> : <p>No posts yet.</p>}
 </SiteLayout>

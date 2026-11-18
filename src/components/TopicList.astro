@@ -10,17 +10,17 @@ const { topics } = Astro.props;
 ---
 
 <ul class="topic-list" role="list">
-  {
-    topics.map(({ id, data }) => (
-      <li>
-        <a class="topic-preview" href={topicHref(id)}>
-          <div class="post-preview-copy" lang={data.lang}>
-            <h2>{data.title}</h2>
-            <p>{data.description}</p>
-          </div>
-          <span class="topic-arrow" aria-hidden="true">→</span>
-        </a>
-      </li>
-    ))
-  }
+  {topics.map(({ id, data }) => (
+    <li>
+      <a class="topic-preview" href={topicHref(id)}>
+        <div class="post-preview-copy" lang={data.lang}>
+          <h2>{data.title}</h2>
+          <p>{data.description}</p>
+        </div>
+        <span class="topic-arrow" aria-hidden="true">
+          →
+        </span>
+      </a>
+    </li>
+  ))}
 </ul>

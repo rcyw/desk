@@ -24,14 +24,28 @@ const desktopHeight =
   (home || homeArchive ? 48 : 0);
 ---
 
-<PageLayout title={title} description={description} surface="desktop" desktopHeight={desktopHeight} robots={robots}>
+<PageLayout
+  title={title}
+  description={description}
+  surface="desktop"
+  desktopHeight={desktopHeight}
+  robots={robots}
+>
   <DeskSurface blogTitle={blogName} blogHeight={desktopHeight}>
     <div class="blog-window">
       <nav class="blog-toolbar" aria-label="Blog navigation">
-        <a class="p9-button surface-button" href="/" aria-current={home ? 'page' : homeArchive ? 'location' : undefined}>
+        <a
+          class="p9-button surface-button"
+          href="/"
+          aria-current={home ? 'page' : homeArchive ? 'location' : undefined}
+        >
           Home
         </a>
-        <a class="p9-button surface-button" href="/topics/" aria-current={topicIndex ? 'page' : topics ? 'location' : undefined}>
+        <a
+          class="p9-button surface-button"
+          href="/topics/"
+          aria-current={topicIndex ? 'page' : topics ? 'location' : undefined}
+        >
           Topics
         </a>
         <a class="blog-profile" href="https://github.com/rcyw">
@@ -49,30 +63,36 @@ const desktopHeight =
         {pagination && pagination.total > 1 && (
           <nav class="blog-pagination" aria-label="Pagination">
             <span class="pagination-count">
-              <span class="pagination-count-word">Page </span>{pagination.current}<span class="pagination-count-word"> of </span><span class="pagination-count-separator"> / </span>{pagination.total}
+              <span class="pagination-count-word">Page </span>
+              {pagination.current}
+              <span class="pagination-count-word"> of </span>
+              <span class="pagination-count-separator"> / </span>
+              {pagination.total}
             </span>
             <div>
               {[
                 { label: 'Newer', href: pagination.newer, rel: 'prev' },
                 { label: 'Older', href: pagination.older, rel: 'next' },
-              ].map(({ label, href, rel }) => href ? (
-                <a
-                  class="p9-button surface-button"
-                  href={href}
-                  rel={rel}
-                  data-page-direction={rel}
-                  aria-label={label}
-                  title={`${label} posts`}
-                ></a>
-              ) : (
-                <button
-                  class="p9-button surface-button"
-                  type="button"
-                  data-page-direction={rel}
-                  aria-label={label}
-                  disabled
-                ></button>
-              ))}
+              ].map(({ label, href, rel }) =>
+                href ? (
+                  <a
+                    class="p9-button surface-button"
+                    href={href}
+                    rel={rel}
+                    data-page-direction={rel}
+                    aria-label={label}
+                    title={`${label} posts`}
+                  ></a>
+                ) : (
+                  <button
+                    class="p9-button surface-button"
+                    type="button"
+                    data-page-direction={rel}
+                    aria-label={label}
+                    disabled
+                  ></button>
+                ),
+              )}
             </div>
           </nav>
         )}

@@ -10,14 +10,14 @@ const { posts } = Astro.props;
 ---
 
 <ol class="post-list" role="list">
-  {
-    posts.map(({ id, data }) => (
-      <li>
-        <a class="post-preview" href={postHref(id)} data-astro-reload>
-          <h2 class="post-preview-title" lang={data.lang}>{data.title}</h2>
-          <time datetime={data.publishedAt}>{formatDate(data.publishedAt)}</time>
-        </a>
-      </li>
-    ))
-  }
+  {posts.map(({ id, data }) => (
+    <li>
+      <a class="post-preview" href={postHref(id)} data-astro-reload>
+        <h2 class="post-preview-title" lang={data.lang}>
+          {data.title}
+        </h2>
+        <time datetime={data.publishedAt}>{formatDate(data.publishedAt)}</time>
+      </a>
+    </li>
+  ))}
 </ol>

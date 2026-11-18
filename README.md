@@ -9,10 +9,19 @@
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev --host 127.0.0.1
+```
+
+本地验证与 CI 使用同一组命令。
+
+```sh
+pnpm format:check
+pnpm lint
 pnpm check
 pnpm build
 pnpm test
 ```
+
+Prettier 统一 Markdown、Astro 和代码格式。`pnpm format` 整理全仓格式，用 `pnpm exec prettier --write <文件>` 整理本次改动。ESLint 检查 JavaScript、TypeScript 和 Astro 代码，`pnpm check` 运行 Astro 的类型检查。 [Prettier 配置](.prettierrc.json) · [ESLint 配置](eslint.config.mjs)
 
 用 `pnpm preview --host 127.0.0.1` 打开构建产物。可以从首页或专题打开文档，也可以直接访问文章地址。
 
@@ -26,6 +35,8 @@ pnpm test
 
 ## 写作
 
+Markdown 普通段落在源文件中写成一行，编辑器开启软折行，页面随窗口宽度自然换行。修改旧文时，按段落语义整理已有的中文段内折行。空行用于分段，标题、列表、代码围栏和有语义的换行按 Markdown 写法保留。
+
 在 `content/topics/<slug>.md` 创建专题。Frontmatter 需要 `title`、`description` 和非负整数 `order`。专题默认是英文，可以通过 `lang` 标明语言。
 
 在 `content/posts/<slug>/index.md` 添加文章，图片可与 Markdown 放在同一目录并使用相对路径引用。目录名为稳定 URL 的一部分，使用小写字母、数字与连字符。每篇文章的 `topics` 至少列出一个已建专题的文件名，省略 `.md`。下面的文章引用 `content/topics/research-notes.md`。
@@ -36,7 +47,7 @@ title: 文章标题
 description: 一句说明
 kind: article
 lang: zh-CN
-publishedAt: "2026-11-18"
+publishedAt: '2026-11-18'
 topics:
   - research-notes
 ---

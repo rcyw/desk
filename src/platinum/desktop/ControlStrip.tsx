@@ -124,7 +124,9 @@ export function ControlStrip({
               >
                 <span className="p9-strip-face">
                   <PixelIcon name="network" size={16} />
-                  <span className={`p9-connection-light is-${connectionStatus}`} />
+                  <span
+                    className={`p9-connection-light is-${connectionStatus}`}
+                  />
                   <span className="p9-strip-triangle" />
                 </span>
               </button>
