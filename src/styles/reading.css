@@ -37,7 +37,7 @@
   margin-inline-end: 2px;
 }
 
-.reading-footer .surface-button {
+:is(.reading-footer, .reading-controls) .surface-button {
   width: var(--reading-button-width, 28px);
   padding-inline: 0;
 }
@@ -128,7 +128,7 @@
 }
 
 @media (pointer: coarse) {
-  .reading-footer .surface-button {
+  :is(.reading-footer, .reading-controls) .surface-button {
     width: var(--reading-button-width, 34px);
   }
 }
