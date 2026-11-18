@@ -28,7 +28,7 @@ sources:
 
 把模型部署到 Kubernetes 上，和做出一个可靠的 Agent 平台，是两件事。
 
-前者回答“请求发给哪张卡”；后者还要回答“任务做到哪一步、环境能否恢复、结果是否可信、失败之后应该重试什么”。如果平台进一步服务强化学习，就还要知道：这条轨迹来自哪个模型、哪个环境版本，以及奖励究竟评价了什么。
+前者主要解决模型服务的部署、资源分配与请求路由；后者还要回答“任务做到哪一步、环境能否恢复、结果是否可信、失败之后应该重试什么”。如果平台进一步服务强化学习，就还要知道：这条轨迹来自哪个模型、哪个环境版本，以及奖励究竟评价了什么。
 
 Google 在 2026 年 11 月 10 日发布的文章，把 OpenRL、llm-d、KubeRay 和 Agent Substrate 放进同一张基础设施蓝图：分别面向后训练、分布式推理、Ray 工作负载管理与 Agent 执行。这篇文章值得读的地方，是它让这些边界同时出现在视野里，而不是要求每个平台照搬全部组件。[Google 原文](https://cloud.google.com/blog/topics/developers-practitioners/the-open-ai-native-stack-on-kubernetes-from-open-models-to-distributed-inference-and-agents)
 
