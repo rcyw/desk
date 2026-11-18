@@ -154,8 +154,7 @@ export function ControlStrip({
         className="p9-strip-handle"
         aria-label={`${stripExpanded ? 'Collapse' : 'Expand'} Control Strip`}
         aria-expanded={stripExpanded}
-        onClick={(event) => {
-          event.currentTarget.focus({ preventScroll: true });
+        onClick={() => {
           const next = !stripExpanded;
           setStripExpanded(next);
           onControlStripChange?.(next);
