@@ -1,0 +1,47 @@
+---
+import { blogName, topicHref } from '../lib/blog';
+import type { BlogTopic } from '../lib/blog';
+import { PixelIcon } from '../platinum';
+import ReadingControls from '../components/ReadingControls.astro';
+import PageLayout from './PageLayout.astro';
+import '../styles/document.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: 'zh-CN' | 'en';
+  kind: 'article' | 'note';
+  topic?: BlogTopic;
+}
+
+const { title, description, lang, kind, topic } = Astro.props;
+---
+
+<PageLayout title={title} description={description} lang={lang} surface="document">
+  <div class="document-frame">
+    <header class="document-titlebar p9-window-titlebar">
+      <PixelIcon name={kind === 'note' ? 'notes' : 'document'} size={16} />
+      <div class="p9-title-stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <span class="p9-window-title" lang="en">{blogName}</span>
+      <div class="p9-title-stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </header>
+
+    <div class="document-content">
+      <nav class="document-toolbar" aria-label="Blog navigation" lang="en">
+        <a class="p9-button surface-button" href="/"><span aria-hidden="true">←</span> Home</a>
+        {topic && <a class="document-folder" href={topicHref(topic.id)} lang={topic.data.lang}>
+          <PixelIcon name="folder" size={16} />
+          {topic.data.title}
+        </a>}
+      </nav>
+
+      <main id="main-content" class="document-main" tabindex="-1">
+        <slot />
+      </main>
+
+      <footer class="reading-footer document-reading-footer">
+        <ReadingControls />
+      </footer>
+    </div>
+  </div>
+</PageLayout>

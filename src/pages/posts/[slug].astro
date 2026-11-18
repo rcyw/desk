@@ -1,0 +1,92 @@
+---
+import { render } from 'astro:content';
+import DocumentLayout from '../../layouts/DocumentLayout.astro';
+import { formatDate, readBlog, topicHref } from '../../lib/blog';
+import type { BlogPost, BlogTopic } from '../../lib/blog';
+import { PixelIcon } from '../../platinum';
+
+export async function getStaticPaths() {
+  const { posts, topics } = await readBlog();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      topics: topics.filter((topic) => post.data.topics.some(({ id }) => id === topic.id)),
+    },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+  topics: BlogTopic[];
+}
+
+const { post, topics } = Astro.props;
+const { Content, headings } = await render(post);
+const { title, description, lang, publishedAt, updatedAt, kind, sources } = post.data;
+const outline = headings.filter(({ depth }) => depth === 2 || depth === 3);
+---
+
+<DocumentLayout title={title} description={description} lang={lang} kind={kind} topic={topics[0]}>
+  <article aria-labelledby="article-title">
+    <header class="article-header">
+      <div class="article-meta" lang="en">
+        <span class="article-type">{kind === 'note' ? 'Note' : 'Article'}</span>
+        <time datetime={publishedAt}>{formatDate(publishedAt)}</time>
+        {updatedAt && <span>Updated <time datetime={updatedAt}>{formatDate(updatedAt)}</time></span>}
+      </div>
+      <h1 id="article-title">{title}</h1>
+      <p class="article-dek">{description}</p>
+    </header>
+
+    <div class:list={['reading-layout', { 'has-outline': outline.length > 0 }]}>
+      {
+        outline.length > 0 && (
+          <details class="document-outline" open>
+            <summary lang="en">Contents</summary>
+            <nav aria-label="Contents" lang="en">
+              <ul role="list" lang={lang}>
+                {outline.map(({ slug, text, depth }) => (
+                  <li class:list={{ 'outline-subheading': depth === 3 }}>
+                    <a href={`#${slug}`}>{text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </details>
+        )
+      }
+
+      <div class="reading-body">
+        <div class="article-prose">
+          <Content />
+        </div>
+
+        {
+          sources && sources.length > 0 && (
+            <section class="article-sources" aria-labelledby="sources-heading">
+              <h2 id="sources-heading" lang="en">Sources</h2>
+              <ul>
+                {sources.map(({ label, url, revision }) => (
+                  <li>
+                    {url ? <a href={url}>{label}</a> : <span>{label}</span>}
+                    {revision && <code>{revision}</code>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <nav class="article-topics" aria-label="Topics" lang="en">
+          {topics.map((topic) => (
+            <a class="document-folder" href={topicHref(topic.id)} lang={topic.data.lang}>
+              <PixelIcon name="folder" size={16} />
+              {topic.data.title}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  </article>
+</DocumentLayout>

@@ -1,0 +1,14 @@
+---
+import TopicList from '../../components/TopicList.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { readBlog } from '../../lib/blog';
+
+const { topics } = await readBlog();
+---
+
+<SiteLayout title="Topics">
+  <header class="blog-heading">
+    <h1>Topics</h1>
+  </header>
+  {topics.length ? <TopicList topics={topics} /> : <p>No topics yet.</p>}
+</SiteLayout>

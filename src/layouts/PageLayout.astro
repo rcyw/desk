@@ -1,0 +1,49 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { blogName, siteName } from '../lib/blog';
+import chicagoFont from '../platinum/fonts/ChicagoKare-Regular.woff2?url';
+import interRegular from '../platinum/fonts/Inter-Regular.woff2?url';
+import interSemiBold from '../platinum/fonts/Inter-SemiBold.woff2?url';
+import readingPreferences from '../scripts/reading-preferences.js?raw';
+import '@fontsource-variable/noto-sans-sc';
+import '../platinum/styles.css';
+import '../styles/common.css';
+import '../styles/reading.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  surface: 'desktop' | 'document';
+  desktopHeight?: number;
+  lang?: 'zh-CN' | 'en';
+  robots?: 'noindex';
+}
+
+const { title, description, surface, desktopHeight, lang = 'en', robots } = Astro.props;
+const name = surface === 'document' ? blogName : siteName;
+const pageTitle = title ? `${title} — ${name}` : name;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang={lang} data-surface={surface} style={desktopHeight && { '--desk-opening-height': `${desktopHeight}px` }} transition:animate="none">
+  <head>
+    <meta charset="UTF-8" />
+    <script is:inline set:html={readingPreferences}></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    {description && <meta name="description" content={description} />}
+    <meta name="theme-color" content="#ddd" />
+    {robots && <meta name="robots" content={robots} />}
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {[chicagoFont, interRegular, interSemiBold].map((font) => (
+      <link rel="preload" href={font} as="font" type="font/woff2" crossorigin="anonymous" />
+    ))}
+    {surface === 'desktop' && <ClientRouter fallback="swap" />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content" lang="en">Skip to content</a>
+    <slot />
+  </body>
+</html>

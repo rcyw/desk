@@ -1,0 +1,25 @@
+---
+import PostList from '../components/PostList.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { paginatePosts, readBlog } from '../lib/blog';
+import type { PostPage } from '../lib/blog';
+
+export async function getStaticPaths() {
+  const { posts } = await readBlog();
+  return paginatePosts(posts, '/').map((page) => ({
+    params: { page: page.path === '/' ? undefined : page.path.slice(1, -1) },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: PostPage;
+}
+
+const { page } = Astro.props;
+---
+
+<SiteLayout title={page.current > 1 ? `Posts · Page ${page.current}` : undefined} pagination={page}>
+  <h1 class="visually-hidden">Posts</h1>
+  {page.posts.length ? <PostList posts={page.posts} /> : <p>No posts yet.</p>}
+</SiteLayout>
