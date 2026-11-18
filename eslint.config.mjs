@@ -23,6 +23,10 @@ export default defineConfig(
     languageOptions: { globals: globals.browser },
   },
   {
+    files: ['public/desk-sw.js'],
+    languageOptions: { globals: globals.serviceworker },
+  },
+  {
     files: ['*.mjs', 'tests/**/*.mjs'],
     languageOptions: { globals: globals.node },
   },
