@@ -1,14 +1,12 @@
 # Bundled typefaces
 
-These unmodified font files are loaded locally by `../typography.css`. A generated
-project does not request a font CDN or depend on locally installed classic Apple
-fonts. The licenses are also retained as a CSS license comment in production
-builds.
+The stylesheet `../typography.css` loads these unmodified font files locally.
+License files ship with production builds under `/licenses/`.
 
-| Files                                         | Author and upstream source                                                                                          | License                                        |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `ChicagoKare-Regular.woff2`                   | Duane King, [Chicago Kare](https://github.com/KingDuane/Chicago-Kare/tree/dca7a9e4f2b971e39cf3a5e8a3f9309d4293d56d) | [MIT](ChicagoKare-LICENSE.txt)                 |
-| `Inter-Regular.woff2`, `Inter-SemiBold.woff2` | The Inter Project Authors, [Inter 4.1](https://github.com/rsms/inter/tree/v4.1/docs/font-files)                     | [SIL Open Font License 1.1](Inter-LICENSE.txt) |
+| Files | Author and upstream source | License |
+| --- | --- | --- |
+| `ChicagoKare-Regular.woff2` | Duane King, [Chicago Kare](https://github.com/KingDuane/Chicago-Kare/tree/dca7a9e4f2b971e39cf3a5e8a3f9309d4293d56d) | [MIT](../../../public/licenses/ChicagoKare-MIT.txt) |
+| `Inter-Regular.woff2`, `Inter-SemiBold.woff2` | The Inter Project Authors, [Inter 4.1](https://github.com/rsms/inter/tree/v4.1/docs/font-files) | [SIL Open Font License 1.1](../../../public/licenses/Inter-OFL.txt) |
 
 Chicago Kare is a community recreation used for compact interface chrome. It is
 not Apple's Charcoal font or a claim of pixel-identical Mac OS 9 typography. Inter

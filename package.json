@@ -2,6 +2,7 @@
   "name": "desk",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@12.11.2",
   "engines": {
@@ -11,7 +12,8 @@
     "dev": "astro dev",
     "check": "astro check",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test"
   },
   "dependencies": {
     "@astrojs/react": "7.1.9",
