@@ -20,6 +20,10 @@ pnpm test
 
 首页与专题每页最多显示 10 篇文章。窗口底栏的字号与明暗设置保存在当前浏览器。
 
+## Agent 使用
+
+从 Desk 仓库根启动 Bot 或 Agent。根目录指引涵盖工作范围与验证，内容工作流说明笔记更新、按日期发时讯和准备 PR。 [Agent 入口](AGENTS.md) · [内容工作流](docs/content-workflow.md)
+
 ## 写作
 
 在 `content/topics/<slug>.md` 创建专题。Frontmatter 需要 `title`、`description` 和非负整数 `order`。专题默认是英文，可以通过 `lang` 标明语言。
