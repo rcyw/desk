@@ -256,7 +256,8 @@ html[data-surface='document'] {
 }
 
 .article-prose pre,
-.article-prose table {
+.article-prose table,
+.mermaid-diagram {
   display: block;
   max-width: 100%;
   overflow-x: auto;
@@ -270,6 +271,20 @@ html[data-surface='document'] {
   font-size: 0.82em;
   line-height: 1.6;
   overflow-wrap: normal;
+}
+
+.mermaid-diagram {
+  margin-inline: 0;
+  padding: clamp(10px, 2vw, 18px);
+  border: 1px solid var(--reading-edge);
+  background: var(--reading-panel);
+  outline-offset: -3px;
+}
+
+.mermaid-diagram > svg {
+  display: block;
+  block-size: auto;
+  margin-inline: auto;
 }
 
 [data-reading-theme='dark'] .astro-code {

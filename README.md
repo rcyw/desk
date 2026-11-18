@@ -40,6 +40,15 @@ topics:
 
 `kind` 支持 `article` 和 `note`，`lang` 支持 `zh-CN` 和 `en`。给有实质变化的内容加 `updatedAt`。可选的 `sources` 列表记录 `label`，并可附 `url` 和 `revision`。没有 URL 的来源以文本显示。带 `draft: true` 的条目从文章页和所有索引中排除。推送到公开仓库的草稿源文件仍可读。
 
+用 `mermaid` 代码围栏写图。图随阅读页的明暗和字号切换，宽图可在图框内横向滚动。
+
+````markdown
+```mermaid
+flowchart TD
+  source["Markdown"] --> build["Astro Build"] --> page["Article"]
+```
+````
+
 ## 桌面与阅读页
 
 [桌面组件](src/platinum/) 提供 Platinum9 风格的窗口、菜单、图标和字体，并适配 Astro 的静态渲染与启动窗口尺寸。[Desk](src/components/Desk.tsx) 注册桌面应用和图标，[SiteLayout](src/layouts/SiteLayout.astro) 提供 Blog 窗口内的页面，[DocumentLayout](src/layouts/DocumentLayout.astro) 提供独立阅读页。导航和控件使用英文。窗口控件与英文栏目标题使用 Chicago Kare，文章标题和正文使用 Inter 和站内加载的 Noto Sans SC。
@@ -49,3 +58,5 @@ topics:
 项目代码、测试和自有界面素材采用 MIT。`content/` 内文章与配图的著作权归各自作者，授权由条目另行说明。 [MIT 许可全文](LICENSE)
 
 Chicago Kare 使用 MIT。Inter 和 Noto Sans SC 使用 SIL Open Font License 1.1。许可声明随站点一同构建。 [Chicago Kare](public/licenses/ChicagoKare-MIT.txt) · [Inter](public/licenses/Inter-OFL.txt) · [Noto Sans SC](public/licenses/NotoSansSC-OFL.txt)
+
+Mermaid 使用 MIT。 [Mermaid 许可](public/licenses/Mermaid-MIT.txt)
