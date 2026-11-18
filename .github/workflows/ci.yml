@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -16,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: pnpm/action-setup@v6.1.1
       - uses: actions/setup-node@v7.1.0
@@ -28,3 +30,30 @@ jobs:
       - run: pnpm check
       - run: pnpm build
       - run: pnpm test
+      - name: Check that changed articles have published pages
+        if: >-
+          github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          changed_posts=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- ':(glob)content/posts/*/index.md')
+          failed=0
+          while IFS= read -r post; do
+            if [[ -z "$post" ]]; then continue; fi
+            slug=${post#content/posts/}
+            slug=${slug%/index.md}
+            if [[ ! -s "dist/posts/$slug/index.html" ]]; then
+              echo "::error file=$post::This article has no published page. Check its draft flag and route."
+              failed=1
+            fi
+          done <<< "$changed_posts"
+          exit "$failed"
+      - name: Upload review build
+        if: github.event_name == 'pull_request' && !github.event.pull_request.draft
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: desk-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
