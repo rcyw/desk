@@ -91,6 +91,47 @@ test(
       ]);
 
       await t.test(
+        'the built site exposes an installable Desk app',
+        async () => {
+          for (const html of [home, topics, topic, article]) {
+            assert.ok(
+              html.includes('rel="manifest" href="/manifest.webmanifest"'),
+            );
+            assert.ok(
+              html.includes(
+                'rel="apple-touch-icon" href="/icons/desk-180.png"',
+              ),
+            );
+          }
+
+          const manifest = JSON.parse(await readPage('/manifest.webmanifest'));
+          assert.equal(manifest.id, '/');
+          assert.equal(manifest.start_url, '/');
+          assert.equal(manifest.scope, '/');
+          assert.equal(manifest.display, 'standalone');
+          const icons = manifest.icons.filter(
+            ({ purpose }) => purpose === 'any',
+          );
+          assert.ok(icons.some(({ sizes }) => sizes === '192x192'));
+          assert.ok(icons.some(({ sizes }) => sizes === '512x512'));
+          for (const { src, sizes } of [
+            ...manifest.icons,
+            { src: '/icons/desk-180.png', sizes: '180x180' },
+          ]) {
+            const icon = await readFile(new URL(`dist${src}`, root));
+            assert.equal(icon.toString('ascii', 1, 4), 'PNG');
+            assert.equal(
+              `${icon.readUInt32BE(16)}x${icon.readUInt32BE(20)}`,
+              sizes,
+            );
+          }
+
+          await readPage('/desk-sw.js');
+          assert.match(await readPage('/offline.html'), /<h1>Offline<\/h1>/);
+        },
+      );
+
+      await t.test(
         'the homepage links to a directly accessible article',
         () => {
           assert.ok(home.includes(`href="${articlePath}"`));

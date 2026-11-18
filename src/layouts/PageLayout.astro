@@ -52,6 +52,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/desk-180.png" />
     {[chicagoFont, interRegular, interSemiBold].map((font) => (
       <link
         rel="preload"
@@ -62,6 +64,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
       />
     ))}
     {surface === 'desktop' && <ClientRouter fallback="swap" />}
+    <script>
+      if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/desk-sw.js', { updateViaCache: 'none' })
+          .catch((error) =>
+            console.warn('Unable to register Desk offline support.', error),
+          );
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main-content" lang="en">

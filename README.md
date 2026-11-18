@@ -2,6 +2,13 @@
 
 Desk 是一个 Astro 静态站点。Platinum9 风格的桌面默认打开 Blog 应用 **Wayne’s Notes**，展示由仓内 Markdown 生成的文章和专题。
 
+## 安装
+
+- 电脑上的 Chrome 或 Edge 可从地址栏或浏览器菜单安装 Desk。macOS Safari 使用 **File → Add to Dock**。
+- Android Chrome 从菜单选择安装。iPhone 或 iPad 在 Safari 的分享菜单中选择 **Add to Home Screen**，并开启 **Open as Web App**。
+
+Desk 安装后从首页独立打开。联网时读取最新页面，断网时可以重读已缓存的文章。安装和离线验证使用生产构建的 `pnpm preview`。
+
 ## 本地开发
 
 使用 [.node-version](.node-version) 和 [package.json](package.json) 中的 Node.js 与 pnpm 版本。
