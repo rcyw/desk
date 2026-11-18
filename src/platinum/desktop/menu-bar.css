@@ -29,11 +29,9 @@
   }
 }
 @media (pointer: coarse) {
-  .p9-control-strip {
-    align-items: flex-end;
-  }
   /* Expand the hit regions above the artwork without scaling the strip. */
   .p9-control-strip .p9-strip-body {
+    align-self: flex-end;
     height: 24px;
   }
   .p9-control-strip .p9-strip-module {
