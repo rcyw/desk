@@ -24,6 +24,7 @@ function mountDiagrams(prose: HTMLElement) {
     if (appearance === renderedAppearance) return;
     const ink = styles.getPropertyValue('--reading-ink').trim();
     const background = styles.getPropertyValue('--reading-panel').trim();
+    if (!ink || !background) return;
 
     const { default: mermaid } = await import('mermaid');
     await document.fonts
@@ -102,6 +103,10 @@ function mountDiagrams(prose: HTMLElement) {
   }
 
   document.addEventListener('reading-preferences-change', scheduleRender);
+  // The first render can run before the reading styles have loaded in WebKit.
+  if (document.readyState !== 'complete') {
+    window.addEventListener('load', scheduleRender, { once: true });
+  }
   scheduleRender();
 }
 
