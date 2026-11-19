@@ -4,6 +4,7 @@ description: 从一次 Coding Agent 任务出发，拆解推理、执行和训�
 kind: article
 lang: zh-CN
 publishedAt: '2026-11-18'
+updatedAt: '2026-11-19'
 topics:
   - agent-infrastructure
 draft: false
@@ -36,25 +37,37 @@ Google 在 2026 年 11 月 10 日发布的文章，把 OpenRL、llm-d、KubeRay 
 
 ## 先从一次 Coding Agent 任务出发
 
-假设任务是“修复一个仓库中的测试失败”。模型本身不会直接完成任务。Harness 负责组织循环：准备上下文，调用模型，把工具请求交给执行环境，再把观察结果送回模型。最后由验证器检查修改是否满足要求。
-
-如果要用这批任务训练模型，循环外还需要轨迹采集、奖励计算、训练和权重更新。
+假设任务是“修复一个仓库中的测试失败”。Harness 把推理服务给出的工具请求交给 Sandbox，再带着执行结果发起下一轮推理。验证器最后检查修改是否满足任务要求。
 
 ```mermaid
-flowchart TD
-    A[任务与环境规格] --> B[Harness：推进任务状态]
-    B --> C[推理服务]
-    C --> B
-    B --> D[Sandbox：执行工具]
-    D --> B
-    B --> E[验证器：结果与奖励]
-    E --> F[轨迹与版本记录]
-    F --> G[训练作业]
-    G --> H[新模型权重]
-    H --> C
+---
+config:
+  sequence:
+    width: 52
+    height: 32
+    actorMargin: 8
+    diagramMarginX: 6
+    wrapPadding: 4
+    mirrorActors: false
+---
+sequenceDiagram
+  accTitle: 一次 Coding Agent 任务怎么完成
+  accDescr: Harness 调用推理服务，把工具调用交给 Sandbox，并将工具结果返回给推理服务。修改完成后，验证器检查结果。
+  participant M as 推理服务
+  participant H as Harness
+  participant S as Sandbox
+  H->>M: 请求推理
+  M-->>H: 工具调用
+  H->>S: 运行测试
+  S-->>H: 失败输出
+  H->>M: 回传结果
+  M-->>H: 修改请求
+  H->>S: 修改文件
+  S-->>H: 返回结果
+  Note over M,S: 验证器检查修改
 ```
 
-这里最容易混淆的三个对象，其实应该分开管理：
+Harness 可以重复推理和工具调用，直到任务完成或用尽预算。这个过程中有三种需要分开管理的状态。
 
 - **任务状态**：目标、步骤、预算、等待原因和完成条件。
 - **执行状态**：文件、进程、依赖、网络连接与工具输出。
@@ -111,6 +124,18 @@ Agent Substrate 则把更高一层的执行生命周期放到前台：其官方�
 KubeRay 用 Kubernetes Operator 管理 Ray 集群，提供 RayCluster、RayJob、RayService 等资源，并支持按工作负载需要扩缩容。它解决的是 Ray 工作负载在 Kubernetes 上的部署和生命周期问题。[Ray on Kubernetes](https://docs.ray.io/en/latest/cluster/kubernetes/index.html)
 
 Google 的文章则将 OpenRL 放在后训练服务这一层。这里应保留一个边界：本文依据 Google 对它的定位进行讨论，没有对 OpenRL 的安装、API 兼容性和训练效果做独立验证。[Google 原文](https://cloud.google.com/blog/topics/developers-practitioners/the-open-ai-native-stack-on-kubernetes-from-open-models-to-distributed-inference-and-agents)
+
+回到测试修复的例子。要用一批这样的任务训练模型，我会把 Harness 记录的模型调用、Sandbox 的工具结果和验证器结论关联到各自的任务轨迹。先筛选样本，再计算奖励。候选权重通过评估后，才发布给推理服务处理后续请求。
+
+```mermaid
+flowchart TD
+  accTitle: 任务轨迹怎样进入训练和后续推理
+  accDescr: 带版本的轨迹与验证器结果用于筛选样本和计算奖励。训练得到候选权重，评估通过后发布给后续推理服务。
+  T[("轨迹与版本<br/>验证结果")] --> F["筛选样本<br/>计算奖励"]
+  F --> J[训练作业]
+  J --> W[候选权重]
+  W -->|评估通过| I[发布到推理服务]
+```
 
 对于已经采用 AReaL、SGLang 和 Sandbox 的系统，我不会先建议更换训练框架。更值得检查的是，下面这些信息能不能沿着完整轨迹保留下来：
 
