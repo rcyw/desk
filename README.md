@@ -1,32 +1,33 @@
 # Wayne’s Desk
 
-Desk 是一个 Astro 静态站点。Platinum9 风格的桌面默认打开 Blog 应用 **Wayne’s Notes**，展示由仓内 Markdown 生成的文章和专题。
+[简体中文](README.zh-CN.md)
 
-## 安装
+Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes**, a blog built from the Markdown articles and topics in this repository.
 
-- 电脑上的 Chrome 或 Edge 可从地址栏或浏览器菜单安装 Desk。macOS Safari 使用 **File → Add to Dock**。
-- Android Chrome 从菜单选择安装。iPhone 或 iPad 在 Safari 的分享菜单中选择 **Add to Home Screen**，并开启 **Open as Web App**。
+[Open Desk](https://rcyw.github.io/)
 
-Desk 安装后从首页独立打开。联网时读取最新页面，断网时可以重读已缓存的文章。安装和离线验证使用生产构建的 `pnpm preview`。
+Install Desk from your browser’s menu. On iPhone or iPad, use Safari’s **Add to Home Screen** and enable **Open as Web App**.
 
-## 本地开发
+## Local development
 
-使用 [.node-version](.node-version) 和 [package.json](package.json) 中的 Node.js 与 pnpm 版本。
+Use the Node.js and pnpm versions pinned by this repository. [Node.js version](.node-version) · [pnpm version](package.json)
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev --host 127.0.0.1
 ```
 
-构建后用 `pnpm preview --host 127.0.0.1` 预览产物。
+After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and offline reading.
 
-## 写作
+## Writing
 
-文章和配图放在 `content/posts/<slug>/`，专题放在 `content/topics/`。 [内容工作流](docs/content-workflow.md)
+Store each article and its images in `content/posts/<slug>/` and topic definitions in `content/topics/`. [Content workflow in Chinese](docs/content-workflow.md)
 
-Agent 从仓库根的指引开始。 [AGENTS.md](AGENTS.md)
+Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
 
-## 验证
+## Verification
+
+Format changed files with `pnpm exec prettier --write <file>`, then run these checks before committing.
 
 ```sh
 pnpm format:check
@@ -36,6 +37,6 @@ pnpm build
 pnpm test
 ```
 
-## 许可
+## License
 
-项目代码、测试和自有界面素材采用 MIT。文章与配图的授权由各条目说明。字体和 Mermaid 适用各自的许可。 [MIT 许可](LICENSE) · [第三方许可](public/licenses/)
+The code, tests, and original interface assets are MIT-licensed. Article and image licensing follows the terms stated in each entry. Fonts and Mermaid retain their respective licenses. [MIT license](LICENSE) · [Third-party licenses](public/licenses/)
