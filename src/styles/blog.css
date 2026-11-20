@@ -1,8 +1,13 @@
 /* Match the static window to the measured desktop geometry. */
-.p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='blog'] {
-  --blog-start-width: min(1064px, calc(100% - 176px));
+.p9-desktop[data-viewport-ready='false']
+  .p9-window:is([data-app-id='blog'], [data-app-id='brief']) {
+  --blog-limit-width: 1064px;
+  --blog-start-width: min(var(--blog-limit-width), calc(100% - 176px));
+  --blog-x-shift: 18px;
+  --blog-cascade: 0px;
   --blog-room: calc(
-    100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) - 32px
+    100dvh - var(--p9-menubar-height) - var(--p9-control-strip-height) - 32px -
+      var(--blog-cascade)
   );
   --blog-start-height: min(var(--desk-opening-height), var(--blog-room));
   --blog-offset: clamp(
@@ -10,25 +15,38 @@
     calc((var(--blog-room) - var(--blog-start-height)) / 2),
     84px
   );
-  left: calc((100% - var(--blog-start-width)) / 2 - 18px) !important;
-  top: calc(var(--p9-menubar-height) + var(--blog-offset)) !important;
+  left: calc(
+    (100% - var(--blog-start-width)) / 2 - var(--blog-x-shift)
+  ) !important;
+  top: calc(
+    var(--p9-menubar-height) + var(--blog-offset) + var(--blog-cascade)
+  ) !important;
   width: var(--blog-start-width) !important;
   height: var(--blog-start-height) !important;
 }
 
-.p9-desktop[data-viewport-ready='false'] [data-icon-id='blog'] {
+.p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='brief'] {
+  --blog-limit-width: 912px;
+  --blog-x-shift: 6px;
+  --blog-cascade: 22px;
+}
+
+.p9-desktop[data-viewport-ready='false']
+  :is([data-icon-id='blog'], [data-icon-id='brief']) {
   left: auto !important;
   right: 12px;
 }
 
 @media (max-width: 1099px) {
-  .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='blog'] {
-    --blog-start-width: calc(100% - 132px);
+  .p9-desktop[data-viewport-ready='false']
+    .p9-window:is([data-app-id='blog'], [data-app-id='brief']) {
+    --blog-start-width: min(var(--blog-limit-width), calc(100% - 132px));
   }
 }
 
 @media (max-width: 599px) {
-  .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='blog'] {
+  .p9-desktop[data-viewport-ready='false']
+    .p9-window:is([data-app-id='blog'], [data-app-id='brief']) {
     --blog-start-width: calc(
       100% - 8px - env(safe-area-inset-left, 0px) -
         env(safe-area-inset-right, 0px)
@@ -49,7 +67,7 @@
   pointer-events: none;
 }
 
-[data-app-id='blog'] > .p9-window-content {
+:is([data-app-id='blog'], [data-app-id='brief']) > .p9-window-content {
   overflow: hidden;
 }
 
@@ -64,7 +82,7 @@
   container: blog / inline-size;
 }
 
-.blog-toolbar .blog-profile {
+.blog-toolbar .blog-toolbar-link {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -74,10 +92,25 @@
   color: var(--p9-text);
   font: 12px/17px var(--p9-font);
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.blog-toolbar .blog-profile:hover {
+.blog-toolbar .blog-toolbar-link:hover {
   text-decoration: underline;
+}
+
+.blog-toolbar .blog-brief-entry {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .blog-toolbar .blog-brief-entry {
+    display: inline-flex;
+  }
+
+  .blog-toolbar .blog-brief-entry + .blog-toolbar-link {
+    margin-left: 0;
+  }
 }
 
 .blog-content {
@@ -293,7 +326,7 @@
 }
 
 @media (pointer: coarse) {
-  .blog-toolbar .blog-profile {
+  .blog-toolbar .blog-toolbar-link {
     min-height: var(--surface-touch-height);
   }
 }

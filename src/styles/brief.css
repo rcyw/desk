@@ -1,0 +1,151 @@
+.brief-latest {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.brief-date {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--reading-muted);
+  font: calc(0.75rem * var(--reading-scale)) / 1.4 var(--p9-font);
+}
+
+.brief-heading h1 {
+  margin: 0;
+  font-family: var(--p9-body-font);
+  font-size: calc(1.1875rem * var(--reading-scale));
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.brief-heading h1:lang(zh),
+.brief-latest:lang(zh) {
+  font-family: var(--p9-cjk-body-font);
+}
+
+.brief-heading p {
+  margin: 4px 0 0;
+  color: var(--reading-muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.brief-highlights {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 0;
+  padding: 8px 0 0 1.15em;
+  border-top: 1px solid var(--reading-rule);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.brief-highlights li::marker {
+  color: var(--reading-muted);
+}
+
+.brief-read {
+  display: inline-flex;
+  margin-top: 14px;
+}
+
+.brief-archive-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--reading-rule);
+}
+
+.brief-archive-heading h1 {
+  margin: 0;
+  font: 400 calc(0.9375rem * var(--reading-scale)) / 1.35 var(--p9-font);
+  font-synthesis: none;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+}
+
+.brief-month-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: auto;
+}
+
+.brief-month-step.surface-button {
+  min-width: 26px;
+  padding-inline: 6px;
+}
+
+.brief-month-step::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: translateX(-1px) rotate(45deg);
+}
+
+.brief-month-step[data-month-direction='older']::before {
+  transform: translateX(1px) rotate(-135deg);
+}
+
+.brief-months {
+  position: relative;
+}
+
+.brief-months summary {
+  list-style: none;
+}
+
+.brief-months summary::-webkit-details-marker {
+  display: none;
+}
+
+.brief-months ul {
+  position: absolute;
+  z-index: 1;
+  inset: calc(100% + 4px) 0 auto auto;
+  min-width: 100%;
+  max-height: min(220px, 45vh);
+  overflow: auto;
+  margin: 0;
+  padding: 3px;
+  border: 1px solid var(--reading-edge);
+  background: var(--reading-paper);
+  box-shadow: 1px 2px var(--reading-rule);
+  list-style: none;
+}
+
+.brief-months a {
+  display: block;
+  padding: 5px 8px;
+  color: var(--reading-ink);
+  font: 12px/1.5 var(--p9-font);
+  outline-offset: -2px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brief-months a:hover,
+.brief-months a:focus-visible,
+.brief-months a[aria-current] {
+  background: var(--reading-panel);
+}
+
+.brief-months a[aria-current] {
+  box-shadow: inset 2px 0 var(--reading-link);
+}
+
+@media (pointer: coarse) {
+  .brief-month-nav {
+    --surface-touch-height: 30px;
+  }
+  .brief-month-step.surface-button {
+    min-width: 30px;
+  }
+}

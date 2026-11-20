@@ -2,9 +2,12 @@ import type { ComponentType, ReactNode } from 'react';
 
 export type IconName =
   | 'computer'
+  | 'desktop'
+  | 'windows'
   | 'disk'
   | 'folder'
   | 'document'
+  | 'newspaper'
   | 'notes'
   | 'terminal'
   | 'trash'
@@ -107,6 +110,7 @@ export interface AppDefinition {
   icon: IconName;
   /** Whether to offer this application in the system launcher; defaults to true. */
   launchable?: boolean;
+  onLaunch?: () => void;
   defaultBounds?: (viewport: DesktopViewport) => Bounds;
   defaultSize?: Size;
   minSize?: Size;

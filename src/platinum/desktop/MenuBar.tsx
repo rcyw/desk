@@ -161,7 +161,7 @@ export function MenuBar({
         title={`Switch application — ${appTitle}`}
         {...menuButton(applicationMenu)}
       >
-        <PixelIcon name={activeApp?.icon ?? 'computer'} size={16} />
+        <PixelIcon name={activeApp?.icon ?? 'desktop'} size={16} />
         <span className="p9-application-name">{appTitle}</span>
         <span className="p9-application-arrow" aria-hidden="true">
           ▾

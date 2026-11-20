@@ -67,6 +67,9 @@ test(
     const origin = `http://127.0.0.1:${server.port}`;
     const articlePath = '/posts/published-note/';
     const topicPath = '/topics/research/';
+    const latestBriefPath = '/brief/2026-11-18/';
+    const olderBriefPath = '/brief/2026-10-20/';
+    const draftBriefPath = '/brief/2026-12-01/';
 
     async function readPage(path, status = 200) {
       const response = await fetch(new URL(path, origin), {
@@ -164,6 +167,66 @@ test(
           await Promise.all([
             readPage('/posts/draft-note/', 404),
             readPage('/topics/draft-only/', 404),
+          ]);
+        },
+      );
+
+      await t.test(
+        'the Blog toolbar opens AI Brief and its latest issue has a reading page',
+        async () => {
+          const [brief, issue] = await Promise.all([
+            readPage('/brief/'),
+            readPage(latestBriefPath),
+          ]);
+
+          const toolbar = home.match(
+            /<nav\b[^>]*aria-label="Blog navigation"[^>]*>[\s\S]*?<\/nav>/,
+          )?.[0];
+          assert.ok(toolbar?.includes('href="/brief/"'));
+          assert.equal(home.match(/<a\b[^>]*href="\/brief\/"/g)?.length, 1);
+          assert.doesNotMatch(home, /Latest Issue|href="\/brief\/2026-/);
+
+          assert.ok(brief.includes(`href="${latestBriefPath}"`));
+          assert.ok(!brief.includes(`href="${olderBriefPath}"`));
+          assert.ok(!brief.includes(`href="${draftBriefPath}"`));
+          assert.match(brief, /November fixture highlight/);
+          assert.match(
+            issue,
+            /<h1 id="article-title">November fixture brief<\/h1>/,
+          );
+          assert.match(
+            issue,
+            /This issue verifies the standalone brief reading page\./,
+          );
+          assert.match(issue, /data-language="mermaid"/);
+          for (const html of [topics, topic, article]) {
+            assert.doesNotMatch(html, /href="\/brief\/2026-/);
+          }
+        },
+      );
+
+      await t.test(
+        'the brief archive groups published issues by coverage month',
+        async () => {
+          const olderMonthPath = '/brief/archive/2026-10/';
+          const [archive, olderMonth] = await Promise.all([
+            readPage('/brief/archive/'),
+            readPage(olderMonthPath),
+          ]);
+          assert.ok(archive.includes(`href="${latestBriefPath}"`));
+          assert.ok(archive.includes(`href="${olderMonthPath}"`));
+          assert.ok(!archive.includes(`href="${olderBriefPath}"`));
+          assert.ok(olderMonth.includes(`href="${olderBriefPath}"`));
+          assert.ok(!olderMonth.includes(`href="${latestBriefPath}"`));
+          for (const html of [archive, olderMonth]) {
+            assert.doesNotMatch(
+              html,
+              /December draft brief|\/brief\/(archive\/)?2026-12/,
+            );
+          }
+          await Promise.all([
+            readPage(draftBriefPath, 404),
+            readPage('/brief/archive/2026-12/', 404),
           ]);
         },
       );

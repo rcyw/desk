@@ -1,5 +1,5 @@
 ---
-import { formatDate, postHref } from '../lib/blog';
+import { postHref } from '../lib/blog';
 import type { BlogPost } from '../lib/blog';
 
 interface Props {
@@ -16,7 +16,7 @@ const { posts } = Astro.props;
         <h2 class="post-preview-title" lang={data.lang}>
           {data.title}
         </h2>
-        <time datetime={data.publishedAt}>{formatDate(data.publishedAt)}</time>
+        <time datetime={data.publishedAt}>{data.publishedAt}</time>
       </a>
     </li>
   ))}

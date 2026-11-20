@@ -57,7 +57,10 @@ export function createDesktopMenus(
   ];
   const launcherItems: MenuItem[] = props.apps
     .filter((app) => app.launchable !== false)
-    .map((app) => ({ label: app.title, action: () => api.openApp(app.id) }));
+    .map((app) => ({
+      label: app.title,
+      action: app.onLaunch ?? (() => api.openApp(app.id)),
+    }));
   const aboutItems: MenuItem[] = props.onAbout
     ? [{ label: 'About This Desktop…', action: props.onAbout }]
     : [];

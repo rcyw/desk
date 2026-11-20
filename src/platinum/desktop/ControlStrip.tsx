@@ -98,7 +98,7 @@ export function ControlStrip({
               onClick={(event) => openMenu(event, windowItems)}
             >
               <span className="p9-strip-face">
-                <PixelIcon name="computer" size={16} />
+                <PixelIcon name="windows" size={16} />
                 <span className="p9-strip-triangle" />
               </span>
             </button>

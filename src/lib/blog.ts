@@ -5,18 +5,10 @@ export type BlogPost = CollectionEntry<'posts'>;
 
 const postsPerPage = 10;
 
-const dateFormat = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'UTC',
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-});
-
 export const siteName = 'Wayne’s Desk';
 export const blogName = 'Wayne’s Notes';
 export const postHref = (id: string) => `/posts/${id}/`;
 export const topicHref = (id: string) => `/topics/${id}/`;
-export const formatDate = (date: string) => dateFormat.format(new Date(date));
 
 export function paginatePosts(posts: BlogPost[], base: string) {
   const total = Math.max(1, Math.ceil(posts.length / postsPerPage));

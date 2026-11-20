@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes**, a blog built from the Markdown articles and topics in this repository.
+Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. The **AI Brief** app organizes daily issues by coverage date.
 
 [Open Desk](https://rcyw.github.io/)
 
@@ -21,7 +21,7 @@ After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and
 
 ## Writing
 
-Store each article and its images in `content/posts/<slug>/` and topic definitions in `content/topics/`. [Content workflow in Chinese](docs/content-workflow.md)
+Store articles in `content/posts/<slug>/index.md`, topic definitions in `content/topics/`, and daily issues in `content/briefs/YYYY/MM/DD/index.md`. Keep images beside their Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
 
 Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
 

@@ -1,27 +1,68 @@
 ---
 import DeskSurface from '../components/DeskSurface.astro';
+import type { DeskApp } from '../components/Desk';
 import ReadingControls from '../components/ReadingControls.astro';
 import { blogName } from '../lib/blog';
 import type { PostPage } from '../lib/blog';
+import { briefName } from '../lib/briefs';
 import PageLayout from './PageLayout.astro';
 import '../styles/blog.css';
+import '../styles/brief.css';
 
 interface Props {
+  app?: DeskApp;
   title?: string;
   description?: string;
   robots?: 'noindex';
   pagination?: PostPage;
 }
 
-const { title, description, robots, pagination } = Astro.props;
+const { app = 'blog', title, description, robots, pagination } = Astro.props;
 const pathname = Astro.url.pathname;
+const brief = app === 'brief';
+const mainId = brief ? 'brief-content' : 'main-content';
 const home = pathname === '/';
 const topics = pathname.startsWith('/topics/');
 const topicIndex = pathname === '/topics/';
 const homeArchive = pathname.startsWith('/page/');
-const desktopHeight =
-  Math.max(340, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
-  (home || homeArchive ? 48 : 0);
+const desktopHeight = brief
+  ? 380
+  : Math.max(340, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
+    (home || homeArchive ? 48 : 0);
+const navigation: {
+  label: string;
+  href: string;
+  current?: 'page' | 'location';
+}[] = brief
+  ? [
+      {
+        label: 'Latest',
+        href: '/brief/',
+        current: pathname === '/brief/' ? 'page' : undefined,
+      },
+      {
+        label: 'Archive',
+        href: '/brief/archive/',
+        current:
+          pathname === '/brief/archive/'
+            ? 'page'
+            : pathname.startsWith('/brief/archive/')
+              ? 'location'
+              : undefined,
+      },
+    ]
+  : [
+      {
+        label: 'Home',
+        href: '/',
+        current: home ? 'page' : homeArchive ? 'location' : undefined,
+      },
+      {
+        label: 'Topics',
+        href: '/topics/',
+        current: topicIndex ? 'page' : topics ? 'location' : undefined,
+      },
+    ];
 ---
 
 <PageLayout
@@ -30,34 +71,60 @@ const desktopHeight =
   surface="desktop"
   desktopHeight={desktopHeight}
   robots={robots}
+  mainId={mainId}
 >
-  <DeskSurface blogTitle={blogName} blogHeight={desktopHeight}>
+  <DeskSurface
+    blogTitle={blogName}
+    briefTitle={briefName}
+    app={app}
+    height={desktopHeight}
+    mainId={mainId}
+  >
     <div class="blog-window">
-      <nav class="blog-toolbar" aria-label="Blog navigation">
-        <a
-          class="p9-button surface-button"
-          href="/"
-          aria-current={home ? 'page' : homeArchive ? 'location' : undefined}
-        >
-          Home
-        </a>
-        <a
-          class="p9-button surface-button"
-          href="/topics/"
-          aria-current={topicIndex ? 'page' : topics ? 'location' : undefined}
-        >
-          Topics
-        </a>
-        <a class="blog-profile" href="https://github.com/rcyw">
-          GitHub <span aria-hidden="true">↗</span>
-        </a>
+      <nav
+        class="blog-toolbar"
+        aria-label={brief ? 'AI Brief navigation' : 'Blog navigation'}
+      >
+        {navigation.map(({ label, href, current }) => (
+          <a
+            class="p9-button surface-button"
+            href={href}
+            aria-current={current}
+          >
+            {label}
+          </a>
+        ))}
+        {brief ? (
+          <a class="blog-toolbar-link" href="/" data-desk-app="blog">
+            Blog
+          </a>
+        ) : (
+          <>
+            <a
+              class="blog-toolbar-link blog-brief-entry"
+              href="/brief/"
+              data-desk-app="brief"
+            >
+              {briefName}
+            </a>
+            <a class="blog-toolbar-link" href="https://github.com/rcyw">
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
+          </>
+        )}
       </nav>
 
-      <main class="blog-content" id="main-content" tabindex="-1">
+      <div
+        class="blog-content"
+        role="main"
+        aria-label={brief ? briefName : blogName}
+        id={mainId}
+        tabindex="-1"
+      >
         <div class="blog-page">
           <slot />
         </div>
-      </main>
+      </div>
 
       <footer class="reading-footer blog-footer">
         {pagination && pagination.total > 1 && (
