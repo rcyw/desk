@@ -30,24 +30,29 @@ jobs:
       - run: pnpm check
       - run: pnpm build
       - run: pnpm test
-      - name: Check that changed articles have published pages
+      - name: Check that changed articles and issues have published pages
         if: >-
           github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
         shell: bash
         run: |
-          changed_posts=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- ':(glob)content/posts/*/index.md')
+          changed_entries=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- \
+            ':(glob)content/posts/*/index.md' ':(glob)content/briefs/**/*.md')
           failed=0
-          while IFS= read -r post; do
-            if [[ -z "$post" ]]; then continue; fi
-            slug=${post#content/posts/}
-            slug=${slug%/index.md}
-            if [[ ! -s "dist/posts/$slug/index.html" ]]; then
-              echo "::error file=$post::This article has no published page. Check its draft flag and route."
+          while IFS= read -r entry; do
+            if [[ -z "$entry" ]]; then continue; fi
+            route=${entry#content/}
+            route=${route%/index.md}
+            if [[ "$route" == briefs/* ]]; then
+              date=${route#briefs/}
+              route="brief/${date//\//-}"
+            fi
+            if [[ ! -s "dist/$route/index.html" ]]; then
+              echo "::error file=$entry::This entry has no published page. Check its draft flag and route."
               failed=1
             fi
-          done <<< "$changed_posts"
+          done <<< "$changed_entries"
           exit "$failed"
       - name: Upload review build
         if: github.event_name == 'pull_request' && !github.event.pull_request.draft

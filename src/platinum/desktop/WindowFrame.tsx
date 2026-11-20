@@ -83,6 +83,9 @@ export function WindowFrame({
       onPointerDownCapture={() => {
         if (!active && !overview) activateWindow(win.id);
       }}
+      onFocusCapture={() => {
+        if (!active && !overview) activateWindow(win.id);
+      }}
     >
       <div
         className="p9-window-titlebar"

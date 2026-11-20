@@ -78,6 +78,25 @@ export function PixelIcon({
           <path stroke="#fff" d="M7 3h17M5 28h22" />
           <path stroke="#999" d="M8 19h11M24 19h1M7 29h18" />
         </g>
+      ) : name === 'desktop' ? (
+        <>
+          <rect x="2" y="4" width="28" height="24" fill="#262626" />
+          <rect x="4" y="6" width="24" height="20" fill="#bdbdbd" />
+          <rect x="4" y="6" width="24" height="2" fill="#f1f1f1" />
+          <rect x="6" y="8" width="20" height="16" fill="#8585ae" />
+          <rect x="6" y="8" width="20" height="2" fill="#ddd" />
+          <rect x="20" y="12" width="4" height="4" fill="#f3f1f8" />
+          <rect x="20" y="18" width="4" height="4" fill="#e8e6d9" />
+        </>
+      ) : name === 'windows' ? (
+        <>
+          <rect x="8" y="4" width="22" height="18" fill="#262626" />
+          <rect x="10" y="6" width="18" height="14" fill="#ddd" />
+          <rect x="10" y="6" width="18" height="4" fill="#a0a0a0" />
+          <rect x="2" y="10" width="22" height="18" fill="#262626" />
+          <rect x="4" y="12" width="18" height="14" fill="#f6f6f6" />
+          <rect x="4" y="12" width="18" height="4" fill="#9999c6" />
+        </>
       ) : name === 'terminal' ? (
         <g {...common}>
           <path fill="#aaa" d="M2.5 3.5h27v23h-27z" />
@@ -137,6 +156,18 @@ export function PixelIcon({
           <path fill="#ccf" stroke="none" d="M9 19h14v3H9z" />
           <path stroke="#aaa" d="M11 24h10M11 27h8" />
           <path stroke="#fff" d="M10 3h5M10 4v7" />
+        </g>
+      ) : name === 'newspaper' ? (
+        <g stroke="none">
+          <path fill="#262626" d="M2 4h24v4h4v16l-4 4H6l-4-4z" />
+          <path fill="#f1f0f3" d="M4 6h20v18H4z" />
+          <path fill="#b9bbd0" d="M26 10h2v14l-2 2H6l-2-2h22z" />
+          <path fill="#939ec9" d="M6 8h16v4H6z" />
+          <path fill="#6879aa" d="M6 10h16v2H6z" />
+          <path
+            fill="#6f727e"
+            d="M6 14h6v2H6zm8 0h8v2h-8zM6 18h6v2H6zm8 0h8v2h-8zM6 22h4v2H6zm8 0h6v2h-6z"
+          />
         </g>
       ) : name === 'info' ? (
         <g {...common}>

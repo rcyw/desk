@@ -17,6 +17,8 @@ interface Props {
   desktopHeight?: number;
   lang?: 'zh-CN' | 'en';
   robots?: 'noindex';
+  documentName?: string;
+  mainId?: string;
 }
 
 const {
@@ -26,8 +28,10 @@ const {
   desktopHeight,
   lang = 'en',
   robots,
+  documentName = blogName,
+  mainId = 'main-content',
 } = Astro.props;
-const name = surface === 'document' ? blogName : siteName;
+const name = surface === 'document' ? documentName : siteName;
 const pageTitle = title ? `${title} — ${name}` : name;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
@@ -75,7 +79,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     </script>
   </head>
   <body>
-    <a class="skip-link" href="#main-content" lang="en">
+    <a class="skip-link" href={`#${mainId}`} lang="en">
       Skip to content
     </a>
     <slot />

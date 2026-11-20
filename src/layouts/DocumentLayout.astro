@@ -1,6 +1,7 @@
 ---
 import { blogName, topicHref } from '../lib/blog';
 import type { BlogTopic } from '../lib/blog';
+import { briefName } from '../lib/briefs';
 import { PixelIcon } from '../platinum';
 import ReadingControls from '../components/ReadingControls.astro';
 import PageLayout from './PageLayout.astro';
@@ -12,9 +13,16 @@ interface Props {
   lang: 'zh-CN' | 'en';
   kind: 'article' | 'note';
   topic?: BlogTopic;
+  issueDate?: string;
 }
 
-const { title, description, lang, kind, topic } = Astro.props;
+const { title, description, lang, kind, topic, issueDate } = Astro.props;
+const documentName = issueDate ? briefName : blogName;
+const documentIcon = issueDate
+  ? 'newspaper'
+  : kind === 'note'
+    ? 'notes'
+    : 'document';
 ---
 
 <PageLayout
@@ -22,10 +30,11 @@ const { title, description, lang, kind, topic } = Astro.props;
   description={description}
   lang={lang}
   surface="document"
+  documentName={documentName}
 >
   <div class="document-frame">
     <header class="document-titlebar p9-window-titlebar">
-      <PixelIcon name={kind === 'note' ? 'notes' : 'document'} size={16} />
+      <PixelIcon name={documentIcon} size={16} />
       <div class="p9-title-stripes" aria-hidden="true">
         <i></i>
         <i></i>
@@ -33,7 +42,7 @@ const { title, description, lang, kind, topic } = Astro.props;
         <i></i>
       </div>
       <span class="p9-window-title" lang="en">
-        {blogName}
+        {documentName}
       </span>
       <div class="p9-title-stripes" aria-hidden="true">
         <i></i>
@@ -45,10 +54,25 @@ const { title, description, lang, kind, topic } = Astro.props;
 
     <div class="document-content">
       <div class="document-toolbar">
-        <nav class="document-navigation" aria-label="Blog navigation" lang="en">
-          <a class="p9-button surface-button" href="/">
-            <span aria-hidden="true">←</span> Home
+        <nav
+          class="document-navigation"
+          aria-label="Reading navigation"
+          lang="en"
+        >
+          <a
+            class="p9-button surface-button"
+            href={issueDate ? '/brief/' : '/'}
+          >
+            <span aria-hidden="true">←</span> {issueDate ? briefName : 'Home'}
           </a>
+          {issueDate && (
+            <a
+              class="document-folder"
+              href={`/brief/archive/${issueDate.slice(0, 7)}/`}
+            >
+              Archive
+            </a>
+          )}
           {topic && (
             <a
               class="document-folder"

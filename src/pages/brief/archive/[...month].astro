@@ -1,0 +1,108 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { briefHref, readBriefs } from '../../../lib/briefs';
+import type { Brief } from '../../../lib/briefs';
+
+export async function getStaticPaths() {
+  const byMonth = new Map<string, Brief[]>();
+  for (const brief of await readBriefs()) {
+    const month = brief.id.slice(0, 7);
+    const issues = byMonth.get(month);
+    if (issues) issues.push(brief);
+    else byMonth.set(month, [brief]);
+  }
+  const months = [...byMonth.keys()];
+  return [
+    {
+      params: { month: undefined },
+      props: { months, month: months[0], issues: byMonth.get(months[0]) ?? [] },
+    },
+    ...[...byMonth].map(([month, issues]) => ({
+      params: { month },
+      props: { months, month, issues },
+    })),
+  ];
+}
+
+interface Props {
+  months: string[];
+  month: string | undefined;
+  issues: Brief[];
+}
+
+const { months, month, issues } = Astro.props;
+const title = month ?? 'Archive';
+const currentIndex = month ? months.indexOf(month) : -1;
+const monthSteps = [
+  { direction: 'older', label: 'Older Month', month: months[currentIndex + 1] },
+  { direction: 'newer', label: 'Newer Month', month: months[currentIndex - 1] },
+] as const;
+---
+
+<SiteLayout app="brief" title={`${title} · AI Brief`}>
+  <section aria-labelledby="brief-archive-heading">
+    <header class="brief-archive-heading" lang="en">
+      <h1 id="brief-archive-heading">
+        {month ? <time datetime={month}>{month}</time> : title}
+      </h1>
+      {months.length > 1 && (
+        <nav class="brief-month-nav" aria-label="Archive months">
+          {monthSteps.map(({ direction, label, month }) =>
+            month ? (
+              <a
+                class="p9-button surface-button brief-month-step"
+                href={`/brief/archive/${month}/`}
+                aria-label={label}
+                title={label}
+                data-month-direction={direction}
+              ></a>
+            ) : (
+              <button
+                type="button"
+                class="p9-button surface-button brief-month-step"
+                aria-label={label}
+                data-month-direction={direction}
+                disabled
+              ></button>
+            ),
+          )}
+          <details class="brief-months">
+            <summary class="p9-button surface-button">
+              Months <span aria-hidden="true">▾</span>
+            </summary>
+            <ul>
+              {months.map((id) => (
+                <li>
+                  <a
+                    href={`/brief/archive/${id}/`}
+                    aria-current={id === month ? 'date' : undefined}
+                  >
+                    <time datetime={id}>{id}</time>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </nav>
+      )}
+    </header>
+    {issues.length ? (
+      <ul class="post-list">
+        {issues.map((issue) => (
+          <li>
+            <a class="post-preview" href={briefHref(issue.id)}>
+              <h2 class="post-preview-title" lang={issue.data.lang}>
+                {issue.data.title}
+              </h2>
+              <time datetime={issue.id} lang="en">
+                {issue.id}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p lang="en">No issues yet.</p>
+    )}
+  </section>
+</SiteLayout>

@@ -3,7 +3,8 @@ const shellCache = cachePrefix + 'shell-v1';
 const pageCache = cachePrefix + 'pages-v1';
 const assetCache = cachePrefix + 'assets-v1';
 const offlinePath = '/offline.html';
-const pagePath = /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/)/;
+const pagePath =
+  /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/|\/brief(?:\/|$))/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
