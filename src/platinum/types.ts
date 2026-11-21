@@ -8,6 +8,7 @@ export type IconName =
   | 'folder'
   | 'document'
   | 'newspaper'
+  | 'papers'
   | 'notes'
   | 'terminal'
   | 'trash'

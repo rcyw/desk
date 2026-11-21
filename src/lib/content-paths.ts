@@ -20,6 +20,16 @@ export function postId(entry: string): string {
   return id;
 }
 
+export function paperId(entry: string): string {
+  const id = entry.slice(0, -3);
+  if (!entry.endsWith('.md') || !slugPattern.test(id) || id === 'index') {
+    throw new Error(
+      `Expected a paper note at <slug>.md with a lowercase, hyphenated name. Found ${entry}`,
+    );
+  }
+  return id;
+}
+
 export function briefId(entry: string): string {
   const [, year, month, date] =
     /^(\d{4})\/(\d{2})\/(\d{4}-\d{2}-\d{2})\.md$/.exec(entry) ?? [];

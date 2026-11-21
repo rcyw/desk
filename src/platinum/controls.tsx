@@ -169,6 +169,20 @@ export function PixelIcon({
             d="M6 14h6v2H6zm8 0h8v2h-8zM6 18h6v2H6zm8 0h8v2h-8zM6 22h4v2H6zm8 0h6v2h-6z"
           />
         </g>
+      ) : name === 'papers' ? (
+        <g stroke="none">
+          <path fill="#262626" d="M8 2h16v4h4v4h2v18h-6v2H4V8h4z" />
+          <path fill="#aeb8bf" d="M10 4h12v4H10zM24 8h2v2h2v16h-4V12h-2V8h2z" />
+          <path fill="#fcfaf1" d="M6 10h12v4h4v14H6z" />
+          <path fill="#aeb8bf" d="M18 10h2v2h2v2h-4z" />
+          <path fill="#5a7777" d="M8 14h8v2H8zm0 4h10v2H8zm0 4h8v2H8z" />
+          <path
+            fill="#262626"
+            d="M20 16h6v2h2v6h-2v2h2v2h2v2h-4v-2h-2v-2h-4v-2h-2v-6h2z"
+          />
+          <path fill="#b9dbd2" d="M20 18h6v6h-6z" />
+          <path fill="#eef9f5" d="M20 18h4v2h-2v2h-2z" />
+        </g>
       ) : name === 'info' ? (
         <g {...common}>
           <path fill="#7777aa" d="M8.5 1.5h16l6 6v17l-6 6h-16l-7-6v-17z" />

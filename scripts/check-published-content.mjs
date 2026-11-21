@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
-import { briefId, postId } from '../src/lib/content-paths.ts';
+import { briefId, paperId, postId } from '../src/lib/content-paths.ts';
 
 const base = process.argv[2];
 if (!base) throw new Error('Pass the Git base revision to check.');
@@ -24,13 +24,16 @@ function contentRoute(file, legacySource = false) {
   const [folder, collection, ...parts] = file.split('/');
   if (
     folder !== 'content' ||
-    (collection !== 'posts' && collection !== 'briefs') ||
+    (collection !== 'posts' &&
+      collection !== 'briefs' &&
+      collection !== 'papers') ||
     parts.includes('assets') ||
     !/\.md$/i.test(file)
   )
     return;
 
   let entry = parts.join('/');
+  if (collection === 'papers') return `papers/${paperId(entry)}`;
   if (collection === 'posts') {
     if (legacySource && parts.length === 2 && parts[1] === 'index.md')
       entry = `${parts[0]}.md`;

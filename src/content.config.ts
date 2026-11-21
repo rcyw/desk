@@ -1,7 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { briefId, postId } from './lib/content-paths';
+import { briefId, paperId, postId } from './lib/content-paths';
 
 function slug(id: string): string {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
@@ -11,7 +11,9 @@ function slug(id: string): string {
 }
 
 const text = z.string().trim().min(1);
+const webUrl = z.url({ protocol: /^https?$/ });
 const markdownEntries = ['**/*.[mM][dD]', '!**/assets/**'];
+const topicReferences = z.array(reference('topics')).min(1);
 
 const publication = z
   .object({
@@ -25,7 +27,7 @@ const publication = z
       .array(
         z.object({
           label: text,
-          url: z.url({ protocol: /^https?$/ }).optional(),
+          url: webUrl.optional(),
           revision: text.optional(),
         }),
       )
@@ -61,7 +63,7 @@ const posts = defineCollection({
   }),
   schema: publication.safeExtend({
     kind: z.enum(['article', 'note']),
-    topics: z.array(reference('topics')).min(1),
+    topics: topicReferences,
   }),
 });
 
@@ -74,4 +76,21 @@ const briefs = defineCollection({
   schema: publication.safeExtend({ highlights: z.array(text).optional() }),
 });
 
-export const collections = { posts, topics, briefs };
+const papers = defineCollection({
+  loader: glob({
+    base: './content/papers',
+    pattern: markdownEntries,
+    generateId: ({ entry }) => paperId(entry),
+  }),
+  schema: publication.safeExtend({
+    topics: topicReferences,
+    paper: z.object({
+      title: text,
+      source: text,
+      url: webUrl,
+      version: text,
+    }),
+  }),
+});
+
+export const collections = { posts, topics, briefs, papers };
