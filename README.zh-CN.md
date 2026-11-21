@@ -10,6 +10,8 @@ Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Wayne�
 
 ## 写作
 
-文章放在 `content/posts/<slug>/index.md`，专题放在 `content/topics/`，日报放在 `content/briefs/YYYY/MM/DD/index.md`。配图放在对应的 Markdown 文件旁。 [内容工作流](docs/content-workflow.md)
+文章默认放在 `content/posts/<slug>.md`，需要分类时用 `content/posts/<category>/<slug>.md`，保留一层分类目录。文件名使用全局唯一的小写短横线 `slug`，决定直链 `/posts/<slug>/`。用 frontmatter 的 `topics` 关联一个或多个专题，专题定义放在 `content/topics/`。
+
+日报放在 `content/briefs/YYYY/MM/YYYY-MM-DD.md`，文件日期须和上级年、月目录对应，直链为 `/brief/YYYY-MM-DD/`。配图放在 Markdown 文件旁的 `./assets/<slug>/` 或 `./assets/YYYY-MM-DD/`。 [内容工作流](docs/content-workflow.md)
 
 开发与验证命令集中在英文 README。 [本地开发](README.md#local-development) · [验证](README.md#verification)

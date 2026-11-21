@@ -21,7 +21,9 @@ After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and
 
 ## Writing
 
-Store articles in `content/posts/<slug>/index.md`, topic definitions in `content/topics/`, and daily issues in `content/briefs/YYYY/MM/DD/index.md`. Keep images beside their Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
+Start articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug>.md` when a single category folder helps. The filename supplies the globally unique lowercase hyphenated slug for `/posts/<slug>/`. Use frontmatter `topics` to list the topics an article belongs to. Topic definitions live in `content/topics/`.
+
+Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`. Put images in `./assets/<slug>/` or `./assets/YYYY-MM-DD/` beside the corresponding Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
 
 Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
 
