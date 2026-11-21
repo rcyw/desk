@@ -105,17 +105,17 @@ test('a move into assets still requires the original published route', (t) => {
   assert.match(result.stderr, /must preserve \/posts\/original\//);
 });
 
-test('a draft without a page fails the publication check', (t) => {
+test('a changed brief without a built page fails the publication check', (t) => {
   const repo = fixture(t);
   repo.write('README.md', '# Desk\n');
   const base = repo.commit();
-  repo.write('content/briefs/2026/11/2026-11-18.md', '---\ndraft: true\n---\n');
+  repo.write('content/briefs/2026/11/2026-11-18.md', '# Daily issue\n');
   repo.commit();
   const result = repo.check(base);
   assert.equal(result.status, 1);
   assert.match(
     result.stderr,
-    /2026-11-18\.md::This entry has no published page/,
+    /2026-11-18\.md::This entry has no published page\. Check its filename and route\./,
   );
 });
 

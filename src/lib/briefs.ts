@@ -7,6 +7,6 @@ export const briefName = 'AI Brief';
 export const briefHref = (id: string) => `/brief/${id}/`;
 
 export async function readBriefs(): Promise<Brief[]> {
-  const briefs = await getCollection('briefs', ({ data }) => !data.draft);
+  const briefs = await getCollection('briefs');
   return briefs.sort((a, b) => b.id.localeCompare(a.id));
 }

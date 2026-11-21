@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { constants } from 'node:fs';
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
@@ -14,7 +14,7 @@ const fixtures = new URL('fixtures/content/', import.meta.url);
 const run = promisify(execFile);
 
 test(
-  'published content and drafts in a production build',
+  'public content and invalid frontmatter in a production build',
   { timeout: 60_000 },
   async (t) => {
     const directory = await mkdtemp(join(tmpdir(), 'desk-content-'));
@@ -51,10 +51,12 @@ test(
     const astroPackage = pathToFileURL(require.resolve('astro/package.json'));
     const { bin } = JSON.parse(await readFile(astroPackage, 'utf8'));
     const astroCli = fileURLToPath(new URL(bin.astro, astroPackage));
-    await run(process.execPath, [astroCli, 'build'], {
-      cwd: directory,
-      timeout: 40_000,
-    });
+    const build = () =>
+      run(process.execPath, [astroCli, 'build'], {
+        cwd: directory,
+        timeout: 40_000,
+      });
+    await build();
 
     const { preview } = await import(
       pathToFileURL(require.resolve('astro')).href
@@ -69,9 +71,7 @@ test(
     const topicPath = '/topics/research/';
     const latestBriefPath = '/brief/2026-11-18/';
     const olderBriefPath = '/brief/2026-10-20/';
-    const draftBriefPath = '/brief/2026-12-01/';
     const paperPath = '/papers/local-summary-retrieval/';
-    const draftPaperPath = '/papers/draft-paper/';
 
     async function readPage(path, status = 200) {
       const response = await fetch(new URL(path, origin), {
@@ -162,21 +162,12 @@ test(
         },
       );
 
-      await t.test(
-        'draft articles and draft-only topics are excluded',
-        async () => {
-          for (const html of [home, topics, topic, article]) {
-            assert.doesNotMatch(
-              html,
-              /Draft Note|Draft Only|\/posts\/draft-note\/|\/topics\/draft-only\//,
-            );
-          }
-          await Promise.all([
-            readPage('/posts/draft-note/', 404),
-            readPage('/topics/draft-only/', 404),
-          ]);
-        },
-      );
+      await t.test('topics without articles are excluded', async () => {
+        for (const html of [home, topics, topic, article]) {
+          assert.doesNotMatch(html, /Empty Topic|\/topics\/empty-topic\//);
+        }
+        await readPage('/topics/empty-topic/', 404);
+      });
 
       await t.test(
         'the Blog toolbar opens AI Brief and its latest issue has a reading page',
@@ -195,7 +186,6 @@ test(
 
           assert.ok(brief.includes(`href="${latestBriefPath}"`));
           assert.ok(!brief.includes(`href="${olderBriefPath}"`));
-          assert.ok(!brief.includes(`href="${draftBriefPath}"`));
           assert.match(brief, /November fixture highlight/);
           assert.match(
             issue,
@@ -225,16 +215,7 @@ test(
           assert.ok(!archive.includes(`href="${olderBriefPath}"`));
           assert.ok(olderMonth.includes(`href="${olderBriefPath}"`));
           assert.ok(!olderMonth.includes(`href="${latestBriefPath}"`));
-          for (const html of [archive, olderMonth]) {
-            assert.doesNotMatch(
-              html,
-              /December draft brief|\/brief\/(archive\/)?2026-12/,
-            );
-          }
-          await Promise.all([
-            readPage(draftBriefPath, 404),
-            readPage('/brief/archive/2026-12/', 404),
-          ]);
+          await readPage('/brief/archive/2026-12/', 404);
         },
       );
 
@@ -250,10 +231,6 @@ test(
           assert.ok(papers.includes(`href="${paperPath}"`));
           assert.match(papers, /用局部摘要理解分层检索/);
           assert.match(papers, /Example Preprint/);
-          assert.doesNotMatch(
-            papers,
-            /Draft Paper Fixture|\/papers\/draft-paper\//,
-          );
           assert.doesNotMatch(home, /用局部摘要理解分层检索/);
           assert.doesNotMatch(topic, /用局部摘要理解分层检索/);
 
@@ -273,11 +250,36 @@ test(
           assert.match(note, /\bv2\b/);
           assert.match(note, /Research/);
           assert.match(note, /data-language="mermaid"/);
-          await readPage(draftPaperPath, 404);
         },
       );
     } finally {
       await server.stop();
+    }
+
+    for (const [path, value] of [
+      ['posts/engineering/published-note.md', 'true'],
+      ['briefs/2026/11/2026-11-18.md', 'false'],
+      ['papers/local-summary-retrieval.md', 'null'],
+    ]) {
+      await t.test(`the build rejects draft: ${value} in ${path}`, async () => {
+        const file = new URL(`content/${path}`, root);
+        const markdown = await readFile(file, 'utf8');
+        await writeFile(
+          file,
+          markdown.replace(/^---\n/, `---\ndraft: ${value}\n`),
+        );
+        try {
+          await assert.rejects(build(), ({ stderr }) => {
+            assert.match(
+              stderr,
+              /Remove the draft field from publishable Markdown\./,
+            );
+            return true;
+          });
+        } finally {
+          await writeFile(file, markdown);
+        }
+      });
     }
   },
 );
