@@ -32,7 +32,7 @@ sources:
 
 Google 在 2026 年 11 月 10 日发布的文章以 Gemma 等开放权重模型为例，把模型的后训练、推理和 Agent 执行放进同一套 Kubernetes 架构。OpenRL 提供后训练服务，llm-d 组织分布式推理，KubeRay 管理 Ray 的分布式计算作业，Agent Substrate 提供执行环境。每一层处理的输入、结果和失败方式都不同。 [Google 原文](https://cloud.google.com/blog/topics/developers-practitioners/the-open-ai-native-stack-on-kubernetes-from-open-models-to-distributed-inference-and-agents)
 
-下面先还原一次任务，再讨论已有 Sandbox、Harness 和 RL 基础设施应该如何演进。组件能力来自官方资料；架构取舍和实验方案是本文的工程判断，不是实测结论。
+下面用一次代码修复说明隔离执行、任务编排和训练怎样衔接。组件能力依据官方资料，架构取舍和实验方案是本文的工程推演。
 
 ## 先从一次 Coding Agent 任务出发
 
