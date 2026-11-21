@@ -11,3 +11,5 @@ topics:
 ## 阅读记录
 
 这篇笔记用于验证独立阅读页。
+
+![Fixture diagram](./assets/published-note/fixture-diagram.svg)

@@ -35,25 +35,7 @@ jobs:
           github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-        shell: bash
-        run: |
-          changed_entries=$(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- \
-            ':(glob)content/posts/*/index.md' ':(glob)content/briefs/**/*.md')
-          failed=0
-          while IFS= read -r entry; do
-            if [[ -z "$entry" ]]; then continue; fi
-            route=${entry#content/}
-            route=${route%/index.md}
-            if [[ "$route" == briefs/* ]]; then
-              date=${route#briefs/}
-              route="brief/${date//\//-}"
-            fi
-            if [[ ! -s "dist/$route/index.html" ]]; then
-              echo "::error file=$entry::This entry has no published page. Check its draft flag and route."
-              failed=1
-            fi
-          done <<< "$changed_entries"
-          exit "$failed"
+        run: node scripts/check-published-content.mjs "$BASE_SHA"
       - name: Upload review build
         if: github.event_name == 'pull_request' && !github.event.pull_request.draft
         uses: actions/upload-artifact@v7.0.2

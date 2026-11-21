@@ -1,5 +1,6 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { postId } from './content-paths';
 
 export type BlogPost = CollectionEntry<'posts'>;
 
@@ -7,7 +8,7 @@ const postsPerPage = 10;
 
 export const siteName = 'Wayne’s Desk';
 export const blogName = 'Wayne’s Notes';
-export const postHref = (id: string) => `/posts/${id}/`;
+export const postHref = (entry: string) => `/posts/${postId(entry)}/`;
 export const topicHref = (id: string) => `/topics/${id}/`;
 
 export function paginatePosts(posts: BlogPost[], base: string) {
@@ -32,15 +33,28 @@ export function paginatePosts(posts: BlogPost[], base: string) {
 export type PostPage = ReturnType<typeof paginatePosts>[number];
 
 export async function readBlog() {
-  const [posts, topics] = await Promise.all([
-    getCollection('posts', ({ data }) => !data.draft),
+  const [entries, topics] = await Promise.all([
+    getCollection('posts'),
     getCollection('topics'),
   ]);
 
+  const filesBySlug = new Map<string, string>();
+  for (const { id } of entries) {
+    const slug = postId(id);
+    const previousFile = filesBySlug.get(slug);
+    if (previousFile) {
+      throw new Error(
+        `Duplicate Blog slug "${slug}" in ${previousFile} and ${id}`,
+      );
+    }
+    filesBySlug.set(slug, id);
+  }
+
+  const posts = entries.filter(({ data }) => !data.draft);
   posts.sort(
     (a, b) =>
       b.data.publishedAt.localeCompare(a.data.publishedAt) ||
-      a.id.localeCompare(b.id),
+      postId(a.id).localeCompare(postId(b.id)),
   );
   topics.sort(
     (a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id),

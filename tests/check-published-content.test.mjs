@@ -1,0 +1,155 @@
+import assert from 'node:assert/strict';
+import { execFileSync, spawnSync } from 'node:child_process';
+import {
+  mkdirSync,
+  mkdtempSync,
+  renameSync,
+  rmSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const script = fileURLToPath(
+  new URL('../scripts/check-published-content.mjs', import.meta.url),
+);
+
+function fixture(t) {
+  const directory = mkdtempSync(join(tmpdir(), 'desk-publication-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const options = { cwd: directory, encoding: 'utf8' };
+  const git = (...args) => execFileSync('git', args, options).trim();
+  git('init', '--quiet');
+
+  return {
+    write(path, text) {
+      const file = join(directory, path);
+      mkdirSync(dirname(file), { recursive: true });
+      writeFileSync(file, text);
+    },
+    move(from, to) {
+      const destination = join(directory, to);
+      mkdirSync(dirname(destination), { recursive: true });
+      renameSync(join(directory, from), destination);
+    },
+    remove(path) {
+      unlinkSync(join(directory, path));
+    },
+    commit() {
+      git('add', '--all');
+      git(
+        '-c',
+        'user.name=Desk Test',
+        '-c',
+        'user.email=desk-test@example.com',
+        '-c',
+        'commit.gpgsign=false',
+        'commit',
+        '--quiet',
+        '-m',
+        'Fixture',
+      );
+      return git('rev-parse', 'HEAD');
+    },
+    check(base) {
+      const result = spawnSync(process.execPath, [script, base], options);
+      assert.ifError(result.error);
+      return result;
+    },
+  };
+}
+
+test('legacy source moves preserve article and brief routes', (t) => {
+  const repo = fixture(t);
+  repo.write('content/posts/first/index.md', '# First\n');
+  repo.write('content/briefs/2026/11/18/index.md', '# Brief\n');
+  const base = repo.commit();
+  repo.move('content/posts/first/index.md', 'content/posts/research/first.md');
+  repo.move(
+    'content/briefs/2026/11/18/index.md',
+    'content/briefs/2026/11/2026-11-18.md',
+  );
+  repo.commit();
+  repo.write('dist/posts/first/index.html', '<h1>First</h1>');
+  repo.write('dist/brief/2026-11-18/index.html', '<h1>Brief</h1>');
+  const result = repo.check(base);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('a renamed post requires its previous route even when the new page exists', (t) => {
+  const repo = fixture(t);
+  repo.write('content/posts/original.md', '# Example\n');
+  const base = repo.commit();
+  repo.move('content/posts/original.md', 'content/posts/research/renamed.md');
+  repo.commit();
+  repo.write('dist/posts/renamed/index.html', '<h1>Example</h1>');
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must preserve \/posts\/original\//);
+  repo.write('dist/posts/original/index.html', '<h1>Existing route</h1>');
+  const preserved = repo.check(base);
+  assert.equal(preserved.status, 0, preserved.stderr);
+});
+
+test('a move into assets still requires the original published route', (t) => {
+  const repo = fixture(t);
+  repo.write('content/posts/original.md', '# Example\n');
+  const base = repo.commit();
+  repo.move('content/posts/original.md', 'content/posts/assets/original.md');
+  repo.commit();
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /must preserve \/posts\/original\//);
+});
+
+test('a draft without a page fails the publication check', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/briefs/2026/11/2026-11-18.md', '---\ndraft: true\n---\n');
+  repo.commit();
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(
+    result.stderr,
+    /2026-11-18\.md::This entry has no published page/,
+  );
+});
+
+test('uppercase Markdown extensions outside assets fail validation', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/posts/research/example.MD', '# Example\n');
+  repo.commit();
+  repo.write('dist/posts/example/index.html', '<h1>Example</h1>');
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Found research\/example\.MD/);
+});
+
+test('correcting an invalid source extension only requires the new route', (t) => {
+  const repo = fixture(t);
+  repo.write('content/posts/example.MD', '# Example\n');
+  const base = repo.commit();
+  repo.move('content/posts/example.MD', 'content/posts/research/example.md');
+  repo.commit();
+  repo.write('dist/posts/example/index.html', '<h1>Example</h1>');
+  const result = repo.check(base);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test('a deletion and Markdown assets remain outside the publication gate', (t) => {
+  const repo = fixture(t);
+  repo.write('content/posts/retired.md', '# Retired\n');
+  const base = repo.commit();
+  repo.remove('content/posts/retired.md');
+  repo.write('content/posts/research/assets/example/credits.MD', '# Credits\n');
+  repo.write('content/briefs/2026/11/assets/example/credits.MD', '# Credits\n');
+  repo.commit();
+  const result = repo.check(base);
+  assert.equal(result.status, 0, result.stderr);
+});

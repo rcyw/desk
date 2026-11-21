@@ -135,14 +135,19 @@ test(
       );
 
       await t.test(
-        'the homepage links to a directly accessible article',
-        () => {
+        'the homepage links to a categorized article at its original URL',
+        async () => {
           assert.ok(home.includes(`href="${articlePath}"`));
           assert.match(
             article,
             /<h1 id="article-title">阅读 Open Source<\/h1>/,
           );
           assert.match(article, /这篇笔记用于验证独立阅读页。/);
+          const imagePath = article.match(
+            /<img\b(?=[^>]*\balt="Fixture diagram")[^>]*\bsrc="([^"]+)"/,
+          )?.[1];
+          assert.ok(imagePath?.startsWith('/_astro/'));
+          assert.match(await readPage(imagePath), /<svg\b/);
         },
       );
 

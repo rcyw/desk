@@ -1,6 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { briefId, postId } from './lib/content-paths';
 
 function slug(id: string): string {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
@@ -10,6 +11,7 @@ function slug(id: string): string {
 }
 
 const text = z.string().trim().min(1);
+const markdownEntries = ['**/*.[mM][dD]', '!**/assets/**'];
 
 const publication = z
   .object({
@@ -51,8 +53,11 @@ const topics = defineCollection({
 const posts = defineCollection({
   loader: glob({
     base: './content/posts',
-    pattern: '*/index.md',
-    generateId: ({ entry }) => slug(entry.slice(0, -'/index.md'.length)),
+    pattern: markdownEntries,
+    generateId: ({ entry }) => {
+      postId(entry);
+      return entry;
+    },
   }),
   schema: publication.safeExtend({
     kind: z.enum(['article', 'note']),
@@ -63,20 +68,8 @@ const posts = defineCollection({
 const briefs = defineCollection({
   loader: glob({
     base: './content/briefs',
-    pattern: '**/*.md',
-    generateId: ({ entry }) => {
-      const date = entry
-        .match(/^(\d{4})\/(\d{2})\/(\d{2})\/index\.md$/)
-        ?.slice(1)
-        .join('-');
-      const parsed = z.iso.date().safeParse(date);
-      if (!parsed.success) {
-        throw new Error(
-          `Expected an AI Brief at YYYY/MM/DD/index.md with a valid date. Found ${entry}`,
-        );
-      }
-      return parsed.data;
-    },
+    pattern: markdownEntries,
+    generateId: ({ entry }) => briefId(entry),
   }),
   schema: publication.safeExtend({ highlights: z.array(text).optional() }),
 });

@@ -9,15 +9,27 @@
 ## 建立或更新文章
 
 1. 按整理目标、来源和 `slug` 查找已有文章与任务 PR。同一个问题更新原文，有独立阅读价值的主题另起一篇。同一期已有 PR 时，核对现有差异和审阅意见后续作。目标和来源版本均已处理时，报告本次无需改动。
-2. 博客文章放在 `content/posts/<slug>/index.md`，优先复用专题，需要时同时提交 `content/topics/<slug>.md`。日报见 [AI Brief 日报](#ai-brief-日报)。配图放在对应文章或日报目录并用相对路径引用。
+2. 博客文章默认放在 `content/posts/<slug>.md`。整理有需要时使用 `content/posts/<category>/<slug>.md`，分类目录保留一层。日报见 [AI Brief 日报](#ai-brief-日报)。
 3. 在 `sources` 记录可公开的原始出处，优先链接到具体版本。版本可核实时填写 `revision`。
 4. 新稿用 `publishedAt` 填预计首发日期，公开时确认。实质更新填写 `updatedAt`，沿用原公开路径和首发日期。
 
 ## 文章格式
 
-博客文章的 `topics` 至少引用一个已建专题，填写专题文件名去掉 `.md` 后的 `slug`。必填字段和允许值见 [内容定义](../src/content.config.ts)。
+用能辨认主题的英文短语给文件命名，例如 `kubernetes-ai-native-stack.md`。去掉小写的 `.md` 后缀就是文章的 `slug`，整个文章集合内须唯一，使用小写字母或数字，用短横线分词。`index.md` 是保留文件名，`assets/` 用于存放配图。直链沿用 `/posts/<slug>/`，发布后保留原文件名。固定前缀留给定期更新的系列。
+
+分类目录用于组织源文件。Frontmatter 的 `topics` 决定专题收录，一篇文章可关联多个专题，同一专题也可收录多篇文章。至少引用一个已建专题，填写 `content/topics/` 下对应文件名去掉 `.md` 后的 `slug`。文章互链用 `/posts/<slug>/`，配图放在该文章旁的 `./assets/<slug>/`，用相对路径引用。必填字段和允许值见 [内容定义](../src/content.config.ts)。
 
 技术长文先给出一个具体问题或任务，再逐步解释关键机制、边界和取舍。积极用 Mermaid 展示组件关系、交互顺序和状态变化。每张图回答一个明确的问题，放在读者需要它的段落。同一组件可以从多个视角重复展示，名称保持一致，图数按理解需要决定。短时讯按内容需要配图。
+
+### 移动文章
+
+当一个长期主类已经积累多篇文章，单独浏览这组源稿会更方便时，再加一级分类目录。
+
+先用 `pnpm content:move <slug> <category>` 预览移动路径，再用 `pnpm content:move <slug> <category> --apply` 执行。工具会把 Markdown 文件和该文的 `assets/<slug>/` 一起移到目标分类。
+
+执行后用 `git status --short` 和 `git diff` 核对变更，运行 `pnpm build`，并预览文章原直链和配图。
+
+如果移动进程被强制终止，先用 `git status --short` 检查源目录和目标目录的 Markdown 与配图，把它们恢复为一份完整的文章。确认原进程已退出后，用 `rmdir content/posts/.move-post-<slug>` 清除残留的空锁目录，再重试。
 
 ## 按日期整理时讯
 
@@ -27,13 +39,13 @@
 
 ### AI Brief 日报
 
-每期覆盖一个上海日历日，从当天 00:00 到次日 00:00 前。按覆盖日期存为 `content/briefs/YYYY/MM/DD/index.md`，直链为 `/brief/YYYY-MM-DD/`。补跑、增补和校正都编辑该日的文件，`publishedAt` 记录实际首发日。
+每期覆盖一个上海日历日，从当天 00:00 到次日 00:00 前。按覆盖日期存为 `content/briefs/YYYY/MM/YYYY-MM-DD.md`。文件日期的年、月须与上级目录对应，直链为 `/brief/YYYY-MM-DD/`。补跑、增补和校正都编辑该日的文件，`publishedAt` 记录实际首发日。配图放在日报旁的 `./assets/YYYY-MM-DD/`，用相对路径引用。
 
 `description` 写该期摘要，可用 `highlights` 列出入口页的要点。正文每条资讯用一个小节交代变化、影响和原始出处。要点有实质更新时一并修订，并填写 `updatedAt`。
 
 ### 周报首发示例
 
-上海时间 2026-11-09 00:00 至 2026-11-16 00:00 前的一期，存为 `content/posts/research-brief-weekly-2026-11-09/index.md`。示例引用已建的 `research-notes` 专题。
+上海时间 2026-11-09 00:00 至 2026-11-16 00:00 前的一期，存为 `content/posts/research-brief-weekly-2026-11-09.md`。示例引用已建的 `research-notes` 专题。
 
 ```yaml
 ---

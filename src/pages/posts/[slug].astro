@@ -2,11 +2,12 @@
 import ArticleDocument from '../../components/ArticleDocument.astro';
 import { readBlog } from '../../lib/blog';
 import type { BlogPost, BlogTopic } from '../../lib/blog';
+import { postId } from '../../lib/content-paths';
 
 export async function getStaticPaths() {
   const { posts, topics } = await readBlog();
   return posts.map((post) => ({
-    params: { slug: post.id },
+    params: { slug: postId(post.id) },
     props: {
       post,
       topics: topics.filter((topic) =>

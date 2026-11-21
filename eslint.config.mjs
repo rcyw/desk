@@ -27,7 +27,7 @@ export default defineConfig(
     languageOptions: { globals: globals.serviceworker },
   },
   {
-    files: ['*.mjs', 'tests/**/*.mjs'],
+    files: ['*.mjs', 'scripts/**/*.mjs', 'tests/**/*.mjs'],
     languageOptions: { globals: globals.node },
   },
 );
