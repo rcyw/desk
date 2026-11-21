@@ -1,10 +1,11 @@
 ---
 import DeskSurface from '../components/DeskSurface.astro';
-import type { DeskApp } from '../components/Desk';
 import ReadingControls from '../components/ReadingControls.astro';
 import { blogName } from '../lib/blog';
 import type { PostPage } from '../lib/blog';
 import { briefName } from '../lib/briefs';
+import { deskAppIds, deskApps } from '../lib/desk-apps';
+import type { DeskApp } from '../lib/desk-apps';
 import PageLayout from './PageLayout.astro';
 import '../styles/blog.css';
 import '../styles/brief.css';
@@ -19,50 +20,61 @@ interface Props {
 
 const { app = 'blog', title, description, robots, pagination } = Astro.props;
 const pathname = Astro.url.pathname;
-const brief = app === 'brief';
-const mainId = brief ? 'brief-content' : 'main-content';
+const { label, mainId, height } = deskApps[app];
+const appName = app === 'blog' ? blogName : label;
+const appLinks = deskAppIds.filter((id) => id !== app);
 const home = pathname === '/';
 const topics = pathname.startsWith('/topics/');
 const topicIndex = pathname === '/topics/';
 const homeArchive = pathname.startsWith('/page/');
-const desktopHeight = brief
-  ? 380
-  : Math.max(340, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
-    (home || homeArchive ? 48 : 0);
-const navigation: {
+const desktopHeight =
+  app === 'blog'
+    ? Math.max(height, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
+      (home || homeArchive ? 48 : 0)
+    : height;
+type NavLink = {
   label: string;
   href: string;
   current?: 'page' | 'location';
-}[] = brief
-  ? [
-      {
-        label: 'Latest',
-        href: '/brief/',
-        current: pathname === '/brief/' ? 'page' : undefined,
-      },
-      {
-        label: 'Archive',
-        href: '/brief/archive/',
-        current:
-          pathname === '/brief/archive/'
-            ? 'page'
-            : pathname.startsWith('/brief/archive/')
-              ? 'location'
-              : undefined,
-      },
-    ]
-  : [
-      {
-        label: 'Home',
-        href: '/',
-        current: home ? 'page' : homeArchive ? 'location' : undefined,
-      },
-      {
-        label: 'Topics',
-        href: '/topics/',
-        current: topicIndex ? 'page' : topics ? 'location' : undefined,
-      },
-    ];
+};
+const links: Record<DeskApp, NavLink[]> = {
+  blog: [
+    {
+      label: 'Home',
+      href: deskApps.blog.entryPath,
+      current: home ? 'page' : homeArchive ? 'location' : undefined,
+    },
+    {
+      label: 'Topics',
+      href: '/topics/',
+      current: topicIndex ? 'page' : topics ? 'location' : undefined,
+    },
+  ],
+  brief: [
+    {
+      label: 'Latest',
+      href: deskApps.brief.entryPath,
+      current: pathname === deskApps.brief.entryPath ? 'page' : undefined,
+    },
+    {
+      label: 'Archive',
+      href: '/brief/archive/',
+      current:
+        pathname === '/brief/archive/'
+          ? 'page'
+          : pathname.startsWith('/brief/archive/')
+            ? 'location'
+            : undefined,
+    },
+  ],
+  papers: [
+    {
+      label: 'Library',
+      href: deskApps.papers.entryPath,
+      current: pathname === deskApps.papers.entryPath ? 'page' : undefined,
+    },
+  ],
+};
 ---
 
 <PageLayout
@@ -81,11 +93,8 @@ const navigation: {
     mainId={mainId}
   >
     <div class="blog-window">
-      <nav
-        class="blog-toolbar"
-        aria-label={brief ? 'AI Brief navigation' : 'Blog navigation'}
-      >
-        {navigation.map(({ label, href, current }) => (
+      <nav class="blog-toolbar" aria-label={`${label} navigation`}>
+        {links[app].map(({ label, href, current }) => (
           <a
             class="p9-button surface-button"
             href={href}
@@ -94,30 +103,37 @@ const navigation: {
             {label}
           </a>
         ))}
-        {brief ? (
-          <a class="blog-toolbar-link" href="/" data-desk-app="blog">
-            Blog
-          </a>
-        ) : (
-          <>
+        <div class="blog-toolbar-actions">
+          {appLinks.map((id) => (
             <a
-              class="blog-toolbar-link blog-brief-entry"
-              href="/brief/"
-              data-desk-app="brief"
+              class:list={[
+                'blog-toolbar-link',
+                { 'blog-mobile-app': id !== 'blog' },
+              ]}
+              href={deskApps[id].entryPath}
+              data-desk-app={id}
             >
-              {briefName}
+              {deskApps[id].label}
             </a>
-            <a class="blog-toolbar-link" href="https://github.com/rcyw">
-              GitHub <span aria-hidden="true">↗</span>
+          ))}
+          {app === 'blog' && (
+            <a
+              class="blog-toolbar-link blog-github"
+              href="https://github.com/rcyw"
+              aria-label="GitHub"
+              title="GitHub"
+            >
+              <span class="blog-github-label">GitHub</span>
+              <span aria-hidden="true">↗</span>
             </a>
-          </>
-        )}
+          )}
+        </div>
       </nav>
 
       <div
         class="blog-content"
         role="main"
-        aria-label={brief ? briefName : blogName}
+        aria-label={appName}
         id={mainId}
         tabindex="-1"
       >

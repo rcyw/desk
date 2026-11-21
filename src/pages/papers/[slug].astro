@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleDocument from '../../components/ArticleDocument.astro';
+import { readPapers } from '../../lib/papers';
+import type { Paper } from '../../lib/papers';
+
+export async function getStaticPaths() {
+  const { papers, topics } = await readPapers();
+  return papers.map((paper) => ({
+    params: { slug: paper.id },
+    props: {
+      paper,
+      topics: topics.filter((topic) =>
+        paper.data.topics.some(({ id }) => id === topic.id),
+      ),
+    },
+  }));
+}
+
+interface Props {
+  paper: Paper;
+  topics: CollectionEntry<'topics'>[];
+}
+
+const { paper, topics } = Astro.props;
+---
+
+<ArticleDocument entry={paper} topics={topics} />

@@ -30,7 +30,7 @@ jobs:
       - run: pnpm check
       - run: pnpm build
       - run: pnpm test
-      - name: Check that changed articles and issues have published pages
+      - name: Check that changed content has published pages
         if: >-
           github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)
         env:

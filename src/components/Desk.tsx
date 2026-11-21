@@ -9,16 +9,15 @@ import {
   useState,
 } from 'react';
 import type { MouseEvent } from 'react';
+import { deskAppIds, deskApps } from '../lib/desk-apps';
+import type { DeskApp } from '../lib/desk-apps';
 import { Desktop } from '../platinum';
 import type {
   AppDefinition,
   AppWindowProps,
   DesktopAPI,
-  DesktopIcon,
   DesktopViewport,
 } from '../platinum';
-
-export type DeskApp = 'blog' | 'brief';
 
 interface DeskPage {
   app: DeskApp;
@@ -36,11 +35,6 @@ interface DeskPageState {
   activatePage: (page: DeskPage) => void;
 }
 
-const icons = [
-  { id: 'blog', label: 'Blog', icon: 'notes', appId: 'blog' },
-  { id: 'brief', label: 'AI Brief', icon: 'newspaper', appId: 'brief' },
-] as const satisfies readonly DesktopIcon[];
-const entryPaths = { blog: '/', brief: '/brief/' };
 const PagesContext = createContext<DeskPageState | null>(null);
 
 function windowBounds(
@@ -48,15 +42,14 @@ function windowBounds(
   heightHint: number,
   app: DeskApp,
 ) {
-  const brief = app === 'brief';
+  const { width: limitWidth, xShift, cascade } = deskApps[app];
   const wide = viewport.width >= 1100;
   const horizontalRoom = wide ? 176 : 132;
   const width = Math.min(
-    brief ? 912 : 1064,
+    limitWidth,
     Math.max(1, viewport.width - horizontalRoom),
   );
   const menu = viewport.menuHeight ?? 20;
-  const cascade = brief ? 22 : 0;
   const availableHeight = Math.max(
     1,
     viewport.height - menu - (viewport.stripHeight ?? 24) - 32 - cascade,
@@ -67,7 +60,7 @@ function windowBounds(
     Math.min(84, Math.round((availableHeight - height) / 2)),
   );
   return {
-    x: Math.round((viewport.width - width) / 2 - (brief ? 6 : 18)),
+    x: Math.round((viewport.width - width) / 2 - xShift),
     y: menu + offset + cascade,
     width,
     height,
@@ -75,7 +68,7 @@ function windowBounds(
 }
 
 function PageWindow({ window: { appId } }: AppWindowProps) {
-  const app = appId === 'brief' ? 'brief' : 'blog';
+  const app = appId as DeskApp;
   const { pages, currentPage, activatePage } = useContext(PagesContext)!;
   const page = pages[app];
 
@@ -141,15 +134,16 @@ export function Desk({
     (app: DeskApp) => {
       const target = page.app === app ? page : cachedPages[app];
       if (target) activatePage(target);
-      else void navigate(entryPaths[app]);
+      else void navigate(deskApps[app].entryPath);
     },
     [activatePage, cachedPages, page],
   );
 
   const openApplication = useCallback(
     (app: DeskApp) => {
-      if (page.app === app && page.path === entryPaths[app]) activatePage(page);
-      else void navigate(entryPaths[app]);
+      const { entryPath } = deskApps[app];
+      if (page.app === app && page.path === entryPath) activatePage(page);
+      else void navigate(entryPath);
     },
     [activatePage, page],
   );
@@ -159,12 +153,16 @@ export function Desk({
     const active = api.windows.find(
       (window) => window.id === api.activeWindowId,
     );
-    const mainId = active?.appId === 'brief' ? 'brief-content' : 'main-content';
-    const main = document.getElementById(mainId);
-    if (main) {
-      document.querySelector('.skip-link')?.setAttribute('href', `#${mainId}`);
+    const main =
+      active && !active.shaded
+        ? document.getElementById(deskApps[active.appId as DeskApp].mainId)
+        : null;
+    const skipLink = document.querySelector<HTMLAnchorElement>('.skip-link');
+    if (skipLink) {
+      skipLink.hidden = !main;
+      if (main) skipLink.setAttribute('href', `#${main.id}`);
     }
-    if (pendingFocus.current === mainId && main) {
+    if (main && pendingFocus.current === main.id) {
       main.focus({ preventScroll: true });
       pendingFocus.current = null;
     }
@@ -178,61 +176,64 @@ export function Desk({
     activatePage(page);
   }, [activatePage, page]);
 
-  const apps = useMemo<AppDefinition[]>(
-    () => [
-      {
-        id: 'blog',
-        title: blogTitle,
-        icon: 'notes',
-        onLaunch: () => launchApplication('blog'),
-        minSize: { width: 360, height: 280 },
-        defaultBounds: (viewport) =>
-          windowBounds(viewport, cachedPages.blog?.height ?? 340, 'blog'),
-        component: PageWindow,
-        menu: () => [
-          {
-            id: 'go',
-            label: 'Go',
-            items: [
-              { label: 'Home', action: () => navigate('/') },
-              { label: 'Topics', action: () => navigate('/topics/') },
-              { label: briefTitle, action: () => openApplication('brief') },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'brief',
-        title: briefTitle,
-        icon: 'newspaper',
-        onLaunch: () => launchApplication('brief'),
-        minSize: { width: 360, height: 280 },
-        defaultBounds: (viewport) =>
-          windowBounds(viewport, cachedPages.brief?.height ?? 380, 'brief'),
-        component: PageWindow,
-        menu: () => [
-          {
-            id: 'go',
-            label: 'Go',
-            items: [
-              { label: 'Latest', action: () => navigate('/brief/') },
-              { label: 'Archive', action: () => navigate('/brief/archive/') },
-              { label: 'Blog', action: () => openApplication('blog') },
-            ],
-          },
-        ],
-      },
-    ],
-    [blogTitle, briefTitle, cachedPages, launchApplication, openApplication],
-  );
+  const apps = useMemo<AppDefinition[]>(() => {
+    const titles = {
+      blog: blogTitle,
+      brief: briefTitle,
+      papers: deskApps.papers.label,
+    };
+    const destinations = {
+      blog: [
+        { label: 'Home', action: () => openApplication('blog') },
+        { label: 'Topics', action: () => navigate('/topics/') },
+      ],
+      brief: [
+        { label: 'Latest', action: () => openApplication('brief') },
+        { label: 'Archive', action: () => navigate('/brief/archive/') },
+      ],
+      papers: [{ label: 'Library', action: () => openApplication('papers') }],
+    };
+    return deskAppIds.map((app) => ({
+      id: app,
+      title: titles[app],
+      icon: deskApps[app].icon,
+      onLaunch: () => launchApplication(app),
+      minSize: { width: 360, height: 280 },
+      defaultBounds: (viewport) =>
+        windowBounds(
+          viewport,
+          cachedPages[app]?.height ?? deskApps[app].height,
+          app,
+        ),
+      component: PageWindow,
+      menu: () => [
+        {
+          id: 'go',
+          label: 'Go',
+          items: [
+            ...destinations[app],
+            ...deskAppIds
+              .filter((id) => id !== app)
+              .map((id) => ({
+                label: deskApps[id].label,
+                action: () => openApplication(id),
+              })),
+          ],
+        },
+      ],
+    }));
+  }, [blogTitle, briefTitle, cachedPages, launchApplication, openApplication]);
 
   return (
     <PagesContext.Provider value={{ pages, currentPage: page, activatePage }}>
       <Desktop
         apps={apps}
-        icons={icons.map((icon) => ({
-          ...icon,
-          onOpen: () => launchApplication(icon.appId),
+        icons={deskAppIds.map((app) => ({
+          id: app,
+          label: deskApps[app].label,
+          icon: deskApps[app].icon,
+          appId: app,
+          onOpen: () => launchApplication(app),
         }))}
         systemMenuIcon={
           <img src="/favicon.svg" alt="" width={16} height={16} />

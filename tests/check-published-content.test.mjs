@@ -119,6 +119,32 @@ test('a draft without a page fails the publication check', (t) => {
   );
 });
 
+test('paper notes require built pages and retain their original URLs on rename', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/papers/reading-note.md', '# Reading note\n');
+  const original = repo.commit();
+  const missing = repo.check(base);
+  assert.equal(missing.status, 1);
+  assert.match(
+    missing.stderr,
+    /reading-note\.md::This entry has no published page/,
+  );
+
+  repo.write('dist/papers/reading-note/index.html', '<h1>Reading note</h1>');
+  const published = repo.check(base);
+  assert.equal(published.status, 0, published.stderr);
+
+  repo.move('content/papers/reading-note.md', 'content/papers/renamed.md');
+  repo.commit();
+  repo.remove('dist/papers/reading-note/index.html');
+  repo.write('dist/papers/renamed/index.html', '<h1>Reading note</h1>');
+  const renamed = repo.check(original);
+  assert.equal(renamed.status, 1);
+  assert.match(renamed.stderr, /must preserve \/papers\/reading-note\//);
+});
+
 test('uppercase Markdown extensions outside assets fail validation', (t) => {
   const repo = fixture(t);
   repo.write('README.md', '# Desk\n');

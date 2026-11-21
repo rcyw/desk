@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. The **AI Brief** app organizes daily issues by coverage date.
+Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions.
 
 [Open Desk](https://rcyw.github.io/)
 
@@ -23,7 +23,9 @@ After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and
 
 Start articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug>.md` when a single category folder helps. The filename supplies the globally unique lowercase hyphenated slug for `/posts/<slug>/`. Use frontmatter `topics` to list the topics an article belongs to. Topic definitions live in `content/topics/`.
 
-Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`. Put images in `./assets/<slug>/` or `./assets/YYYY-MM-DD/` beside the corresponding Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
+Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`.
+
+Store paper notes at `content/papers/<slug>.md` for `/papers/<slug>/`. Use the shared `topics` and record the original source and version in `paper` metadata. Put images in `./assets/<slug>/` or `./assets/YYYY-MM-DD/` beside the corresponding Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
 
 Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
 

@@ -1,7 +1,8 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import { blogName, topicHref } from '../lib/blog';
-import type { BlogTopic } from '../lib/blog';
 import { briefName } from '../lib/briefs';
+import { papersName } from '../lib/desk-apps';
 import { PixelIcon } from '../platinum';
 import ReadingControls from '../components/ReadingControls.astro';
 import PageLayout from './PageLayout.astro';
@@ -12,17 +13,23 @@ interface Props {
   description: string;
   lang: 'zh-CN' | 'en';
   kind: 'article' | 'note';
-  topic?: BlogTopic;
+  topic?: CollectionEntry<'topics'>;
   issueDate?: string;
+  isPaper?: boolean;
 }
 
-const { title, description, lang, kind, topic, issueDate } = Astro.props;
-const documentName = issueDate ? briefName : blogName;
-const documentIcon = issueDate
-  ? 'newspaper'
-  : kind === 'note'
-    ? 'notes'
-    : 'document';
+const { title, description, lang, kind, topic, issueDate, isPaper } =
+  Astro.props;
+const documentName = isPaper ? papersName : issueDate ? briefName : blogName;
+const documentIcon = isPaper
+  ? 'papers'
+  : issueDate
+    ? 'newspaper'
+    : kind === 'note'
+      ? 'notes'
+      : 'document';
+const backHref = isPaper ? '/papers/' : issueDate ? '/brief/' : '/';
+const backLabel = isPaper || issueDate ? documentName : 'Home';
 ---
 
 <PageLayout
@@ -59,11 +66,8 @@ const documentIcon = issueDate
           aria-label="Reading navigation"
           lang="en"
         >
-          <a
-            class="p9-button surface-button"
-            href={issueDate ? '/brief/' : '/'}
-          >
-            <span aria-hidden="true">←</span> {issueDate ? briefName : 'Home'}
+          <a class="p9-button surface-button" href={backHref}>
+            <span aria-hidden="true">←</span> {backLabel}
           </a>
           {issueDate && (
             <a

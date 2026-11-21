@@ -70,6 +70,8 @@ test(
     const latestBriefPath = '/brief/2026-11-18/';
     const olderBriefPath = '/brief/2026-10-20/';
     const draftBriefPath = '/brief/2026-12-01/';
+    const paperPath = '/papers/local-summary-retrieval/';
+    const draftPaperPath = '/papers/draft-paper/';
 
     async function readPage(path, status = 200) {
       const response = await fetch(new URL(path, origin), {
@@ -233,6 +235,45 @@ test(
             readPage(draftBriefPath, 404),
             readPage('/brief/archive/2026-12/', 404),
           ]);
+        },
+      );
+
+      await t.test(
+        'Papers opens published notes with their original source and version',
+        async () => {
+          const [papers, note] = await Promise.all([
+            readPage('/papers/'),
+            readPage(paperPath),
+          ]);
+          assert.match(home, /data-icon-id="papers"/);
+          assert.ok(home.includes('href="/papers/"'));
+          assert.ok(papers.includes(`href="${paperPath}"`));
+          assert.match(papers, /用局部摘要理解分层检索/);
+          assert.match(papers, /Example Preprint/);
+          assert.doesNotMatch(
+            papers,
+            /Draft Paper Fixture|\/papers\/draft-paper\//,
+          );
+          assert.doesNotMatch(home, /用局部摘要理解分层检索/);
+          assert.doesNotMatch(topic, /用局部摘要理解分层检索/);
+
+          assert.match(note, /<html\b[^>]*\blang="zh-CN"/);
+          assert.ok(note.includes(`href="https://rcyw.github.io${paperPath}"`));
+          assert.match(
+            note,
+            /<h1 id="article-title">用局部摘要理解分层检索<\/h1>/,
+          );
+          assert.ok(note.includes('href="/papers/"'));
+          assert.ok(
+            note.includes(
+              'href="https://example.com/papers/local-summary-retrieval-v2"',
+            ),
+          );
+          assert.match(note, /Hierarchical Retrieval with Local Summaries/);
+          assert.match(note, /\bv2\b/);
+          assert.match(note, /Research/);
+          assert.match(note, /data-language="mermaid"/);
+          await readPage(draftPaperPath, 404);
         },
       );
     } finally {

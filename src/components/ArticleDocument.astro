@@ -1,15 +1,18 @@
 ---
 import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import DocumentLayout from '../layouts/DocumentLayout.astro';
 import { topicHref } from '../lib/blog';
-import type { BlogPost, BlogTopic } from '../lib/blog';
+import type { BlogPost } from '../lib/blog';
 import { briefName } from '../lib/briefs';
 import type { Brief } from '../lib/briefs';
+import type { Paper } from '../lib/papers';
 import { PixelIcon } from '../platinum';
+import '../styles/paper-document.css';
 
 interface Props {
-  entry: BlogPost | Brief;
-  topics?: BlogTopic[];
+  entry: BlogPost | Brief | Paper;
+  topics?: CollectionEntry<'topics'>[];
   issueDate?: string;
 }
 
@@ -18,6 +21,7 @@ const { Content, headings } = await render(entry);
 const { title, description, lang, publishedAt, updatedAt, sources } =
   entry.data;
 const kind = 'kind' in entry.data ? entry.data.kind : 'note';
+const paper = 'paper' in entry.data ? entry.data.paper : undefined;
 const outline = headings.filter(({ depth }) => depth === 2 || depth === 3);
 const date = issueDate ?? publishedAt;
 ---
@@ -27,14 +31,21 @@ const date = issueDate ?? publishedAt;
   description={description}
   lang={lang}
   kind={kind}
-  topic={topics[0]}
+  topic={paper ? undefined : topics[0]}
   issueDate={issueDate}
+  isPaper={Boolean(paper)}
 >
   <article aria-labelledby="article-title">
     <header class="article-header">
       <div class="article-meta" lang="en">
         <span class="article-type">
-          {issueDate ? briefName : kind === 'note' ? 'Note' : 'Article'}
+          {paper
+            ? 'Paper Note'
+            : issueDate
+              ? briefName
+              : kind === 'note'
+                ? 'Note'
+                : 'Article'}
         </span>
         <time datetime={date}>{date}</time>
         {issueDate && publishedAt !== issueDate && (
@@ -50,11 +61,31 @@ const date = issueDate ?? publishedAt;
       </div>
       <h1 id="article-title">{title}</h1>
       <p class="article-dek">{description}</p>
+      {paper && (
+        <aside class="paper-reference" aria-labelledby="paper-source-heading">
+          <h2 id="paper-source-heading" lang="en">
+            Original Paper
+          </h2>
+          <p>
+            <a href={paper.url}>{paper.title}</a>
+          </p>
+          <p>
+            {paper.source} <span aria-hidden="true">·</span> {paper.version}
+          </p>
+          {topics.length > 0 && (
+            <ul class="paper-topic-labels" aria-label="Topics" role="list">
+              {topics.map((topic) => (
+                <li lang={topic.data.lang}>{topic.data.title}</li>
+              ))}
+            </ul>
+          )}
+        </aside>
+      )}
     </header>
 
     <div class:list={['reading-layout', { 'has-outline': outline.length > 0 }]}>
       {outline.length > 0 && (
-        <details class="document-outline" open={!issueDate}>
+        <details class="document-outline" open={!issueDate && !paper}>
           <summary lang="en">Contents</summary>
           <nav aria-label="Contents" lang="en">
             <ul role="list" lang={lang}>
@@ -89,7 +120,7 @@ const date = issueDate ?? publishedAt;
           </section>
         )}
 
-        {topics.length > 0 && (
+        {!paper && topics.length > 0 && (
           <nav class="article-topics" aria-label="Topics" lang="en">
             {topics.map((topic) => (
               <a
