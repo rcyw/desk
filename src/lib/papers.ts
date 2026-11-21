@@ -10,7 +10,7 @@ export async function readPapers(): Promise<{
   topics: CollectionEntry<'topics'>[];
 }> {
   const [papers, topics] = await Promise.all([
-    getCollection('papers', ({ data }) => !data.draft),
+    getCollection('papers'),
     getCollection('topics'),
   ]);
   const topicIds = new Set(topics.map(({ id }) => id));

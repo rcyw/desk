@@ -67,7 +67,7 @@ for (let index = 0; index < changes.length - 1;) {
     checkPage(
       file,
       route,
-      'This entry has no published page. Check its draft flag and route.',
+      'This entry has no published page. Check its filename and route.',
     );
   }
   if (kind === 'R') {

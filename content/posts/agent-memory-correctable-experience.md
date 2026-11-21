@@ -7,7 +7,6 @@ publishedAt: '2026-11-18'
 updatedAt: '2026-11-19'
 topics:
   - agent-engineering
-draft: false
 sources:
   - label: Anthropic · The components of agent memory
     url: https://www.anthropic.com/research/components-of-agent-memory

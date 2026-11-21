@@ -33,13 +33,13 @@ export function paginatePosts(posts: BlogPost[], base: string) {
 export type PostPage = ReturnType<typeof paginatePosts>[number];
 
 export async function readBlog() {
-  const [entries, topics] = await Promise.all([
+  const [posts, topics] = await Promise.all([
     getCollection('posts'),
     getCollection('topics'),
   ]);
 
   const filesBySlug = new Map<string, string>();
-  for (const { id } of entries) {
+  for (const { id } of posts) {
     const slug = postId(id);
     const previousFile = filesBySlug.get(slug);
     if (previousFile) {
@@ -50,7 +50,6 @@ export async function readBlog() {
     filesBySlug.set(slug, id);
   }
 
-  const posts = entries.filter(({ data }) => !data.draft);
   posts.sort(
     (a, b) =>
       b.data.publishedAt.localeCompare(a.data.publishedAt) ||

@@ -7,7 +7,6 @@ publishedAt: '2026-11-18'
 updatedAt: '2026-11-19'
 topics:
   - agent-infrastructure
-draft: false
 sources:
   - label: Google：The open AI-native stack on Kubernetes
     url: https://cloud.google.com/blog/topics/developers-practitioners/the-open-ai-native-stack-on-kubernetes-from-open-models-to-distributed-inference-and-agents

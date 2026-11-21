@@ -22,7 +22,13 @@ const publication = z
     lang: z.enum(['zh-CN', 'en']),
     publishedAt: z.iso.date(),
     updatedAt: z.iso.date().optional(),
-    draft: z.boolean().default(false),
+    // Reject legacy draft flags before content can enter a build.
+    draft: z
+      .never({
+        error:
+          'Remove the draft field from publishable Markdown. Keep unfinished drafts outside the content collections.',
+      })
+      .optional(),
     sources: z
       .array(
         z.object({
