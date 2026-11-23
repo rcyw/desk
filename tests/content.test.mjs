@@ -103,6 +103,9 @@ test(
               html.includes('rel="manifest" href="/manifest.webmanifest"'),
             );
             assert.ok(
+              html.includes('name="apple-mobile-web-app-title" content="Desk"'),
+            );
+            assert.ok(
               html.includes(
                 'rel="apple-touch-icon" href="/icons/desk-180.png"',
               ),
@@ -111,6 +114,8 @@ test(
 
           const manifest = JSON.parse(await readPage('/manifest.webmanifest'));
           assert.equal(manifest.id, '/');
+          assert.equal(manifest.name, 'Desk');
+          assert.equal(manifest.short_name, 'Desk');
           assert.equal(manifest.start_url, '/');
           assert.equal(manifest.scope, '/');
           assert.equal(manifest.display, 'standalone');
@@ -119,6 +124,12 @@ test(
           );
           assert.ok(icons.some(({ sizes }) => sizes === '192x192'));
           assert.ok(icons.some(({ sizes }) => sizes === '512x512'));
+          assert.ok(
+            manifest.icons.some(
+              ({ purpose, sizes }) =>
+                purpose === 'maskable' && sizes === '1024x1024',
+            ),
+          );
           for (const { src, sizes } of [
             ...manifest.icons,
             { src: '/icons/desk-180.png', sizes: '180x180' },
