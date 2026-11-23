@@ -57,6 +57,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Desk" />
     <link rel="apple-touch-icon" href="/icons/desk-180.png" />
     {[chicagoFont, interRegular, interSemiBold].map((font) => (
       <link
