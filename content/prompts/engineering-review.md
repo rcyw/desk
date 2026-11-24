@@ -1,6 +1,6 @@
 ---
 title: 工程审查与交付
-description: 审查 Git 历史、状态机、PR 和 CI，处理缺陷、完成交付与复盘。
+description: 走查项目与页面，审查 Git 历史、状态机、PR 和 CI，处理缺陷、完成交付与复盘。
 lang: zh-CN
 publishedAt: '2026-11-24'
 sources:
@@ -8,6 +8,8 @@ sources:
     url: https://x.com/Khazix0918/status/2122268349707219333
   - label: Voxyz · X 原帖
     url: https://x.com/Voxyz_ai/status/2122011755240984607
+  - label: Voxyz · 项目与页面走查
+    url: https://x.com/Voxyz_ai/status/2124548469540974596
 ---
 
 按场景复制对应的提示词。包含 `XX` 的条目可填入你要分析的时间范围。
@@ -27,6 +29,23 @@ sources:
 ```
 
 来源 [Khazix · X 原帖](https://x.com/Khazix0918/status/2122268349707219333)
+
+## 走查项目与页面
+
+```text
+通读整个项目，找出所有有故障、不一致、低效或已经用不到的地方。优先删除，其次简化，再考虑优化，最后考虑自动化。运行我的应用，亲自在 Chrome 中打开每个页面并截图。先列出视觉层级和信息密度方面最严重的 5 个问题。修复你有把握的问题，把其余问题列出来给我审阅。
+```
+
+<details class="prompt-language" lang="en">
+<summary>English</summary>
+
+```text
+Read this entire project and find everything that's broken, inconsistent, inefficient, or no longer needed. Prefer deleting over simplifying, simplifying over optimizing, and optimizing over automating. Run my app, open every page in Chrome yourself and screenshot it. List the 5 biggest hierarchy and density problems first. Fix what you're sure about and list the rest for me to review.
+```
+
+</details>
+
+来源 [Voxyz · X 原帖](https://x.com/Voxyz_ai/status/2124548469540974596)
 
 ## 找出近期 PR 的瓶颈
 
