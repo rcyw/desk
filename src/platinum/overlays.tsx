@@ -10,12 +10,17 @@ export interface MenuRequest {
   opener: HTMLElement | null;
   menuBarId?: string;
   initialSelection?: 'first' | 'last';
+  aboveOpener?: boolean;
 }
 
 interface MenuLevel {
   items: MenuItem[];
   point: Point;
   selected: number;
+}
+
+interface MenuPosition extends Point {
+  maxHeight?: number;
 }
 
 const enabledIndex = (items: MenuItem[], fromEnd = false) => {
@@ -49,7 +54,7 @@ export function MenuOverlay({
     },
   ]);
   const refs = useRef<Array<HTMLDivElement | null>>([]);
-  const [positions, setPositions] = useState<Point[]>([]);
+  const [positions, setPositions] = useState<MenuPosition[]>([]);
   const [layerTop, setLayerTop] = useState(viewport.menuHeight ?? 20);
   const previousSelections = useRef<number[]>([]);
   const previousViewport = useRef(viewport);
@@ -66,7 +71,7 @@ export function MenuOverlay({
     const menuBarBottom =
       document.querySelector('.p9-menubar')?.getBoundingClientRect().bottom ??
       20;
-    const next: Point[] = [];
+    const next: MenuPosition[] = [];
     levels.forEach((level, index) => {
       const element = refs.current[index];
       if (
@@ -81,13 +86,27 @@ export function MenuOverlay({
       scrollPositions.current[index] = element?.scrollTop ?? 0;
       const rect = element?.getBoundingClientRect();
       const width = rect?.width ?? 200;
-      const height = rect?.height ?? 100;
+      let height = rect?.height ?? 100;
+      let maxHeight: number | undefined;
       let x = level.point.x;
       let y = level.point.y;
-      if (index === 0 && request.menuBarId && request.opener) {
+      if (
+        index === 0 &&
+        request.opener &&
+        (request.menuBarId || request.aboveOpener)
+      ) {
         const opener = request.opener.getBoundingClientRect();
         x = opener.left;
         y = opener.bottom;
+        if (request.aboveOpener) {
+          const bottom = opener.top - 3;
+          maxHeight = Math.max(0, bottom - menuBarBottom - 2);
+          const naturalHeight = element
+            ? element.scrollHeight + element.offsetHeight - element.clientHeight
+            : height;
+          height = Math.min(naturalHeight, maxHeight);
+          y = bottom - height;
+        }
       } else if (index > 0) {
         const previousElement = refs.current[index - 1];
         const previous = previousElement?.getBoundingClientRect();
@@ -102,6 +121,7 @@ export function MenuOverlay({
           menuBarBottom + 2,
           Math.min(y, viewport.height - height - 3),
         ),
+        maxHeight,
       });
     });
     previousSelections.current = levels.map((level) => level.selected);
@@ -185,7 +205,9 @@ export function MenuOverlay({
           style={{
             left: positions[levelIndex]?.x ?? level.point.x,
             top: positions[levelIndex]?.y ?? level.point.y,
-            maxHeight: Math.max(0, viewport.height - layerTop - 6),
+            maxHeight:
+              positions[levelIndex]?.maxHeight ??
+              Math.max(0, viewport.height - layerTop - 6),
           }}
           onScroll={(event) => {
             const scrollTop = event.currentTarget.scrollTop;

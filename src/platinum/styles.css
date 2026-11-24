@@ -480,12 +480,32 @@ a {
   z-index: 390;
   background: #24244277;
 }
-.p9-overview-backdrop > span {
+.p9-overview-hint {
   position: absolute;
-  bottom: 12px;
-  width: 100%;
+  inset-inline: 12px;
+  bottom: calc(
+    var(--p9-control-strip-height) + env(safe-area-inset-bottom, 0px) + 6px
+  );
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px 12px;
+  color: #fff;
+  font: 400 14px/1.4 var(--p9-font);
   text-align: center;
-  color: white;
+  text-shadow: 0 1px 2px #242442;
+  pointer-events: none;
+}
+.p9-overview-keyboard-hint {
+  color: #e6e6f4;
+  font-size: 12px;
+}
+.p9-overview-keyboard-hint kbd {
+  padding: 1px 4px;
+  border: 1px solid #c5c5dc;
+  border-radius: 2px;
+  font: inherit;
 }
 .p9-overview-pick {
   position: absolute;
@@ -501,17 +521,23 @@ a {
   background: #ccccff15;
 }
 .p9-control-strip {
+  --p9-strip-handle-width: 18px;
+  --p9-strip-room: calc(
+    100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
+  );
   position: absolute;
   z-index: 1900;
   left: env(safe-area-inset-left, 0px);
   bottom: env(safe-area-inset-bottom, 0px);
   display: flex;
   align-items: stretch;
+  max-width: var(--p9-strip-room);
   height: var(--p9-control-strip-height);
 }
 .p9-strip-body {
   display: flex;
   align-items: stretch;
+  min-width: 0;
   border: 1px solid #262626;
   border-right: 0;
   background: #c0c0c0;
@@ -542,7 +568,8 @@ a {
 .p9-strip-modules {
   display: flex;
   flex: 0 1 auto;
-  max-width: calc(100vw - 46px - env(safe-area-inset-left, 0px));
+  min-width: 0;
+  max-width: calc(var(--p9-strip-room) - var(--p9-strip-handle-width) - 1px);
   overflow: hidden;
   scrollbar-width: none;
 }
@@ -554,6 +581,9 @@ a {
   border: 0;
   border-left: 1px solid #262626;
   background: #c0c0c0;
+}
+.p9-strip-well[hidden] + .p9-strip-modules > .p9-strip-module:first-child {
+  border-left: 0;
 }
 .p9-strip-face {
   display: block;
@@ -569,6 +599,10 @@ a {
   position: absolute;
   top: 2px;
   left: 1px;
+}
+.p9-strip-shortcut .p9-strip-face > .p9-pixel-icon {
+  left: 50%;
+  transform: translateX(-50%);
 }
 .p9-strip-triangle {
   position: absolute;
@@ -591,8 +625,8 @@ a {
 }
 .p9-strip-handle {
   display: block;
-  flex: 0 0 18px;
-  width: 18px;
+  flex: 0 0 var(--p9-strip-handle-width);
+  width: var(--p9-strip-handle-width);
   height: 24px;
   padding: 0;
   border: 0;
@@ -1165,6 +1199,16 @@ a {
 @media (pointer: coarse) {
   :root {
     --p9-control-strip-height: 34px;
+  }
+  .p9-control-strip {
+    --p9-strip-handle-width: 32px;
+  }
+  .p9-overview-hint {
+    top: calc(env(safe-area-inset-top, 0px) + 3px);
+    bottom: auto;
+  }
+  .p9-overview-keyboard-hint {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: no-preference) {

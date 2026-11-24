@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { PixelIcon } from '../controls';
-import type { DesktopProps, MenuItem } from '../types';
+import type { DesktopProps, IconName, MenuItem } from '../types';
 
 interface ControlStripProps extends Pick<
   DesktopProps,
@@ -9,9 +9,17 @@ interface ControlStripProps extends Pick<
 > {
   viewportWidth: number;
   appearance?: () => void;
+  shortcuts?: readonly {
+    id: string;
+    title: string;
+    icon: IconName;
+    launch: () => void;
+  }[];
   windowItems: MenuItem[];
   openMenu: (event: MouseEvent<HTMLButtonElement>, items: MenuItem[]) => void;
 }
+
+const initialStripScroll = { overflow: false, left: false, right: false };
 
 export function ControlStrip({
   controlStrip,
@@ -20,29 +28,57 @@ export function ControlStrip({
   connectionStatus,
   viewportWidth,
   appearance,
+  shortcuts = [],
   windowItems,
   openMenu,
 }: ControlStripProps) {
   const [stripExpanded, setStripExpanded] = useState(controlStrip ?? true);
   const stripModules = useRef<HTMLDivElement>(null);
-  const [stripScroll, setStripScroll] = useState({ left: false, right: false });
+  const [stripScroll, setStripScroll] = useState(initialStripScroll);
   const hasAppearance = !!appearance;
+  const hasConnection = !!connectionStatus;
   useEffect(() => {
     setStripExpanded(controlStrip ?? true);
   }, [controlStrip]);
-  const measureStrip = () => {
+  const measureStrip = useCallback(() => {
     const element = stripModules.current;
-    setStripScroll({
-      left: !!element && element.scrollLeft > 0,
-      right:
-        !!element &&
-        element.scrollLeft + element.clientWidth < element.scrollWidth - 1,
-    });
-  };
-  useEffect(measureStrip, [stripExpanded, viewportWidth, hasAppearance]);
+    if (!element) return;
+    const { scrollLeft, clientWidth, scrollWidth } = element;
+    // The CSS limit excludes the wells, so their own width cannot keep them visible.
+    const space = Number.parseFloat(getComputedStyle(element).maxWidth);
+    const overflow = scrollWidth > Math.ceil(space);
+    const left = scrollLeft >= 1;
+    const right = Math.ceil(scrollLeft + clientWidth) < scrollWidth;
+    setStripScroll((current) =>
+      current.overflow === overflow &&
+      current.left === left &&
+      current.right === right
+        ? current
+        : { overflow, left, right },
+    );
+  }, []);
+  useEffect(() => {
+    const element = stripModules.current;
+    if (!element) {
+      setStripScroll(initialStripScroll);
+      return;
+    }
+    const observer = new ResizeObserver(measureStrip);
+    observer.observe(element);
+    measureStrip();
+    return () => observer.disconnect();
+  }, [
+    hasAppearance,
+    hasConnection,
+    measureStrip,
+    shortcuts.length,
+    stripExpanded,
+    viewportWidth,
+  ]);
   return (
     <div
       className={`p9-control-strip ${stripExpanded ? 'is-expanded' : ''}`}
+      role="group"
       aria-label="Control Strip"
     >
       {stripExpanded && (
@@ -51,6 +87,7 @@ export function ControlStrip({
             type="button"
             className="p9-strip-well"
             aria-label="Scroll Control Strip left"
+            hidden={!stripScroll.overflow}
             disabled={!stripScroll.left}
             onClick={() => stripModules.current?.scrollBy({ left: -31 })}
           >
@@ -90,6 +127,20 @@ export function ControlStrip({
                 </span>
               </button>
             )}
+            {shortcuts.map(({ id, title, icon, launch }) => (
+              <button
+                key={id}
+                type="button"
+                className="p9-strip-module p9-strip-shortcut"
+                aria-label={`Open ${title}`}
+                title={`Open ${title}`}
+                onClick={launch}
+              >
+                <span className="p9-strip-face">
+                  <PixelIcon name={icon} size={16} />
+                </span>
+              </button>
+            ))}
             <button
               type="button"
               className="p9-strip-module"
@@ -136,6 +187,7 @@ export function ControlStrip({
             type="button"
             className="p9-strip-well p9-strip-well-right"
             aria-label="Scroll Control Strip right"
+            hidden={!stripScroll.overflow}
             disabled={!stripScroll.right}
             onClick={() => stripModules.current?.scrollBy({ left: 31 })}
           >

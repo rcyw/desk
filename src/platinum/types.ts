@@ -142,6 +142,7 @@ export interface DesktopProps {
   onDesktopMenu?: (ids: string[], desktop: DesktopAPI) => MenuItem[];
   wallpaper?: 'lavender' | 'grid' | 'solid';
   controlStrip?: boolean;
+  controlStripApps?: readonly string[];
   onControlStripChange?: (expanded: boolean) => void;
   iconSnap?: boolean;
   connectionStatus?: 'connected' | 'connecting' | 'offline';

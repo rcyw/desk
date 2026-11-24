@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { blogName, topicHref } from '../lib/blog';
+import { topicHref } from '../lib/blog';
 import { deskApps } from '../lib/desk-apps';
 import { PixelIcon } from '../platinum';
 import ReadingControls from '../components/ReadingControls.astro';
@@ -20,7 +20,7 @@ interface Props {
 const { title, description, lang, kind, topic, issueDate, library } =
   Astro.props;
 const app = deskApps[library ?? (issueDate ? 'brief' : 'blog')];
-const documentName = library || issueDate ? app.label : blogName;
+const documentName = app.label;
 const documentIcon =
   library || issueDate ? app.icon : kind === 'note' ? 'notes' : 'document';
 const backLabel = library || issueDate ? app.label : 'Home';

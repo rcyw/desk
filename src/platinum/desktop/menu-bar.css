@@ -51,13 +51,18 @@
     border-left: 1px solid #262626;
     pointer-events: none;
   }
+  .p9-strip-well[hidden]
+    + .p9-strip-modules
+    > .p9-strip-module:first-child::before {
+    display: none;
+  }
+  .p9-control-strip .p9-strip-shortcut {
+    flex-basis: 38px;
+    width: 38px;
+  }
   .p9-control-strip .p9-strip-modules {
     height: 32px;
     align-self: flex-end;
-    max-width: calc(
-      100vw - 60px - env(safe-area-inset-left, 0px) -
-        env(safe-area-inset-right, 0px)
-    );
     overflow-x: auto;
     overscroll-behavior-x: contain;
     touch-action: pan-x;
@@ -69,6 +74,10 @@
     width: 29px;
     background: #c0c0c0;
   }
+  .p9-control-strip .p9-strip-shortcut .p9-strip-face {
+    width: auto;
+    right: 0;
+  }
   .p9-control-strip .p9-strip-module:active .p9-strip-face {
     background: #888;
   }
@@ -76,8 +85,6 @@
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
-    flex: 0 0 32px;
-    width: 32px;
     height: var(--p9-control-strip-height);
   }
 }

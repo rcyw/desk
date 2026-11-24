@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
+Desk is a Platinum9-style web desktop built with Astro. It opens **Blog** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
 
 [Open Desk](https://rcyw.github.io/)
 

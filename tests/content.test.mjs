@@ -96,6 +96,24 @@ test(
       ]);
 
       await t.test(
+        'Desk starts with its Control Strip shortcuts expanded',
+        () => {
+          assert.match(home, /class="p9-control-strip is-expanded"/);
+          const controls = [
+            ...home.matchAll(
+              /aria-label="(Open AI Brief|Open Papers|Switch Window|Collapse Control Strip)"/g,
+            ),
+          ].map((match) => match[1]);
+          assert.deepEqual(controls, [
+            'Open AI Brief',
+            'Open Papers',
+            'Switch Window',
+            'Collapse Control Strip',
+          ]);
+        },
+      );
+
+      await t.test(
         'the built site exposes an installable Desk app',
         async () => {
           for (const html of [home, topics, topic, article]) {
@@ -151,6 +169,8 @@ test(
         'the homepage links to a categorized article at its original URL',
         async () => {
           assert.ok(home.includes(`href="${articlePath}"`));
+          assert.match(home, /class="p9-window-title">Blog<\/span>/);
+          assert.match(article, /<title>阅读 Open Source — Blog<\/title>/);
           assert.match(
             article,
             /<h1 id="article-title">阅读 Open Source<\/h1>/,

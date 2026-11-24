@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Wayne’s Notes** 阅读文章和专题。**AI Brief** 按覆盖日期归档日报，**Papers** 收录带有原文版本链接的论文读解。**Prompts** 提供与 Agent 协作时可复用的模板。
+Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Blog** 阅读文章和专题。**AI Brief** 按覆盖日期归档日报，**Papers** 收录带有原文版本链接的论文读解。**Prompts** 提供与 Agent 协作时可复用的模板。
 
 [打开 Desk](https://rcyw.github.io/)
 
