@@ -263,6 +263,41 @@ test(
           assert.match(note, /data-language="mermaid"/);
         },
       );
+
+      await t.test(
+        'Prompts opens an independent reading page with copyable template text',
+        async () => {
+          const promptPath = '/prompts/decision-fixture/';
+          const [library, document] = await Promise.all([
+            readPage('/prompts/'),
+            readPage(promptPath),
+          ]);
+          assert.match(home, /data-icon-id="prompts"/);
+          assert.ok(home.includes('href="/prompts/"'));
+          assert.ok(library.includes(`href="${promptPath}" data-astro-reload`));
+          assert.match(library, /判断练习/);
+          assert.doesNotMatch(home, /判断练习/);
+          assert.match(document, /<html\b[^>]*\blang="zh-CN"/);
+          assert.match(document, /<h1 id="article-title">判断练习<\/h1>/);
+          assert.ok(document.includes('href="/prompts/"'));
+          const template = document.match(
+            /<pre\b[^>]*data-language="text"[^>]*>[\s\S]*?<\/pre>/,
+          )?.[0];
+          assert.ok(template?.includes('我希望处理 {{问题}}。'));
+          assert.doesNotMatch(template, /decision-reference|用下面的模板/);
+          const english = document.match(
+            /<details class="prompt-language" lang="en">[\s\S]*?<\/details>/,
+          )?.[0];
+          assert.ok(english?.includes('<summary>English</summary>'));
+          assert.match(
+            english,
+            /data-language="text"[\s\S]*Give me one verifiable criterion for completion\./,
+          );
+          assert.ok(
+            document.includes('href="https://example.com/decision-reference"'),
+          );
+        },
+      );
     } finally {
       await server.stop();
     }

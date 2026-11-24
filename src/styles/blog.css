@@ -3,7 +3,8 @@
   .p9-window:is(
     [data-app-id='blog'],
     [data-app-id='brief'],
-    [data-app-id='papers']
+    [data-app-id='papers'],
+    [data-app-id='prompts']
   ) {
   --blog-limit-width: 1064px;
   --blog-start-width: min(var(--blog-limit-width), calc(100% - 176px));
@@ -41,8 +42,19 @@
   --blog-cascade: 44px;
 }
 
+.p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='prompts'] {
+  --blog-limit-width: 880px;
+  --blog-x-shift: 6px;
+  --blog-cascade: 66px;
+}
+
 .p9-desktop[data-viewport-ready='false']
-  :is([data-icon-id='blog'], [data-icon-id='brief'], [data-icon-id='papers']) {
+  :is(
+    [data-icon-id='blog'],
+    [data-icon-id='brief'],
+    [data-icon-id='papers'],
+    [data-icon-id='prompts']
+  ) {
   left: auto !important;
   right: 12px;
 }
@@ -52,7 +64,8 @@
     .p9-window:is(
       [data-app-id='blog'],
       [data-app-id='brief'],
-      [data-app-id='papers']
+      [data-app-id='papers'],
+      [data-app-id='prompts']
     ) {
     --blog-start-width: min(var(--blog-limit-width), calc(100% - 132px));
   }
@@ -63,7 +76,8 @@
     .p9-window:is(
       [data-app-id='blog'],
       [data-app-id='brief'],
-      [data-app-id='papers']
+      [data-app-id='papers'],
+      [data-app-id='prompts']
     ) {
     --blog-start-width: calc(
       100% - 8px - env(safe-area-inset-left, 0px) -
@@ -85,7 +99,12 @@
   pointer-events: none;
 }
 
-:is([data-app-id='blog'], [data-app-id='brief'], [data-app-id='papers'])
+:is(
+    [data-app-id='blog'],
+    [data-app-id='brief'],
+    [data-app-id='papers'],
+    [data-app-id='prompts']
+  )
   > .p9-window-content {
   overflow: hidden;
 }
@@ -104,6 +123,8 @@
 .blog-toolbar-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   margin-left: auto;
 }
 
@@ -133,7 +154,7 @@
   }
 }
 
-@container blog (max-width: 340px) {
+@container blog (max-width: 395px) {
   .blog-toolbar .blog-github-label {
     display: none;
   }

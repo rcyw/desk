@@ -9,6 +9,7 @@ export type IconName =
   | 'document'
   | 'newspaper'
   | 'papers'
+  | 'prompts'
   | 'notes'
   | 'terminal'
   | 'trash'

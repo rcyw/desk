@@ -181,6 +181,7 @@ export function Desk({
       blog: blogTitle,
       brief: briefTitle,
       papers: deskApps.papers.label,
+      prompts: deskApps.prompts.label,
     };
     const destinations = {
       blog: [
@@ -192,6 +193,7 @@ export function Desk({
         { label: 'Archive', action: () => navigate('/brief/archive/') },
       ],
       papers: [{ label: 'Library', action: () => openApplication('papers') }],
+      prompts: [{ label: 'Library', action: () => openApplication('prompts') }],
     };
     return deskAppIds.map((app) => ({
       id: app,

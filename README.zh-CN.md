@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Wayne’s Notes** 阅读文章和专题。**AI Brief** 按覆盖日期归档日报，**Papers** 收录带有原文版本链接的论文读解。
+Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Wayne’s Notes** 阅读文章和专题。**AI Brief** 按覆盖日期归档日报，**Papers** 收录带有原文版本链接的论文读解。**Prompts** 提供与 Agent 协作时可复用的模板。
 
 [打开 Desk](https://rcyw.github.io/)
 
@@ -15,5 +15,7 @@ Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Wayne�
 日报放在 `content/briefs/YYYY/MM/YYYY-MM-DD.md`，文件日期须和上级年、月目录对应，直链为 `/brief/YYYY-MM-DD/`。
 
 论文读解放在 `content/papers/<slug>.md`，直链为 `/papers/<slug>/`。用共用的 `topics` 关联专题，并在 `paper` 中记录原论文的出处与版本。配图放在 Markdown 文件旁的 `./assets/<slug>/` 或 `./assets/YYYY-MM-DD/`。 [内容工作流](docs/content-workflow.md)
+
+提示词放在 `content/prompts/<slug>.md`，直链为 `/prompts/<slug>/`。 [模板写作说明](docs/content-workflow.md#prompts-模板)
 
 开发与验证命令集中在英文 README。 [本地开发](README.md#local-development) · [验证](README.md#verification)

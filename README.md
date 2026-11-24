@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions.
+Desk is a Platinum9-style web desktop built with Astro. It opens **Wayne’s Notes** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
 
 [Open Desk](https://rcyw.github.io/)
 
@@ -26,6 +26,8 @@ Start articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug
 Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`.
 
 Store paper notes at `content/papers/<slug>.md` for `/papers/<slug>/`. Use the shared `topics` and record the original source and version in `paper` metadata. Put images in `./assets/<slug>/` or `./assets/YYYY-MM-DD/` beside the corresponding Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
+
+Store prompt collections at `content/prompts/<slug>.md` for `/prompts/<slug>/`. [Prompt writing guide in Chinese](docs/content-workflow.md#prompts-模板)
 
 Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
 

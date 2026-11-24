@@ -4,7 +4,7 @@ const pageCache = cachePrefix + 'pages-v1';
 const assetCache = cachePrefix + 'assets-v1';
 const offlinePath = '/offline.html';
 const pagePath =
-  /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/|\/(?:brief|papers)(?:\/|$))/;
+  /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/|\/(?:brief|papers|prompts)(?:\/|$))/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

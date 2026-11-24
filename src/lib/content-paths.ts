@@ -20,11 +20,15 @@ export function postId(entry: string): string {
   return id;
 }
 
-export function paperId(entry: string): string {
+export function libraryId(
+  entry: string,
+  collection: 'papers' | 'prompts',
+): string {
   const id = entry.slice(0, -3);
   if (!entry.endsWith('.md') || !slugPattern.test(id) || id === 'index') {
+    const label = collection === 'papers' ? 'paper note' : 'prompt collection';
     throw new Error(
-      `Expected a paper note at <slug>.md with a lowercase, hyphenated name. Found ${entry}`,
+      `Expected a ${label} at <slug>.md with a lowercase, hyphenated name. Found ${entry}`,
     );
   }
   return id;
