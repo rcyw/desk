@@ -183,6 +183,19 @@ export function PixelIcon({
           <path fill="#b9dbd2" d="M20 18h6v6h-6z" />
           <path fill="#eef9f5" d="M20 18h4v2h-2v2h-2z" />
         </g>
+      ) : name === 'prompts' ? (
+        <g stroke="none">
+          <path fill="#29262b" d="M6 4h6V2h8v2h6v2h2v22h-2v2H6v-2H4V6h2z" />
+          <path fill="#be8973" d="M6 6h20v22H6z" />
+          <path fill="#a07061" d="M6 26h18V6h2v22H6z" />
+          <path fill="#fff2e6" d="M8 8h16v18H8z" />
+          <path fill="#6c4d56" d="M12 4h8v2h2v4H10V6h2z" />
+          <path fill="#f1c7b1" d="M14 4h4v2h-4z" />
+          <path
+            fill="#4d3945"
+            d="M10 12h2v2h2v2h2v2h-2v2h-2v2h-2v-4h2v-2h-2zm8 8h4v2h-4z"
+          />
+        </g>
       ) : name === 'info' ? (
         <g {...common}>
           <path fill="#7777aa" d="M8.5 1.5h16l6 6v17l-6 6h-16l-7-6v-17z" />

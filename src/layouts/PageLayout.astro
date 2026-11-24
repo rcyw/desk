@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import { blogName, siteName } from '../lib/blog';
+import { siteName } from '../lib/blog';
+import { deskApps } from '../lib/desk-apps';
 import chicagoFont from '../platinum/fonts/ChicagoKare-Regular.woff2?url';
 import interRegular from '../platinum/fonts/Inter-Regular.woff2?url';
 import interSemiBold from '../platinum/fonts/Inter-SemiBold.woff2?url';
@@ -28,7 +29,7 @@ const {
   desktopHeight,
   lang = 'en',
   robots,
-  documentName = blogName,
+  documentName = deskApps.blog.label,
   mainId = 'main-content',
 } = Astro.props;
 const name = surface === 'document' ? documentName : siteName;

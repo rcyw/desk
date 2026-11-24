@@ -1,9 +1,7 @@
 ---
 import DeskSurface from '../components/DeskSurface.astro';
 import ReadingControls from '../components/ReadingControls.astro';
-import { blogName } from '../lib/blog';
 import type { PostPage } from '../lib/blog';
-import { briefName } from '../lib/briefs';
 import { deskAppIds, deskApps } from '../lib/desk-apps';
 import type { DeskApp } from '../lib/desk-apps';
 import PageLayout from './PageLayout.astro';
@@ -21,7 +19,6 @@ interface Props {
 const { app = 'blog', title, description, robots, pagination } = Astro.props;
 const pathname = Astro.url.pathname;
 const { label, mainId, height } = deskApps[app];
-const appName = app === 'blog' ? blogName : label;
 const appLinks = deskAppIds.filter((id) => id !== app);
 const home = pathname === '/';
 const topics = pathname.startsWith('/topics/');
@@ -74,6 +71,13 @@ const links: Record<DeskApp, NavLink[]> = {
       current: pathname === deskApps.papers.entryPath ? 'page' : undefined,
     },
   ],
+  prompts: [
+    {
+      label: 'Library',
+      href: deskApps.prompts.entryPath,
+      current: pathname === deskApps.prompts.entryPath ? 'page' : undefined,
+    },
+  ],
 };
 ---
 
@@ -85,13 +89,7 @@ const links: Record<DeskApp, NavLink[]> = {
   robots={robots}
   mainId={mainId}
 >
-  <DeskSurface
-    blogTitle={blogName}
-    briefTitle={briefName}
-    app={app}
-    height={desktopHeight}
-    mainId={mainId}
-  >
+  <DeskSurface app={app} height={desktopHeight} mainId={mainId}>
     <div class="blog-window">
       <nav class="blog-toolbar" aria-label={`${label} navigation`}>
         {links[app].map(({ label, href, current }) => (
@@ -133,7 +131,7 @@ const links: Record<DeskApp, NavLink[]> = {
       <div
         class="blog-content"
         role="main"
-        aria-label={appName}
+        aria-label={label}
         id={mainId}
         tabindex="-1"
       >

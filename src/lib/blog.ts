@@ -7,7 +7,6 @@ export type BlogPost = CollectionEntry<'posts'>;
 const postsPerPage = 10;
 
 export const siteName = 'Wayne’s Desk';
-export const blogName = 'Wayne’s Notes';
 export const postHref = (entry: string) => `/posts/${postId(entry)}/`;
 export const topicHref = (id: string) => `/topics/${id}/`;
 

@@ -3,15 +3,13 @@ import { Desk } from './Desk';
 import type { DeskApp } from '../lib/desk-apps';
 
 interface Props {
-  blogTitle: string;
-  briefTitle: string;
   app: DeskApp;
   height: number;
   mainId: string;
 }
 
 // Pass the rendered page as a prop so Astro can update the persisted island.
-const { blogTitle, briefTitle, app, height, mainId } = Astro.props;
+const { app, height, mainId } = Astro.props;
 const page = {
   app,
   path: Astro.url.pathname,
@@ -21,13 +19,7 @@ const page = {
 };
 ---
 
-<Desk
-  blogTitle={blogTitle}
-  briefTitle={briefTitle}
-  page={page}
-  client:load
-  transition:persist="platinum-desktop"
-/>
+<Desk page={page} client:load transition:persist="platinum-desktop" />
 
 <script is:inline>
   document.addEventListener('astro:before-preparation', (event) => {

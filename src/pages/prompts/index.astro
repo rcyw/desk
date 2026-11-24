@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { promptsName } from '../../lib/desk-apps';
+
+const prompts = (await getCollection('prompts')).sort(
+  (a, b) =>
+    b.data.publishedAt.localeCompare(a.data.publishedAt) ||
+    a.id.localeCompare(b.id),
+);
+---
+
+<SiteLayout app="prompts" title={promptsName}>
+  <h1 class="visually-hidden">{promptsName}</h1>
+  {prompts.length ? (
+    <ol class="post-list" role="list">
+      {prompts.map(({ id, data }) => (
+        <li>
+          <a class="post-preview" href={`/prompts/${id}/`} data-astro-reload>
+            <div class="post-preview-copy" lang={data.lang}>
+              <h2 class="post-preview-title">{data.title}</h2>
+              <p>{data.description}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p>No prompt collections yet.</p>
+  )}
+</SiteLayout>

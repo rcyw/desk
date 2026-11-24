@@ -1,0 +1,114 @@
+<style is:global>
+  .prompt-block {
+    border: 1px solid var(--reading-edge);
+    background: var(--reading-panel);
+  }
+
+  .prompt-block-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px 8px;
+    padding: 5px 7px;
+    border-bottom: 1px solid var(--reading-rule);
+  }
+
+  .prompt-copy-status {
+    color: var(--reading-muted);
+    font: 12px/1.5 var(--p9-body-font);
+  }
+
+  .prompt-prose pre[data-language='text'] {
+    background: var(--reading-panel) !important;
+    padding: clamp(10px, 2.8vw, 15px);
+    color: var(--reading-ink) !important;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 0.9em;
+    line-height: 1.65;
+  }
+
+  .prompt-block pre[data-language='text'] {
+    margin: 0;
+    border: 0;
+  }
+
+  .prompt-prose pre[data-language='text'] > code {
+    font-family: inherit;
+  }
+
+  .prompt-language {
+    font-family: var(--p9-body-font);
+  }
+
+  .prompt-language > summary {
+    width: fit-content;
+    min-height: 24px;
+    padding-block: 3px;
+    color: var(--reading-link);
+    cursor: pointer;
+    font: 12px/1.5 var(--p9-font);
+  }
+
+  .prompt-language[open] > summary {
+    margin-bottom: 5px;
+  }
+</style>
+
+<script>
+  let heading = '';
+  for (const block of document.querySelectorAll<HTMLElement>(
+    '.prompt-prose > h2, .prompt-prose > pre[data-language="text"], .prompt-prose > .prompt-language > pre[data-language="text"]',
+  )) {
+    if (block.tagName === 'H2') {
+      heading = block.textContent?.trim() ?? '';
+      continue;
+    }
+
+    const code = block.querySelector('code');
+    const source = code?.textContent?.replace(/\n$/, '');
+    if (!code || !source?.trim()) continue;
+
+    const panel = document.createElement('div');
+    panel.className = 'prompt-block';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'prompt-block-toolbar';
+    toolbar.lang = 'en';
+    const status = document.createElement('span');
+    status.className = 'prompt-copy-status';
+    status.setAttribute('role', 'status');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'p9-button surface-button';
+    button.textContent = 'Copy Prompt';
+    if (heading) {
+      const english =
+        block.parentElement?.classList.contains('prompt-language');
+      button.setAttribute(
+        'aria-label',
+        `Copy Prompt for ${heading}${english ? ' in English' : ''}`,
+      );
+    }
+
+    button.addEventListener('click', async () => {
+      status.textContent = '';
+      try {
+        await navigator.clipboard.writeText(source);
+        status.textContent = 'Copied';
+      } catch {
+        const selection = document.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        status.textContent =
+          'Copy unavailable. Copy the selected text manually.';
+      }
+    });
+
+    toolbar.append(status, button);
+    block.before(panel);
+    panel.append(toolbar, block);
+  }
+</script>

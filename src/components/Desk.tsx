@@ -36,6 +36,11 @@ interface DeskPageState {
 }
 
 const PagesContext = createContext<DeskPageState | null>(null);
+const controlStripKey = 'desk:control-strip-expanded';
+const controlStripApps = [
+  'brief',
+  'papers',
+] as const satisfies readonly DeskApp[];
 
 function windowBounds(
   viewport: DesktopViewport,
@@ -108,22 +113,32 @@ function PageWindow({ window: { appId } }: AppWindowProps) {
   ) : null;
 }
 
-export function Desk({
-  blogTitle,
-  briefTitle,
-  page,
-}: {
-  blogTitle: string;
-  briefTitle: string;
-  page: DeskPage;
-}) {
+export function Desk({ page }: { page: DeskPage }) {
   const [cachedPages, setCachedPages] = useState<DeskPages>({
     [page.app]: page,
   });
+  const [stripExpanded, setStripExpanded] = useState(true);
   const pages = { ...cachedPages, [page.app]: page };
   const previousPage = useRef(page);
   const desktop = useRef<DesktopAPI | null>(null);
   const pendingFocus = useRef<string | null>(null);
+
+  useEffect(() => {
+    try {
+      setStripExpanded(localStorage.getItem(controlStripKey) !== 'false');
+    } catch {
+      // Keep the default when browser storage is unavailable.
+    }
+  }, []);
+
+  function updateControlStrip(expanded: boolean) {
+    setStripExpanded(expanded);
+    try {
+      localStorage.setItem(controlStripKey, String(expanded));
+    } catch {
+      // Keep the in-memory preference usable without storage.
+    }
+  }
 
   const activatePage = useCallback((target: DeskPage) => {
     pendingFocus.current = target.mainId;
@@ -177,11 +192,6 @@ export function Desk({
   }, [activatePage, page]);
 
   const apps = useMemo<AppDefinition[]>(() => {
-    const titles = {
-      blog: blogTitle,
-      brief: briefTitle,
-      papers: deskApps.papers.label,
-    };
     const destinations = {
       blog: [
         { label: 'Home', action: () => openApplication('blog') },
@@ -192,10 +202,11 @@ export function Desk({
         { label: 'Archive', action: () => navigate('/brief/archive/') },
       ],
       papers: [{ label: 'Library', action: () => openApplication('papers') }],
+      prompts: [{ label: 'Library', action: () => openApplication('prompts') }],
     };
     return deskAppIds.map((app) => ({
       id: app,
-      title: titles[app],
+      title: deskApps[app].label,
       icon: deskApps[app].icon,
       onLaunch: () => launchApplication(app),
       minSize: { width: 360, height: 280 },
@@ -222,7 +233,7 @@ export function Desk({
         },
       ],
     }));
-  }, [blogTitle, briefTitle, cachedPages, launchApplication, openApplication]);
+  }, [cachedPages, launchApplication, openApplication]);
 
   return (
     <PagesContext.Provider value={{ pages, currentPage: page, activatePage }}>
@@ -240,7 +251,9 @@ export function Desk({
         }
         initialWindows={[{ appId: page.app }]}
         wallpaper="lavender"
-        controlStrip={false}
+        controlStrip={stripExpanded}
+        controlStripApps={controlStripApps}
+        onControlStripChange={updateControlStrip}
         onReady={onDesktopReady}
       />
     </PagesContext.Provider>

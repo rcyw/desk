@@ -1,7 +1,8 @@
 import type { IconName } from '../platinum/types';
 
 export const papersName = 'Papers';
-export const deskAppIds = ['blog', 'brief', 'papers'] as const;
+export const promptsName = 'Prompts';
+export const deskAppIds = ['blog', 'brief', 'papers', 'prompts'] as const;
 export type DeskApp = (typeof deskAppIds)[number];
 
 interface DeskAppConfig {
@@ -45,5 +46,15 @@ export const deskApps = {
     height: 460,
     xShift: -6,
     cascade: 44,
+  },
+  prompts: {
+    label: promptsName,
+    entryPath: '/prompts/',
+    mainId: 'prompts-content',
+    icon: 'prompts',
+    width: 880,
+    height: 300,
+    xShift: 6,
+    cascade: 66,
   },
 } as const satisfies Record<DeskApp, DeskAppConfig>;

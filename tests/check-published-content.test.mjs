@@ -145,6 +145,25 @@ test('paper notes require built pages and retain their original URLs on rename',
   assert.match(renamed.stderr, /must preserve \/papers\/reading-note\//);
 });
 
+test('prompt collections require built pages at their stable URLs', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/prompts/decision-making.md', '# Decisions\n');
+  repo.commit();
+
+  const missing = repo.check(base);
+  assert.equal(missing.status, 1);
+  assert.match(
+    missing.stderr,
+    /decision-making\.md::This entry has no published page/,
+  );
+
+  repo.write('dist/prompts/decision-making/index.html', '<h1>Decisions</h1>');
+  const published = repo.check(base);
+  assert.equal(published.status, 0, published.stderr);
+});
+
 test('uppercase Markdown extensions outside assets fail validation', (t) => {
   const repo = fixture(t);
   repo.write('README.md', '# Desk\n');

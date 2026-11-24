@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import DocumentLayout from '../layouts/DocumentLayout.astro';
+import PromptCopy from './PromptCopy.astro';
 import { topicHref } from '../lib/blog';
 import type { BlogPost } from '../lib/blog';
 import { briefName } from '../lib/briefs';
@@ -11,7 +12,7 @@ import { PixelIcon } from '../platinum';
 import '../styles/paper-document.css';
 
 interface Props {
-  entry: BlogPost | Brief | Paper;
+  entry: BlogPost | Brief | Paper | CollectionEntry<'prompts'>;
   topics?: CollectionEntry<'topics'>[];
   issueDate?: string;
 }
@@ -22,6 +23,9 @@ const { title, description, lang, publishedAt, updatedAt, sources } =
   entry.data;
 const kind = 'kind' in entry.data ? entry.data.kind : 'note';
 const paper = 'paper' in entry.data ? entry.data.paper : undefined;
+const isPrompt = entry.collection === 'prompts';
+const library =
+  entry.collection === 'papers' || isPrompt ? entry.collection : undefined;
 const outline = headings.filter(({ depth }) => depth === 2 || depth === 3);
 const date = issueDate ?? publishedAt;
 ---
@@ -31,22 +35,24 @@ const date = issueDate ?? publishedAt;
   description={description}
   lang={lang}
   kind={kind}
-  topic={paper ? undefined : topics[0]}
+  topic={library ? undefined : topics[0]}
   issueDate={issueDate}
-  isPaper={Boolean(paper)}
+  library={library}
 >
   <article aria-labelledby="article-title">
     <header class="article-header">
       <div class="article-meta" lang="en">
-        <span class="article-type">
-          {paper
-            ? 'Paper Note'
-            : issueDate
-              ? briefName
-              : kind === 'note'
-                ? 'Note'
-                : 'Article'}
-        </span>
+        {!isPrompt && (
+          <span class="article-type">
+            {paper
+              ? 'Paper Note'
+              : issueDate
+                ? briefName
+                : kind === 'note'
+                  ? 'Note'
+                  : 'Article'}
+          </span>
+        )}
         <time datetime={date}>{date}</time>
         {issueDate && publishedAt !== issueDate && (
           <span>
@@ -85,7 +91,7 @@ const date = issueDate ?? publishedAt;
 
     <div class:list={['reading-layout', { 'has-outline': outline.length > 0 }]}>
       {outline.length > 0 && (
-        <details class="document-outline" open={!issueDate && !paper}>
+        <details class="document-outline" open={!issueDate && !library}>
           <summary lang="en">Contents</summary>
           <nav aria-label="Contents" lang="en">
             <ul role="list" lang={lang}>
@@ -100,9 +106,10 @@ const date = issueDate ?? publishedAt;
       )}
 
       <div class="reading-body">
-        <div class="article-prose">
+        <div class:list={['article-prose', { 'prompt-prose': isPrompt }]}>
           <Content />
         </div>
+        {isPrompt && <PromptCopy />}
 
         {sources && sources.length > 0 && (
           <section class="article-sources" aria-labelledby="sources-heading">
@@ -120,7 +127,7 @@ const date = issueDate ?? publishedAt;
           </section>
         )}
 
-        {!paper && topics.length > 0 && (
+        {!library && topics.length > 0 && (
           <nav class="article-topics" aria-label="Topics" lang="en">
             {topics.map((topic) => (
               <a

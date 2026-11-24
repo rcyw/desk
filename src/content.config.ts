@@ -1,7 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { briefId, paperId, postId } from './lib/content-paths';
+import { briefId, libraryId, postId } from './lib/content-paths';
 
 function slug(id: string): string {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
@@ -86,7 +86,7 @@ const papers = defineCollection({
   loader: glob({
     base: './content/papers',
     pattern: markdownEntries,
-    generateId: ({ entry }) => paperId(entry),
+    generateId: ({ entry }) => libraryId(entry, 'papers'),
   }),
   schema: publication.safeExtend({
     topics: topicReferences,
@@ -99,4 +99,13 @@ const papers = defineCollection({
   }),
 });
 
-export const collections = { posts, topics, briefs, papers };
+const prompts = defineCollection({
+  loader: glob({
+    base: './content/prompts',
+    pattern: markdownEntries,
+    generateId: ({ entry }) => libraryId(entry, 'prompts'),
+  }),
+  schema: publication,
+});
+
+export const collections = { posts, topics, briefs, papers, prompts };

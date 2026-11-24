@@ -43,6 +43,20 @@ export function Desktop(props: DesktopProps) {
     (win) => win.id === layout.activeWindowId,
   );
   const activeApp = props.apps.find((app) => app.id === activeWindow?.appId);
+  const stripShortcuts = (props.controlStripApps ?? []).flatMap((id) => {
+    const app = props.apps.find(
+      (item) => item.id === id && item.launchable !== false,
+    );
+    if (!app) return [];
+    return [
+      {
+        id,
+        title: app.title,
+        icon: app.icon,
+        launch: app.onLaunch ?? (() => api.openApp(id)),
+      },
+    ];
+  });
   const applicationMenu: MenuGroup = {
     id: 'platinum-applications',
     label: 'Applications',
@@ -79,9 +93,15 @@ export function Desktop(props: DesktopProps) {
     event: MouseEvent<HTMLButtonElement>,
     items: MenuItem[],
   ) => {
-    event.currentTarget.focus({ preventScroll: true });
-    const rect = event.currentTarget.getBoundingClientRect();
-    api.contextMenu(items, { x: rect.left, y: rect.bottom });
+    const opener = event.currentTarget;
+    opener.focus({ preventScroll: true });
+    const rect = opener.getBoundingClientRect();
+    controller.openMenu({
+      items,
+      point: { x: rect.left, y: rect.top },
+      opener,
+      aboveOpener: true,
+    });
   };
 
   return (
@@ -119,7 +139,12 @@ export function Desktop(props: DesktopProps) {
           className="p9-overview-backdrop"
           onClick={() => setOverview(false)}
         >
-          <span>Choose a window · Escape to return</span>
+          <div className="p9-overview-hint">
+            <span>Choose a window</span>
+            <span className="p9-overview-keyboard-hint">
+              <kbd>Esc</kbd> to return
+            </span>
+          </div>
         </div>
       )}
       {layout.windows.map((win, index) => {
@@ -144,6 +169,7 @@ export function Desktop(props: DesktopProps) {
       })}
       <ControlStrip
         controlStrip={props.controlStrip}
+        shortcuts={stripShortcuts}
         onControlStripChange={props.onControlStripChange}
         wallpaper={props.wallpaper}
         connectionStatus={props.connectionStatus}
