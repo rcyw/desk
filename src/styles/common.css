@@ -86,6 +86,7 @@
 }
 
 .surface-button.p9-button,
+.document-toolbar-link,
 .reading-size,
 .blog-pagination {
   font: 400 12px/17px var(--p9-font);

@@ -61,7 +61,8 @@ html[data-surface='document'] {
   min-width: 0;
 }
 
-.document-folder {
+.document-folder,
+.document-toolbar-link {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -72,7 +73,8 @@ html[data-surface='document'] {
   overflow-wrap: anywhere;
 }
 
-.document-folder:hover {
+.document-folder:hover,
+.document-toolbar-link:hover {
   text-decoration: underline;
 }
 
@@ -395,6 +397,7 @@ html[data-surface='document'] {
 
 @media (pointer: coarse) {
   .document-folder,
+  .document-toolbar-link,
   .document-outline summary,
   .document-outline a {
     min-height: var(--surface-touch-height);
