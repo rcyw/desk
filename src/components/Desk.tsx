@@ -18,6 +18,7 @@ import type {
   DesktopAPI,
   DesktopViewport,
 } from '../platinum';
+import { PaperBird } from './PaperBird';
 
 interface DeskPage {
   app: DeskApp;
@@ -118,6 +119,7 @@ export function Desk({ page }: { page: DeskPage }) {
     [page.app]: page,
   });
   const [stripExpanded, setStripExpanded] = useState(true);
+  const [showPaperBird, setShowPaperBird] = useState(false);
   const pages = { ...cachedPages, [page.app]: page };
   const previousPage = useRef(page);
   const desktop = useRef<DesktopAPI | null>(null);
@@ -164,7 +166,13 @@ export function Desk({ page }: { page: DeskPage }) {
   );
 
   const onDesktopReady = useCallback((api: DesktopAPI) => {
+    const previous = desktop.current;
     desktop.current = api;
+    const hasWindows = api.windows.length > 0;
+    if (previous && previous.windows.length > 0 !== hasWindows) {
+      setShowPaperBird(!hasWindows);
+    }
+
     const active = api.windows.find(
       (window) => window.id === api.activeWindowId,
     );
@@ -248,6 +256,11 @@ export function Desk({ page }: { page: DeskPage }) {
         }))}
         systemMenuIcon={
           <img src="/favicon.svg" alt="" width={16} height={16} />
+        }
+        desktopDecoration={
+          showPaperBird && (
+            <PaperBird onFinish={() => setShowPaperBird(false)} />
+          )
         }
         initialWindows={[{ appId: page.app }]}
         wallpaper="lavender"

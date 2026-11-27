@@ -337,6 +337,45 @@ a {
   border-top: 1px solid #fff;
   border-bottom: 1px solid #777;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .p9-window-titlebar[data-opening] .p9-title-stripes {
+    position: relative;
+  }
+  .p9-window-titlebar[data-opening] .p9-title-stripes:first-of-type {
+    transform: scaleX(-1);
+  }
+  .p9-window-titlebar[data-opening] .p9-title-stripes::after {
+    --p9-pixel-band-width: min(28%, 56px);
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: var(--p9-pixel-band-width);
+    opacity: 0;
+    background: conic-gradient(
+        #554687 25%,
+        transparent 0 50%,
+        #554687 0 75%,
+        transparent 0
+      )
+      0 0 / 6px 6px;
+    pointer-events: none;
+    animation: p9-window-open-pixels 240ms steps(6, end);
+    content: '';
+  }
+}
+@keyframes p9-window-open-pixels {
+  from {
+    left: 0;
+    opacity: 0.95;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  to {
+    left: calc(100% - var(--p9-pixel-band-width));
+    opacity: 0;
+  }
+}
 .p9-window-control {
   position: relative;
   width: 13px;

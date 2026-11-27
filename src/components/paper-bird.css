@@ -1,0 +1,63 @@
+.desk-paper-bird {
+  --paper-bird-duration: 2400ms;
+  position: absolute;
+  z-index: 1800;
+  top: calc(var(--p9-menubar-height) + env(safe-area-inset-top, 0px) + 7px);
+  left: 0;
+  width: 100px;
+  height: 84px;
+  overflow: hidden;
+  pointer-events: none;
+  animation: desk-paper-bird-flight var(--paper-bird-duration) linear both;
+}
+
+.desk-paper-bird img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: 100%;
+  image-rendering: pixelated;
+  animation: desk-paper-bird-frames var(--paper-bird-duration) steps(36, end);
+}
+
+@keyframes desk-paper-bird-flight {
+  from {
+    transform: translate(-100%, 9px);
+  }
+  50% {
+    transform: translate(calc(50vw - 50%), -5px);
+  }
+  to {
+    transform: translate(100vw, 5px);
+  }
+}
+
+@keyframes desk-paper-bird-frames {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes desk-paper-bird-still {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .desk-paper-bird {
+    width: 50px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-paper-bird {
+    left: 25%;
+    transform: translateX(-50%);
+    animation: desk-paper-bird-still var(--paper-bird-duration) step-end both;
+  }
+  .desk-paper-bird img {
+    animation: none;
+  }
+}
