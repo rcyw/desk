@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { PointerEvent } from 'react';
 import {
   MENU_HEIGHT,
@@ -21,6 +22,7 @@ interface WindowFrameProps {
   viewport: DesktopViewport;
   mobile: boolean;
   overview: boolean;
+  animateOpen: boolean;
   preview?: Bounds;
   activateWindow: (id: string) => void;
   beginWindowGesture: (
@@ -41,12 +43,21 @@ export function WindowFrame({
   viewport,
   mobile,
   overview,
+  animateOpen,
   preview,
   activateWindow,
   beginWindowGesture,
   toggleShade,
   toggleZoom,
 }: WindowFrameProps) {
+  const [opening, setOpening] = useState(animateOpen);
+  useEffect(() => {
+    if (!opening) return;
+    // Clear the cue even if the window is hidden before the animation ends.
+    const timer = globalThis.setTimeout(() => setOpening(false), 300);
+    return () => globalThis.clearTimeout(timer);
+  }, [opening]);
+
   const bounds = mobile
     ? {
         x: 4,
@@ -89,6 +100,7 @@ export function WindowFrame({
     >
       <div
         className="p9-window-titlebar"
+        data-opening={opening || undefined}
         onPointerDown={(event) => {
           if (!(event.target as HTMLElement).closest('button'))
             beginWindowGesture(event, win);

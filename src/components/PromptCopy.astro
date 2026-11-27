@@ -15,8 +15,38 @@
   }
 
   .prompt-copy-status {
+    position: relative;
     color: var(--reading-muted);
-    font: 12px/1.5 var(--p9-body-font);
+  }
+
+  .prompt-copy-pop {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .prompt-copy-pop {
+      position: absolute;
+      display: block;
+      inset-block-start: 50%;
+      inset-inline-end: calc(100% + 2px);
+      width: 34px;
+      height: 34px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      background: url('./copy-pop.png') 0 0 / auto 100% no-repeat;
+      image-rendering: pixelated;
+      animation: prompt-copy-pop 300ms steps(12, end) both;
+    }
+
+    :root[data-reading-theme='dark'] .prompt-copy-pop {
+      filter: brightness(1.55);
+    }
+  }
+
+  @keyframes prompt-copy-pop {
+    to {
+      background-position: -408px 0;
+    }
   }
 
   .prompt-prose pre[data-language='text'] {
@@ -57,6 +87,9 @@
 </style>
 
 <script>
+  const reducedMotion = globalThis.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  );
   let heading = '';
   for (const block of document.querySelectorAll<HTMLElement>(
     '.prompt-prose > h2, .prompt-prose > pre[data-language="text"], .prompt-prose > .prompt-language > pre[data-language="text"]',
@@ -91,12 +124,14 @@
       );
     }
 
+    let copyAttempt = 0;
     button.addEventListener('click', async () => {
+      const attempt = ++copyAttempt;
       status.textContent = '';
       try {
         await navigator.clipboard.writeText(source);
-        status.textContent = 'Copied';
       } catch {
+        if (attempt !== copyAttempt) return;
         const selection = document.getSelection();
         const range = document.createRange();
         range.selectNodeContents(code);
@@ -104,7 +139,20 @@
         selection?.addRange(range);
         status.textContent =
           'Copy unavailable. Copy the selected text manually.';
+        return;
       }
+
+      if (attempt !== copyAttempt) return;
+      status.textContent = 'Copied';
+      if (reducedMotion.matches) return;
+
+      const pop = document.createElement('span');
+      pop.className = 'prompt-copy-pop';
+      pop.setAttribute('aria-hidden', 'true');
+      const removePop = () => pop.remove();
+      pop.addEventListener('animationend', removePop, { once: true });
+      pop.addEventListener('animationcancel', removePop, { once: true });
+      status.append(pop);
     });
 
     toolbar.append(status, button);

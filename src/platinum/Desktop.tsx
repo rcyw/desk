@@ -159,6 +159,7 @@ export function Desktop(props: DesktopProps) {
             viewport={viewport}
             mobile={mobile}
             overview={overview}
+            animateOpen={viewport !== initialViewport}
             preview={gestures.windowPreview[win.id]}
             activateWindow={controller.activateWindow}
             beginWindowGesture={gestures.beginWindowGesture}
@@ -167,6 +168,7 @@ export function Desktop(props: DesktopProps) {
           />
         ) : null;
       })}
+      {props.desktopDecoration}
       <ControlStrip
         controlStrip={props.controlStrip}
         shortcuts={stripShortcuts}

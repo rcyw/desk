@@ -135,6 +135,7 @@ export interface DesktopProps {
   apps: AppDefinition[];
   icons: DesktopIcon[];
   systemMenuIcon?: ReactNode;
+  desktopDecoration?: ReactNode;
   initialLayout?: DesktopLayout;
   initialWindows?: { appId: string; params?: WindowParams; title?: string }[];
   onLayoutChange?: (layout: DesktopLayout) => void;
