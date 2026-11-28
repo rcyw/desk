@@ -1,5 +1,8 @@
 ---
-import { deskApps } from '../lib/desk-apps';
+import BlogIndex from '../components/BlogIndex.astro';
+import { readBlogPages } from '../lib/blog';
 
-return Astro.redirect(deskApps.blog.entryPath, 307);
+const [page] = await readBlogPages();
 ---
+
+<BlogIndex page={page} />

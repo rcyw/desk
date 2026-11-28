@@ -139,9 +139,14 @@ topics: [research]
         'Desk opens Blog and both Blog lists paginate under their own URL',
         async () => {
           const launch = await readPage('/desk/');
+          assert.doesNotMatch(launch, /http-equiv="refresh"|Redirecting to/i);
+          assert.ok(launch.includes(`href="${articlePath}"`));
           assert.ok(
-            launch.includes('http-equiv="refresh" content="0;url=/desk/blog/"'),
+            launch.includes(
+              'rel="canonical" href="https://rcyw.github.io/desk/blog/"',
+            ),
           );
+          assert.ok(launch.includes('href="/desk/blog/page/2/" rel="next"'));
           for (const [base, first] of [
             ['/desk/blog/', home],
             [topicPath, topic],

@@ -31,7 +31,8 @@ for (const [name, browser, options] of [
     context = await browser.launchPersistentContext(profile, options);
     const first = await context.newPage();
     await first.goto(root);
-    await first.waitForURL(root + 'blog/');
+    await first.getByRole('main', { name: 'Blog' }).waitFor();
+    assert.equal(first.url(), root);
     await first.waitForFunction(
       () => navigator.serviceWorker.controller !== null,
     );
@@ -55,7 +56,6 @@ for (const [name, browser, options] of [
     });
     const launch = await reopened.goto(start);
     assert.equal(launch.status(), 200);
-    await reopened.waitForURL(root + 'blog/');
     await reopened.locator('.p9-desktop[data-viewport-ready="true"]').waitFor();
     assert.ok(await reopened.getByRole('main', { name: 'Blog' }).isVisible());
     assert.equal(
@@ -81,6 +81,7 @@ for (const [name, browser, options] of [
         return [...document.fonts].some((font) => font.status === 'loaded');
       }),
     );
+    assert.equal(reopened.url(), root);
     const missing = await reopened.goto(root + 'papers/');
     assert.equal(missing.status(), 503);
     assert.equal(await reopened.locator('h1').innerText(), 'Offline');
