@@ -19,7 +19,7 @@ interface Props {
 }
 
 const { app = 'blog', title, description, robots, pagination } = Astro.props;
-const pathname = Astro.url.pathname;
+const pathname = pagination?.path ?? Astro.url.pathname;
 const { label, mainId, height } = deskApps[app];
 const appLinks = deskAppIds.filter((id) => id !== app);
 const home = pathname === deskApps.blog.entryPath;
@@ -86,6 +86,7 @@ const links: Record<DeskApp, NavLink[]> = {
 ---
 
 <PageLayout
+  canonicalPath={pathname}
   title={title}
   description={description}
   surface="desktop"

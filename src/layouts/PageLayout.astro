@@ -12,6 +12,7 @@ import '../styles/common.css';
 import '../styles/reading.css';
 
 interface Props {
+  canonicalPath?: string;
   title?: string;
   description?: string;
   surface: 'desktop' | 'document';
@@ -34,7 +35,10 @@ const {
 } = Astro.props;
 const name = surface === 'document' ? documentName : siteName;
 const pageTitle = title ? `${title} — ${name}` : name;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+const canonical = new URL(
+  Astro.props.canonicalPath ?? Astro.url.pathname,
+  Astro.site ?? Astro.url,
+);
 ---
 
 <!doctype html>

@@ -1,0 +1,25 @@
+---
+import ArticleList from './ArticleList.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { postHref } from '../lib/blog';
+import type { BlogPost } from '../lib/blog';
+import type { EntryPage } from '../lib/pagination';
+
+interface Props {
+  page: EntryPage<BlogPost>;
+}
+
+const { page } = Astro.props;
+---
+
+<SiteLayout
+  title={page.current > 1 ? `Blog · Page ${page.current}` : 'Blog'}
+  pagination={page}
+>
+  <h1 class="visually-hidden">Posts</h1>
+  {page.entries.length ? (
+    <ArticleList entries={page.entries} hrefFor={postHref} />
+  ) : (
+    <p>No posts yet.</p>
+  )}
+</SiteLayout>

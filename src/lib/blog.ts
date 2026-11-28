@@ -1,3 +1,5 @@
+import { deskApps } from './desk-apps';
+import { paginateEntries } from './pagination';
 import { sitePath } from './site-path';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -32,4 +34,9 @@ export async function readBlog() {
       postId(a.id).localeCompare(postId(b.id)),
   );
   return { posts, topics: groupTopics(topics, posts) };
+}
+
+export async function readBlogPages() {
+  const { posts } = await readBlog();
+  return paginateEntries(posts, deskApps.blog.entryPath);
 }

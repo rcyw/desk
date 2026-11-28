@@ -49,17 +49,7 @@ export function offlineShell() {
           paths.add(icon.src.replace(/^\.\//, ''));
         paths.add('icons/desk-180.png');
 
-        const home = await readFile(new URL('blog/index.html', dir), 'utf8');
-        const homeUrl = new URL('blog/', publicRoot);
         const assetRoot = new URL('_astro/', publicRoot);
-        for (const match of home.matchAll(
-          /(?:src|href|component-url|renderer-url)="([^"]+)"/g,
-        )) {
-          const url = new URL(match[1], homeUrl);
-          if (url.href.startsWith(assetRoot.href))
-            paths.add(url.pathname.slice(publicRoot.pathname.length));
-        }
-
         const digest = createHash('sha256');
         for (const path of paths) {
           const file = new URL(
@@ -67,6 +57,16 @@ export function offlineShell() {
             dir,
           );
           const bytes = await readFile(file);
+          if (path.endsWith('/')) {
+            const pageUrl = new URL(path, publicRoot);
+            for (const match of bytes
+              .toString()
+              .matchAll(/(?:src|href|component-url|renderer-url)="([^"]+)"/g)) {
+              const url = new URL(match[1], pageUrl);
+              if (url.href.startsWith(assetRoot.href))
+                paths.add(url.pathname.slice(publicRoot.pathname.length));
+            }
+          }
           digest.update(path).update(bytes);
           if (path.endsWith('.js') && !imports.has(path))
             throw new Error(`Missing build dependencies for ${path}`);
