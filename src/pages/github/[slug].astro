@@ -1,0 +1,29 @@
+---
+import { getCollection, getEntries, type CollectionEntry } from 'astro:content';
+import ArticleDocument from '../../components/ArticleDocument.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('github');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'github'>;
+}
+
+const { project } = Astro.props;
+const references = [
+  ...new Map(project.data.topics.map((topic) => [topic.id, topic])).values(),
+];
+const topics = await getEntries(references);
+const missingTopic = references.find((_, index) => !topics[index]);
+if (missingTopic)
+  throw new Error(
+    `${project.id} references an unknown topic: ${missingTopic.id}`,
+  );
+---
+
+<ArticleDocument entry={project} topics={topics} />

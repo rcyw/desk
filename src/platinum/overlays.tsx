@@ -352,6 +352,7 @@ export function DialogOverlay({
 }) {
   const [value, setValue] = useState(options.input?.value ?? '');
   const ref = useRef<HTMLDivElement>(null);
+  const heading = <div className="p9-dialog-header">{options.title}</div>;
   const buttons = options.buttons ?? [
     { label: 'Cancel', value: 'cancel', cancel: true },
     { label: 'OK', value: 'ok', default: true },
@@ -409,8 +410,8 @@ export function DialogOverlay({
           }
           if (
             event.key === 'Enter' &&
-            !(event.target instanceof HTMLTextAreaElement) &&
-            !(event.target instanceof HTMLButtonElement)
+            event.target instanceof Element &&
+            !event.target.closest('a[href], button, textarea')
           ) {
             event.preventDefault();
             finish(buttons.find((button) => button.default) ?? buttons.at(-1));
@@ -432,10 +433,11 @@ export function DialogOverlay({
           }
         }}
       >
-        <div className="p9-dialog-header">{options.title}</div>
+        {options.input && heading}
         <div className="p9-dialog-main">
-          <PixelIcon name="info" />
+          {!options.input && (options.icon ?? <PixelIcon name="info" />)}
           <div className="p9-dialog-copy">
+            {!options.input && heading}
             {options.message && (
               <div className="p9-dialog-message">{options.message}</div>
             )}

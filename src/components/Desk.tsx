@@ -4,13 +4,15 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import type { MouseEvent } from 'react';
-import { deskAppIds, deskApps } from '../lib/desk-apps';
+import { deskAppIds, deskApps, siteName } from '../lib/desk-apps';
 import type { DeskApp } from '../lib/desk-apps';
+import { topicIndexes } from '../lib/topics';
 import { Desktop } from '../platinum';
 import type {
   AppDefinition,
@@ -73,10 +75,39 @@ function windowBounds(
   };
 }
 
-function PageWindow({ window: { appId } }: AppWindowProps) {
+function PageWindow({
+  window: { appId, shaded },
+  desktop: { activeWindowId },
+}: AppWindowProps) {
   const app = appId as DeskApp;
   const { pages, currentPage, activatePage } = useContext(PagesContext)!;
   const page = pages[app];
+  const position = useRef({ path: '', top: 0 });
+
+  useLayoutEffect(() => {
+    if (!page) return;
+    const content = document.getElementById(page.mainId);
+    if (!content) return;
+    if (position.current.path !== page.path) {
+      position.current = { path: page.path, top: content.scrollTop };
+    }
+    const remember = () => {
+      if (content.clientHeight) position.current.top = content.scrollTop;
+    };
+    const restore = () => {
+      if (content.clientHeight) content.scrollTop = position.current.top;
+    };
+    // Raising a window or moving the persisted island can reset nested scroll containers.
+    restore();
+    content.addEventListener('scroll', remember);
+    document.addEventListener('astro:before-swap', remember);
+    document.addEventListener('astro:after-swap', restore);
+    return () => {
+      content.removeEventListener('scroll', remember);
+      document.removeEventListener('astro:before-swap', remember);
+      document.removeEventListener('astro:after-swap', restore);
+    };
+  }, [page, activeWindowId, shaded]);
 
   function handleLink(event: MouseEvent) {
     if (
@@ -142,6 +173,23 @@ export function Desk({ page }: { page: DeskPage }) {
     }
   }
 
+  function showAbout() {
+    void desktop.current?.dialog({
+      title: siteName,
+      icon: <img src="/favicon.svg" alt="" width={32} height={32} />,
+      message: (
+        <>
+          Personal writing and project notes.
+          <br />
+          <a href="https://github.com/rcyw" rel="me">
+            @rcyw on GitHub
+          </a>
+        </>
+      ),
+      buttons: [{ label: 'OK', value: 'ok', default: true }],
+    });
+  }
+
   const activatePage = useCallback((target: DeskPage) => {
     pendingFocus.current = target.mainId;
     desktop.current?.openApp(target.app);
@@ -149,9 +197,8 @@ export function Desk({ page }: { page: DeskPage }) {
 
   const launchApplication = useCallback(
     (app: DeskApp) => {
-      const target = page.app === app ? page : cachedPages[app];
-      if (target) activatePage(target);
-      else void navigate(deskApps[app].entryPath);
+      if (page.app === app) activatePage(page);
+      else void navigate(cachedPages[app]?.path ?? deskApps[app].entryPath);
     },
     [activatePage, cachedPages, page],
   );
@@ -203,7 +250,7 @@ export function Desk({ page }: { page: DeskPage }) {
     const destinations = {
       blog: [
         { label: 'Home', action: () => openApplication('blog') },
-        { label: 'Topics', action: () => navigate('/topics/') },
+        { label: 'Topics', action: () => navigate(topicIndexes.blog) },
       ],
       brief: [
         { label: 'Latest', action: () => openApplication('brief') },
@@ -211,6 +258,10 @@ export function Desk({ page }: { page: DeskPage }) {
       ],
       papers: [{ label: 'Library', action: () => openApplication('papers') }],
       prompts: [{ label: 'Library', action: () => openApplication('prompts') }],
+      github: [
+        { label: 'Projects', action: () => openApplication('github') },
+        { label: 'Topics', action: () => navigate(topicIndexes.github) },
+      ],
     };
     return deskAppIds.map((app) => ({
       id: app,
@@ -267,6 +318,7 @@ export function Desk({ page }: { page: DeskPage }) {
         controlStrip={stripExpanded}
         controlStripApps={controlStripApps}
         onControlStripChange={updateControlStrip}
+        onAbout={showAbout}
         onReady={onDesktopReady}
       />
     </PagesContext.Provider>

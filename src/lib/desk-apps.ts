@@ -1,8 +1,15 @@
 import type { IconName } from '../platinum/types';
 
+export const siteName = 'Wayne’s Desk';
 export const papersName = 'Papers';
 export const promptsName = 'Prompts';
-export const deskAppIds = ['blog', 'brief', 'papers', 'prompts'] as const;
+export const deskAppIds = [
+  'blog',
+  'brief',
+  'papers',
+  'prompts',
+  'github',
+] as const;
 export type DeskApp = (typeof deskAppIds)[number];
 
 interface DeskAppConfig {
@@ -56,5 +63,15 @@ export const deskApps = {
     height: 300,
     xShift: 6,
     cascade: 66,
+  },
+  github: {
+    label: 'GitHub',
+    entryPath: '/github/',
+    mainId: 'github-content',
+    icon: 'github',
+    width: 960,
+    height: 560,
+    xShift: -18,
+    cascade: 88,
   },
 } as const satisfies Record<DeskApp, DeskAppConfig>;

@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Desk is a Platinum9-style web desktop built with Astro. It opens **Blog** for articles and topics. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
+Desk is a Platinum9-style web desktop built with Astro. It opens **Blog** for personal articles and their topics. **GitHub** opens a separate library of repository references for developers and agents designing products or implementing features. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
 
 [Open Desk](https://rcyw.github.io/)
 
@@ -21,7 +21,9 @@ After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and
 
 ## Writing
 
-Start articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug>.md` when a single category folder helps. The filename supplies the globally unique lowercase hyphenated slug for `/posts/<slug>/`. Use frontmatter `topics` to list the topics an article belongs to. Topic definitions live in `content/topics/`.
+Start Blog articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug>.md` when a single category folder helps. The filename supplies the globally unique lowercase hyphenated slug for `/posts/<slug>/`. Use frontmatter `topics` to list the topics an article belongs to. Topic definitions live in `content/topics/`.
+
+Store one reference per repository at `content/github/<slug>.md`. Desk lists it at `/github/` and publishes it at `/github/<slug>/`. Record the repository URL and the revision you read together in a `sources` entry. Set `topics` to one or more IDs defined in `content/github/topics/`. Readers can browse those projects at `/github/topics/`. Illustrate the architecture and a core interaction with Mermaid. [Project reference writing guide in Chinese](docs/content-workflow.md#github-项目参考)
 
 Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`.
 
@@ -45,4 +47,4 @@ pnpm test
 
 ## License
 
-The code, tests, and original interface assets are MIT-licensed. Article and image licensing follows the terms stated in each entry. Fonts and Mermaid retain their respective licenses. [MIT license](LICENSE) · [Third-party licenses](public/licenses/)
+The code, tests, and original interface assets are MIT-licensed. Article and image licensing follows the terms stated in each entry. Fonts, Mermaid, and GitHub’s Octicons retain their respective licenses. [MIT license](LICENSE) · [Third-party licenses](public/licenses/)

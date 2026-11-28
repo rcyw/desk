@@ -1,11 +1,5 @@
 /* Match the static window to the measured desktop geometry. */
-.p9-desktop[data-viewport-ready='false']
-  .p9-window:is(
-    [data-app-id='blog'],
-    [data-app-id='brief'],
-    [data-app-id='papers'],
-    [data-app-id='prompts']
-  ) {
+.p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id] {
   --blog-limit-width: 1064px;
   --blog-start-width: min(var(--blog-limit-width), calc(100% - 176px));
   --blog-x-shift: 18px;
@@ -48,37 +42,25 @@
   --blog-cascade: 66px;
 }
 
-.p9-desktop[data-viewport-ready='false']
-  :is(
-    [data-icon-id='blog'],
-    [data-icon-id='brief'],
-    [data-icon-id='papers'],
-    [data-icon-id='prompts']
-  ) {
+.p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id='github'] {
+  --blog-limit-width: 960px;
+  --blog-x-shift: -18px;
+  --blog-cascade: 88px;
+}
+
+.p9-desktop[data-viewport-ready='false'] .p9-desktop-icon {
   left: auto !important;
   right: 12px;
 }
 
 @media (max-width: 1099px) {
-  .p9-desktop[data-viewport-ready='false']
-    .p9-window:is(
-      [data-app-id='blog'],
-      [data-app-id='brief'],
-      [data-app-id='papers'],
-      [data-app-id='prompts']
-    ) {
+  .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id] {
     --blog-start-width: min(var(--blog-limit-width), calc(100% - 132px));
   }
 }
 
 @media (max-width: 599px) {
-  .p9-desktop[data-viewport-ready='false']
-    .p9-window:is(
-      [data-app-id='blog'],
-      [data-app-id='brief'],
-      [data-app-id='papers'],
-      [data-app-id='prompts']
-    ) {
+  .p9-desktop[data-viewport-ready='false'] .p9-window[data-app-id] {
     --blog-start-width: calc(
       100% - 8px - env(safe-area-inset-left, 0px) -
         env(safe-area-inset-right, 0px)
@@ -99,13 +81,7 @@
   pointer-events: none;
 }
 
-:is(
-    [data-app-id='blog'],
-    [data-app-id='brief'],
-    [data-app-id='papers'],
-    [data-app-id='prompts']
-  )
-  > .p9-window-content {
+.p9-window[data-app-id] > .p9-window-content {
   overflow: hidden;
 }
 
@@ -131,7 +107,6 @@
 .blog-toolbar .blog-toolbar-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
   min-height: 24px;
   padding-inline: 6px;
   color: var(--p9-text);
@@ -151,17 +126,6 @@
 @media (max-width: 599px) {
   .blog-toolbar .blog-mobile-app {
     display: inline-flex;
-  }
-}
-
-@container blog (max-width: 395px) {
-  .blog-toolbar .blog-github-label {
-    display: none;
-  }
-
-  .blog-toolbar .blog-github {
-    justify-content: center;
-    min-width: var(--surface-touch-height);
   }
 }
 
@@ -187,6 +151,11 @@
   font-size: calc(0.8125rem * var(--reading-scale));
 }
 
+.blog-page:has(> .project-topics) {
+  width: 100%;
+  padding: 6px 8px;
+}
+
 .blog-heading {
   padding: 2px 0 11px;
   border-bottom: 1px solid var(--reading-rule);
@@ -196,6 +165,11 @@
   margin: 0;
   font-size: calc(1.125rem * var(--reading-scale));
   overflow-wrap: anywhere;
+}
+
+.blog-heading p {
+  margin: 4px 0 0;
+  color: var(--reading-muted);
 }
 
 .blog-heading h1:lang(en),
@@ -232,6 +206,23 @@
   padding: 7px 0;
   text-decoration: none;
   outline-offset: -1px;
+}
+
+.topic-preview {
+  grid-template-areas: 'title meta' 'description .';
+  row-gap: 0;
+}
+
+.topic-preview .post-preview-copy {
+  display: contents;
+}
+
+.topic-preview h2 {
+  grid-area: title;
+}
+
+.topic-preview p {
+  grid-area: description;
 }
 
 .post-preview-title,
@@ -271,13 +262,48 @@
 }
 
 .post-preview time,
-.topic-arrow {
+.topic-meta {
   color: var(--reading-muted);
   white-space: nowrap;
 }
 
-.topic-arrow {
+.topic-meta {
+  grid-area: meta;
+  justify-self: end;
   font-size: calc(0.75rem * var(--reading-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.project-topics .blog-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 7px;
+  border-top: 1px solid var(--reading-rule);
+  background: var(--reading-panel);
+}
+
+.topic-count-heading {
+  color: var(--reading-muted);
+  font: 400 calc(0.75rem * var(--reading-scale)) / 1.3 var(--p9-font);
+}
+
+.project-topics .topic-preview {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'icon title meta' '. description description';
+  column-gap: 7px;
+  padding-inline: 7px;
+}
+
+.project-topics .p9-pixel-icon {
+  grid-area: icon;
+  align-self: start;
+  margin-top: 0.15em;
+}
+
+.project-topics .topic-preview:is(:hover, :focus-visible) {
+  background: var(--reading-press);
 }
 
 :is(.post-preview, .topic-preview):hover :is(h2, h3) {
@@ -356,6 +382,10 @@
   .post-preview {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
+  }
+
+  .topic-preview {
+    grid-template-areas: 'title meta' 'description description';
   }
 
   .post-preview-title {

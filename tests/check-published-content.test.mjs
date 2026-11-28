@@ -105,6 +105,57 @@ test('a move into assets still requires the original published route', (t) => {
   assert.match(result.stderr, /must preserve \/posts\/original\//);
 });
 
+test('GitHub project references require a page in the GitHub library', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/github/workflow.md', '# Workflow\n');
+  repo.write(
+    'content/github/topics/workflows.md',
+    '---\ntitle: Workflows\n---\n',
+  );
+  repo.commit();
+  repo.write('dist/posts/workflow/index.html', '<h1>Blog</h1>');
+  const missing = repo.check(base);
+  assert.equal(missing.status, 1);
+  assert.match(
+    missing.stderr,
+    /content\/github\/workflow\.md::This entry has no published page/,
+  );
+  repo.write('dist/github/workflow/index.html', '<h1>Workflow</h1>');
+  const published = repo.check(base);
+  assert.equal(published.status, 0, published.stderr);
+});
+
+test('a GitHub project cannot take the topic index URL', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  repo.write('content/github/topics.md', '# Topics\n');
+  repo.commit();
+  repo.write('dist/github/topics/index.html', '<h1>Topics</h1>');
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /GitHub reserves the slug "topics"/);
+});
+
+test('topic definitions in both catalogs must use a flat, lowercase Markdown path', (t) => {
+  const repo = fixture(t);
+  repo.write('README.md', '# Desk\n');
+  const base = repo.commit();
+  for (const folder of ['content/github/topics', 'content/topics']) {
+    for (const entry of ['nested/workflows.md', 'workflows.MD']) {
+      const file = `${folder}/${entry}`;
+      repo.write(file, '# Workflows\n');
+      repo.commit();
+      const result = repo.check(base);
+      assert.equal(result.status, 1);
+      assert.ok(result.stderr.includes(`Found ${entry}`), result.stderr);
+      repo.remove(file);
+    }
+  }
+});
+
 test('a changed brief without a built page fails the publication check', (t) => {
   const repo = fixture(t);
   repo.write('README.md', '# Desk\n');

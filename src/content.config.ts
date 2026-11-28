@@ -1,17 +1,15 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { briefId, libraryId, postId } from './lib/content-paths';
-
-function slug(id: string): string {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
-    throw new Error(`Use a lowercase, hyphenated slug for ${id}`);
-  }
-  return id;
-}
+import { briefId, libraryId, postId, topicId } from './lib/content-paths';
 
 const text = z.string().trim().min(1);
 const webUrl = z.url({ protocol: /^https?$/ });
+const source = z.object({
+  label: text,
+  url: webUrl.optional(),
+  revision: text.optional(),
+});
 const markdownEntries = ['**/*.[mM][dD]', '!**/assets/**'];
 const topicReferences = z.array(reference('topics')).min(1);
 
@@ -29,34 +27,31 @@ const publication = z
           'Remove the draft field from publishable Markdown. Keep unfinished drafts outside the content collections.',
       })
       .optional(),
-    sources: z
-      .array(
-        z.object({
-          label: text,
-          url: webUrl.optional(),
-          revision: text.optional(),
-        }),
-      )
-      .optional(),
+    sources: z.array(source).optional(),
   })
   .refine((entry) => !entry.updatedAt || entry.updatedAt >= entry.publishedAt, {
     path: ['updatedAt'],
     message: 'updatedAt must be on or after publishedAt',
   });
 
-const topics = defineCollection({
-  loader: glob({
-    base: './content/topics',
-    pattern: '*.md',
-    generateId: ({ entry }) => slug(entry.slice(0, -'.md'.length)),
-  }),
-  schema: z.object({
-    title: text,
-    description: text,
-    lang: z.enum(['zh-CN', 'en']).default('en'),
-    order: z.number().int().nonnegative(),
-  }),
-});
+function defineTopics(base: string) {
+  return defineCollection({
+    loader: glob({
+      base,
+      pattern: markdownEntries,
+      generateId: ({ entry }) => topicId(entry),
+    }),
+    schema: z.object({
+      title: text,
+      description: text,
+      lang: z.enum(['zh-CN', 'en']).default('en'),
+      order: z.number().int().nonnegative(),
+    }),
+  });
+}
+
+const topics = defineTopics('./content/topics');
+const githubTopics = defineTopics('./content/github/topics');
 
 const posts = defineCollection({
   loader: glob({
@@ -70,6 +65,23 @@ const posts = defineCollection({
   schema: publication.safeExtend({
     kind: z.enum(['article', 'note']),
     topics: topicReferences,
+  }),
+});
+
+const github = defineCollection({
+  loader: glob({
+    base: './content/github',
+    pattern: [...markdownEntries, '!topics/**'],
+    generateId: ({ entry }) => libraryId(entry, 'github'),
+  }),
+  schema: publication.safeExtend({
+    topics: z.array(reference('githubTopics')).min(1),
+    sources: z
+      .array(source)
+      .refine(
+        (sources) => sources.some(({ url, revision }) => url && revision),
+        'Include a repository URL and its revision together in sources.',
+      ),
   }),
 });
 
@@ -108,4 +120,12 @@ const prompts = defineCollection({
   schema: publication,
 });
 
-export const collections = { posts, topics, briefs, papers, prompts };
+export const collections = {
+  posts,
+  github,
+  githubTopics,
+  topics,
+  briefs,
+  papers,
+  prompts,
+};

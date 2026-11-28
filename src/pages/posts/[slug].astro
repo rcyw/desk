@@ -1,16 +1,17 @@
 ---
 import ArticleDocument from '../../components/ArticleDocument.astro';
-import { readBlog } from '../../lib/blog';
-import type { BlogPost, BlogTopic } from '../../lib/blog';
+import type { CollectionEntry } from 'astro:content';
+import { readBlog, type BlogPost } from '../../lib/blog';
 import { postId } from '../../lib/content-paths';
 
 export async function getStaticPaths() {
   const { posts, topics } = await readBlog();
+  const definitions = topics.map(({ topic }) => topic);
   return posts.map((post) => ({
     params: { slug: postId(post.id) },
     props: {
       post,
-      topics: topics.filter((topic) =>
+      topics: definitions.filter((topic) =>
         post.data.topics.some(({ id }) => id === topic.id),
       ),
     },
@@ -19,7 +20,7 @@ export async function getStaticPaths() {
 
 interface Props {
   post: BlogPost;
-  topics: BlogTopic[];
+  topics: CollectionEntry<'topics'>[];
 }
 
 const { post, topics } = Astro.props;

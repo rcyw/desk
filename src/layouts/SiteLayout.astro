@@ -1,8 +1,9 @@
 ---
 import DeskSurface from '../components/DeskSurface.astro';
 import ReadingControls from '../components/ReadingControls.astro';
-import type { PostPage } from '../lib/blog';
+import type { EntryPage } from '../lib/pagination';
 import { deskAppIds, deskApps } from '../lib/desk-apps';
+import { topicIndexes } from '../lib/topics';
 import type { DeskApp } from '../lib/desk-apps';
 import PageLayout from './PageLayout.astro';
 import '../styles/blog.css';
@@ -13,7 +14,7 @@ interface Props {
   title?: string;
   description?: string;
   robots?: 'noindex';
-  pagination?: PostPage;
+  pagination?: EntryPage<unknown>;
 }
 
 const { app = 'blog', title, description, robots, pagination } = Astro.props;
@@ -21,8 +22,6 @@ const pathname = Astro.url.pathname;
 const { label, mainId, height } = deskApps[app];
 const appLinks = deskAppIds.filter((id) => id !== app);
 const home = pathname === '/';
-const topics = pathname.startsWith('/topics/');
-const topicIndex = pathname === '/topics/';
 const homeArchive = pathname.startsWith('/page/');
 const desktopHeight =
   app === 'blog'
@@ -34,18 +33,19 @@ type NavLink = {
   href: string;
   current?: 'page' | 'location';
 };
+function sectionLink(label: string, href: string, descendants = href): NavLink {
+  const current =
+    pathname === href
+      ? 'page'
+      : pathname.startsWith(descendants)
+        ? 'location'
+        : undefined;
+  return { label, href, current };
+}
 const links: Record<DeskApp, NavLink[]> = {
   blog: [
-    {
-      label: 'Home',
-      href: deskApps.blog.entryPath,
-      current: home ? 'page' : homeArchive ? 'location' : undefined,
-    },
-    {
-      label: 'Topics',
-      href: '/topics/',
-      current: topicIndex ? 'page' : topics ? 'location' : undefined,
-    },
+    sectionLink('Home', deskApps.blog.entryPath, '/page/'),
+    sectionLink('Topics', topicIndexes.blog),
   ],
   brief: [
     {
@@ -53,16 +53,7 @@ const links: Record<DeskApp, NavLink[]> = {
       href: deskApps.brief.entryPath,
       current: pathname === deskApps.brief.entryPath ? 'page' : undefined,
     },
-    {
-      label: 'Archive',
-      href: '/brief/archive/',
-      current:
-        pathname === '/brief/archive/'
-          ? 'page'
-          : pathname.startsWith('/brief/archive/')
-            ? 'location'
-            : undefined,
-    },
+    sectionLink('Archive', '/brief/archive/'),
   ],
   papers: [
     {
@@ -77,6 +68,14 @@ const links: Record<DeskApp, NavLink[]> = {
       href: deskApps.prompts.entryPath,
       current: pathname === deskApps.prompts.entryPath ? 'page' : undefined,
     },
+  ],
+  github: [
+    sectionLink(
+      'Projects',
+      deskApps.github.entryPath,
+      `${deskApps.github.entryPath}page/`,
+    ),
+    sectionLink('Topics', topicIndexes.github),
   ],
 };
 ---
@@ -114,17 +113,6 @@ const links: Record<DeskApp, NavLink[]> = {
               {deskApps[id].label}
             </a>
           ))}
-          {app === 'blog' && (
-            <a
-              class="blog-toolbar-link blog-github"
-              href="https://github.com/rcyw"
-              aria-label="GitHub"
-              title="GitHub"
-            >
-              <span class="blog-github-label">GitHub</span>
-              <span aria-hidden="true">↗</span>
-            </a>
-          )}
         </div>
       </nav>
 
@@ -162,7 +150,7 @@ const links: Record<DeskApp, NavLink[]> = {
                     rel={rel}
                     data-page-direction={rel}
                     aria-label={label}
-                    title={`${label} posts`}
+                    title={`${label} entries`}
                   ></a>
                 ) : (
                   <button

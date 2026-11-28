@@ -23,18 +23,3 @@
   color: var(--reading-link);
   text-underline-offset: 0.13em;
 }
-
-.paper-topic-labels {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 7px;
-  margin: 7px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.paper-topic-labels li {
-  min-width: 0;
-  padding-inline: 5px;
-  border: 1px solid var(--reading-rule);
-}

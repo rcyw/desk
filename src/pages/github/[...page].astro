@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleList from '../../components/ArticleList.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { deskApps } from '../../lib/desk-apps';
+import { projectHref, readGitHub, type Project } from '../../lib/github';
+import { paginateEntries, type EntryPage } from '../../lib/pagination';
+import { topicHref } from '../../lib/topics';
+
+export async function getStaticPaths() {
+  const { projects, topics } = await readGitHub();
+  const base = deskApps.github.entryPath;
+  const lists = [
+    { entries: projects, path: base, topic: undefined },
+    ...topics.map(({ topic, entries }) => ({
+      entries,
+      path: topicHref(topic),
+      topic,
+    })),
+  ];
+  return lists.flatMap(({ entries, path, topic }) =>
+    paginateEntries(entries, path).map((page) => ({
+      params: { page: page.path.slice(base.length, -1) || undefined },
+      props: { page, topic },
+    })),
+  );
+}
+
+interface Props {
+  page: EntryPage<Project>;
+  topic?: CollectionEntry<'githubTopics'>;
+}
+
+const { page, topic } = Astro.props;
+const section = topic?.data.title ?? 'GitHub';
+const title =
+  page.current === 1 ? section : `${section} · Page ${page.current}`;
+---
+
+<SiteLayout
+  app="github"
+  title={title}
+  description={
+    topic?.data.description ??
+    '了解一个项目能解决什么问题，以及设计其他产品或实现功能时，哪些做法值得借鉴、需要哪些前提。'
+  }
+  pagination={page}
+>
+  <header class="blog-heading" lang={topic?.data.lang ?? 'zh-CN'}>
+    <h1>{topic?.data.title ?? 'GitHub 项目参考'}</h1>
+    {topic && <p>{topic.data.description}</p>}
+  </header>
+  {page.entries.length ? (
+    <ArticleList
+      entries={page.entries}
+      hrefFor={projectHref}
+      showDescriptions
+    />
+  ) : (
+    <p>No project references yet.</p>
+  )}
+</SiteLayout>

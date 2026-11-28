@@ -1,5 +1,15 @@
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function topicId(entry: string): string {
+  const id = entry.slice(0, -3);
+  if (!entry.endsWith('.md') || !slugPattern.test(id)) {
+    throw new Error(
+      `Expected a topic at <slug>.md with a lowercase, hyphenated name. Found ${entry}`,
+    );
+  }
+  return id;
+}
+
 export function postId(entry: string): string {
   const parts = entry.split('/');
   const filename = parts.at(-1) ?? '';
@@ -22,11 +32,18 @@ export function postId(entry: string): string {
 
 export function libraryId(
   entry: string,
-  collection: 'papers' | 'prompts',
+  collection: 'papers' | 'prompts' | 'github',
 ): string {
   const id = entry.slice(0, -3);
+  if (collection === 'github' && id === 'topics') {
+    throw new Error('GitHub reserves the slug "topics" for its topic index.');
+  }
   if (!entry.endsWith('.md') || !slugPattern.test(id) || id === 'index') {
-    const label = collection === 'papers' ? 'paper note' : 'prompt collection';
+    const label = {
+      papers: 'paper note',
+      prompts: 'prompt collection',
+      github: 'GitHub project reference',
+    }[collection];
     throw new Error(
       `Expected a ${label} at <slug>.md with a lowercase, hyphenated name. Found ${entry}`,
     );

@@ -9,6 +9,7 @@ export type IconName =
   | 'document'
   | 'newspaper'
   | 'papers'
+  | 'github'
   | 'prompts'
   | 'notes'
   | 'terminal'
@@ -68,6 +69,7 @@ export interface MenuGroup {
 
 export interface DialogOptions {
   title: string;
+  icon?: ReactNode;
   message?: ReactNode;
   input?: { label: string; value?: string };
   buttons?: {

@@ -1,6 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
-import { briefId, libraryId, postId } from '../src/lib/content-paths.ts';
+import {
+  briefId,
+  libraryId,
+  postId,
+  topicId,
+} from '../src/lib/content-paths.ts';
 
 const base = process.argv[2];
 if (!base) throw new Error('Pass the Git base revision to check.');
@@ -22,25 +27,31 @@ const changes = execFileSync(
 
 function contentRoute(file, legacySource = false) {
   const [folder, collection, ...parts] = file.split('/');
-  if (
-    folder !== 'content' ||
-    (collection !== 'posts' &&
-      collection !== 'briefs' &&
-      collection !== 'papers' &&
-      collection !== 'prompts') ||
-    parts.includes('assets') ||
-    !/\.md$/i.test(file)
-  )
+  if (folder !== 'content' || parts.includes('assets') || !/\.md$/i.test(file))
     return;
 
+  if (
+    collection === 'topics' ||
+    (collection === 'github' && parts[0] === 'topics')
+  ) {
+    topicId((collection === 'topics' ? parts : parts.slice(1)).join('/'));
+    // A valid topic only gets a page once an entry uses it.
+    return;
+  }
+
   let entry = parts.join('/');
-  if (collection === 'papers' || collection === 'prompts')
+  if (
+    collection === 'papers' ||
+    collection === 'prompts' ||
+    collection === 'github'
+  )
     return `${collection}/${libraryId(entry, collection)}`;
   if (collection === 'posts') {
     if (legacySource && parts.length === 2 && parts[1] === 'index.md')
       entry = `${parts[0]}.md`;
     return `posts/${postId(entry)}`;
   }
+  if (collection !== 'briefs') return;
 
   if (legacySource && parts.length === 4 && parts[3] === 'index.md') {
     const [year, month, day] = parts;

@@ -62,14 +62,14 @@ export function createDesktopMenus(
       action: app.onLaunch ?? (() => api.openApp(app.id)),
     }));
   const aboutItems: MenuItem[] = props.onAbout
-    ? [{ label: 'About This Desktop…', action: props.onAbout }]
+    ? [{ label: 'About', action: props.onAbout }]
     : [];
-  const helpItems: MenuItem[] = [
-    ...(props.onHelp
-      ? [{ label: props.helpLabel ?? 'Help', action: props.onHelp }]
-      : []),
-    ...aboutItems,
-  ];
+  const helpItems: MenuItem[] = props.onHelp
+    ? [
+        { label: props.helpLabel ?? 'Help', action: props.onHelp },
+        ...aboutItems,
+      ]
+    : [];
   const defaults: MenuGroup[] = [
     {
       id: 'desktop',

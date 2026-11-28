@@ -1115,6 +1115,7 @@ a {
   background: transparent;
 }
 .p9-dialog {
+  font-family: var(--p9-font);
   width: 390px;
   max-width: calc(100vw - 24px);
   max-height: calc(var(--p9-viewport-height, 100dvh) - 52px);
@@ -1145,10 +1146,12 @@ a {
   min-width: 0;
 }
 .p9-dialog-message {
-  margin-bottom: 14px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   user-select: text;
+}
+.p9-dialog-message:not(:last-child) {
+  margin-bottom: 14px;
 }
 .p9-dialog-copy .p9-field-label {
   align-items: flex-start;
@@ -1175,16 +1178,19 @@ a {
     inset -1px -1px #888,
     1px 1px #262626;
 }
-.p9-dialog-alert .p9-dialog-header,
-.p9-dialog-confirm .p9-dialog-header {
+.p9-dialog-alert {
+  width: 352px;
+}
+.p9-dialog-copy .p9-dialog-header {
   border: 0;
   box-shadow: none;
   text-align: left;
-  padding: 16px 16px 0 64px;
+  padding: 0;
+  margin-bottom: 6px;
 }
 .p9-dialog-alert .p9-dialog-main,
 .p9-dialog-confirm .p9-dialog-main {
-  padding-top: 8px;
+  padding-block: 16px 8px;
 }
 .p9-dialog-input .p9-dialog-header {
   background: repeating-linear-gradient(to bottom, #fff 0 1px, #ddd 1px 3px);
@@ -1193,9 +1199,6 @@ a {
     1px 0 #ddd,
     0 -1px #ddd,
     0 1px #ddd;
-}
-.p9-dialog-input .p9-dialog-main > .p9-pixel-icon {
-  display: none;
 }
 @media (max-width: 599px) {
   .p9-menubar > button {

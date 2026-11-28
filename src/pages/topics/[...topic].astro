@@ -1,22 +1,24 @@
 ---
-import PostList from '../../components/PostList.astro';
+import ArticleList from '../../components/ArticleList.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { paginatePosts, readBlog, topicHref } from '../../lib/blog';
-import type { BlogTopic, PostPage } from '../../lib/blog';
+import type { CollectionEntry } from 'astro:content';
+import { postHref, readBlog, type BlogPost } from '../../lib/blog';
+import { topicHref, topicIndexes } from '../../lib/topics';
+import { paginateEntries, type EntryPage } from '../../lib/pagination';
 
 export async function getStaticPaths() {
   const { topics } = await readBlog();
-  return topics.flatMap((topic) =>
-    paginatePosts(topic.posts, topicHref(topic.id)).map((page) => ({
-      params: { topic: page.path.slice('/topics/'.length, -1) },
+  return topics.flatMap(({ topic, entries }) =>
+    paginateEntries(entries, topicHref(topic)).map((page) => ({
+      params: { topic: page.path.slice(topicIndexes.blog.length, -1) },
       props: { topic, page },
     })),
   );
 }
 
 interface Props {
-  topic: BlogTopic;
-  page: PostPage;
+  topic: CollectionEntry<'topics'>;
+  page: EntryPage<BlogPost>;
 }
 
 const { topic, page } = Astro.props;
@@ -34,5 +36,5 @@ const title =
   <header class="blog-heading">
     <h1 lang={topic.data.lang}>{topic.data.title}</h1>
   </header>
-  <PostList posts={page.posts} />
+  <ArticleList entries={page.entries} hrefFor={postHref} />
 </SiteLayout>

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { constants } from 'node:fs';
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
@@ -46,6 +46,31 @@ test(
         filter: (source) => !caches.has(source),
       }),
     ]);
+
+    // Include a slug shared with Blog and enough projects to fill a second page.
+    const projectSlugs = [
+      'published-note',
+      ...Array.from({ length: 9 }, (_, index) => `project-${index + 1}`),
+    ];
+    for (const slug of projectSlugs) {
+      const topics =
+        slug === 'project-1' ? '[research, research]' : '[research]';
+      await writeFile(
+        new URL(`content/github/${slug}.md`, root),
+        `---
+title: Project ${slug}
+description: Project reference.
+lang: en
+publishedAt: '2026-11-01'
+topics: ${topics}
+sources:
+  - label: Example
+    url: https://example.com/project
+    revision: v1
+---
+`,
+      );
+    }
 
     const require = createRequire(new URL('package.json', root));
     const astroPackage = pathToFileURL(require.resolve('astro/package.json'));
@@ -94,6 +119,10 @@ test(
         readPage(topicPath),
         readPage(articlePath),
       ]);
+      const blogToolbar =
+        home.match(
+          /<nav\b[^>]*aria-label="Blog navigation"[^>]*>[\s\S]*?<\/nav>/,
+        )?.[0] ?? '';
 
       await t.test(
         'Desk starts with its Control Strip shortcuts expanded',
@@ -201,6 +230,126 @@ test(
       });
 
       await t.test(
+        'GitHub has its own window, paginated project library and reading pages',
+        async () => {
+          const projectPath = '/github/temporal-worker-restart/';
+          const [library, secondPage, document, sharedSlug] = await Promise.all(
+            [
+              readPage('/github/'),
+              readPage('/github/page/2/'),
+              readPage(projectPath),
+              readPage('/github/published-note/'),
+            ],
+          );
+          assert.match(home, /data-icon-id="github" aria-label="GitHub"/);
+          assert.match(
+            blogToolbar,
+            /href="\/github\/"[^>]*data-desk-app="github"/,
+          );
+          assert.doesNotMatch(
+            blogToolbar,
+            /href="https:\/\/github\.com\/rcyw\/?"/,
+          );
+          for (const html of [home, topics, topic, article]) {
+            assert.doesNotMatch(
+              html,
+              /工作流如何接续|\/github\/temporal-worker-restart\//,
+            );
+          }
+          assert.match(library, /class="p9-window-title">GitHub<\/span>/);
+          assert.match(library, /aria-label="GitHub navigation"/);
+          assert.ok(library.includes(`href="${projectPath}"`));
+          assert.match(library, /<p>从运行历史跟踪一次恢复。<\/p>/);
+          assert.ok(library.includes('href="/github/page/2/" rel="next"'));
+          assert.ok(secondPage.includes('href="/github/" rel="prev"'));
+          assert.ok(secondPage.includes('href="/github/published-note/"'));
+          for (const html of [library, secondPage]) {
+            assert.ok(!html.includes(`href="${articlePath}"`));
+          }
+          assert.match(
+            sharedSlug,
+            /<h1 id="article-title">Project published-note<\/h1>/,
+          );
+          assert.match(document, /<title>工作流如何接续 — GitHub<\/title>/);
+          assert.ok(
+            document.includes(`href="https://rcyw.github.io${projectPath}"`),
+          );
+          assert.ok(document.includes('href="/github/"'));
+          assert.doesNotMatch(document, /href="\/topics\//);
+          assert.match(document, /Repository Research/);
+          assert.match(document, /data-language="mermaid"/);
+          await readPage('/posts/project-1/', 404);
+        },
+      );
+
+      await t.test(
+        'GitHub topics keep their own definitions, counts, pages and article links',
+        async () => {
+          const base = '/github/topics/';
+          const research = base + 'research/';
+          const workflow = base + 'workflow-systems/';
+          const project = '/github/temporal-worker-restart/';
+          const [index, first, next, single, detail] = await Promise.all([
+            readPage(base),
+            readPage(research),
+            readPage(research + 'page/2/'),
+            readPage(workflow),
+            readPage(project),
+          ]);
+          assert.ok(index.includes('aria-label="GitHub navigation"'));
+          assert.match(
+            index,
+            /href="\/github\/topics\/"[^>]*aria-current="page"/,
+          );
+          const rows = [
+            ...index.matchAll(
+              /<a class="topic-preview" href="([^"]+)">([\s\S]*?)<\/a>/g,
+            ),
+          ];
+          assert.deepEqual(
+            rows.map((row) => row[1]),
+            [workflow, research],
+          );
+          assert.match(index, /class="topic-count-heading">Projects<\/span>/);
+          assert.match(
+            rows[0][2],
+            /\b1\s*<span class="visually-hidden">\s*project\s*<\/span>/,
+          );
+          assert.match(
+            rows[1][2],
+            /\b11\s*<span class="visually-hidden">\s*projects\s*<\/span>/,
+          );
+          assert.match(
+            first,
+            /href="\/github\/topics\/"[^>]*aria-current="location"/,
+          );
+          assert.ok(first.includes(`href="${research}page/2/" rel="next"`));
+          assert.ok(next.includes(`href="${research}" rel="prev"`));
+          assert.ok(next.includes('href="/github/published-note/"'));
+          assert.ok(first.includes(`href="${project}"`));
+          assert.ok(single.includes(`href="${project}"`));
+          assert.equal((single.match(/class="post-preview"/g) ?? []).length, 1);
+          for (const path of [base, workflow, research])
+            assert.ok(detail.includes(`href="${path}"`));
+          for (const html of [index, first, next, single, detail]) {
+            assert.doesNotMatch(
+              html,
+              /href="\/topics\/|href="\/posts\/|Unused Project Topic/,
+            );
+          }
+          for (const html of [topics, topic, article]) {
+            assert.doesNotMatch(
+              html,
+              /Repository Research|Workflow Systems|href="\/github\/topics\//,
+            );
+          }
+          await readPage(base + 'unused/', 404);
+          await readPage(base + 'empty-topic/', 404);
+          await readPage('/topics/workflow-systems/', 404);
+        },
+      );
+
+      await t.test(
         'the Blog toolbar opens AI Brief and its latest issue has a reading page',
         async () => {
           const [brief, issue] = await Promise.all([
@@ -208,10 +357,7 @@ test(
             readPage(latestBriefPath),
           ]);
 
-          const toolbar = home.match(
-            /<nav\b[^>]*aria-label="Blog navigation"[^>]*>[\s\S]*?<\/nav>/,
-          )?.[0];
-          assert.ok(toolbar?.includes('href="/brief/"'));
+          assert.ok(blogToolbar.includes('href="/brief/"'));
           assert.equal(home.match(/<a\b[^>]*href="\/brief\/"/g)?.length, 1);
           assert.doesNotMatch(home, /Latest Issue|href="\/brief\/2026-/);
 
@@ -322,10 +468,67 @@ test(
       await server.stop();
     }
 
+    await t.test('a misplaced GitHub topic fails the build', async () => {
+      const folder = new URL('content/github/topics/nested/', root);
+      await mkdir(folder);
+      await cp(
+        new URL('content/github/topics/research.md', root),
+        new URL('research.md', folder),
+      );
+      try {
+        await assert.rejects(build(), ({ stderr }) => {
+          assert.match(stderr, /Found nested\/research\.md/);
+          return true;
+        });
+      } finally {
+        await rm(folder, { recursive: true });
+      }
+    });
+
+    await t.test(
+      'a GitHub project must identify the repository version it covers',
+      async () => {
+        const file = new URL('content/github/project-2.md', root);
+        const markdown = await readFile(file, 'utf8');
+        await writeFile(file, markdown.replace('    revision: v1\n', ''));
+        try {
+          await assert.rejects(build(), ({ stderr }) => {
+            assert.match(stderr, /Include a repository URL and its revision/);
+            return true;
+          });
+        } finally {
+          await writeFile(file, markdown);
+        }
+      },
+    );
+
+    await t.test(
+      'a project must reference at least one topic from the GitHub catalog',
+      async () => {
+        const file = new URL('content/github/project-2.md', root);
+        const markdown = await readFile(file, 'utf8');
+        try {
+          for (const [references, diagnostic] of [
+            ['[]', /topics/],
+            ['[empty-topic]', /references an unknown topic: empty-topic/],
+          ]) {
+            await writeFile(file, markdown.replace('[research]', references));
+            await assert.rejects(build(), ({ stderr }) => {
+              assert.match(stderr, diagnostic);
+              return true;
+            });
+          }
+        } finally {
+          await writeFile(file, markdown);
+        }
+      },
+    );
+
     for (const [path, value] of [
       ['posts/engineering/published-note.md', 'true'],
       ['briefs/2026/11/2026-11-18.md', 'false'],
       ['papers/local-summary-retrieval.md', 'null'],
+      ['github/temporal-worker-restart.md', 'true'],
     ]) {
       await t.test(`the build rejects draft: ${value} in ${path}`, async () => {
         const file = new URL(`content/${path}`, root);

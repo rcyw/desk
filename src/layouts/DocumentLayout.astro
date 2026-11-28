@@ -1,6 +1,5 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { topicHref } from '../lib/blog';
+import { topicHref, topicIndexes, type Topic } from '../lib/topics';
 import { deskApps } from '../lib/desk-apps';
 import { PixelIcon } from '../platinum';
 import ReadingControls from '../components/ReadingControls.astro';
@@ -12,9 +11,9 @@ interface Props {
   description: string;
   lang: 'zh-CN' | 'en';
   kind: 'article' | 'note';
-  topic?: CollectionEntry<'topics'>;
+  topic?: Topic;
   issueDate?: string;
-  library?: 'papers' | 'prompts';
+  library?: 'papers' | 'prompts' | 'github';
 }
 
 const { title, description, lang, kind, topic, issueDate, library } =
@@ -63,6 +62,11 @@ const backLabel = library || issueDate ? app.label : 'Home';
           <a class="p9-button surface-button" href={app.entryPath}>
             <span aria-hidden="true">←</span> {backLabel}
           </a>
+          {library === 'github' && (
+            <a class="document-toolbar-link" href={topicIndexes.github}>
+              Topics
+            </a>
+          )}
           {issueDate && (
             <a
               class="document-toolbar-link"
@@ -74,7 +78,7 @@ const backLabel = library || issueDate ? app.label : 'Home';
           {topic && (
             <a
               class="document-folder"
-              href={topicHref(topic.id)}
+              href={topicHref(topic)}
               lang={topic.data.lang}
             >
               <PixelIcon name="folder" size={16} />

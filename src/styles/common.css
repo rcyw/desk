@@ -58,6 +58,10 @@
   transform: none;
 }
 
+.p9-dialog-message a {
+  color: var(--p9-link);
+}
+
 .blog-toolbar,
 .document-toolbar {
   display: flex;
