@@ -34,6 +34,8 @@ jobs:
       - run: pnpm check
       - run: pnpm build
       - run: pnpm test
+      - run: pnpm exec playwright install --with-deps --only-shell chromium webkit
+      - run: pnpm test:pwa
       - name: Check that changed content has published pages
         if: >-
           github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)

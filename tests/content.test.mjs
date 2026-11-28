@@ -23,6 +23,7 @@ test(
 
     const projectFiles = [
       'astro.config.mjs',
+      'scripts/build-offline-shell.mjs',
       'package.json',
       'tsconfig.json',
       'src',
