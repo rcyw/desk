@@ -41,7 +41,7 @@ pnpm lint
 pnpm check
 pnpm build
 pnpm test
-pnpm exec playwright install --with-deps chromium webkit
+pnpm exec playwright install --with-deps --only-shell chromium webkit
 pnpm test:pwa
 ```
 
