@@ -1,3 +1,4 @@
+import { sitePath } from './site-path';
 import type { IconName } from '../platinum/types';
 
 export const siteName = 'Wayne’s Desk';
@@ -26,7 +27,7 @@ interface DeskAppConfig {
 export const deskApps = {
   blog: {
     label: 'Blog',
-    entryPath: '/',
+    entryPath: sitePath('/'),
     mainId: 'main-content',
     icon: 'notes',
     width: 1064,
@@ -36,7 +37,7 @@ export const deskApps = {
   },
   brief: {
     label: 'AI Brief',
-    entryPath: '/brief/',
+    entryPath: sitePath('/brief/'),
     mainId: 'brief-content',
     icon: 'newspaper',
     width: 912,
@@ -46,7 +47,7 @@ export const deskApps = {
   },
   papers: {
     label: papersName,
-    entryPath: '/papers/',
+    entryPath: sitePath('/papers/'),
     mainId: 'papers-content',
     icon: 'papers',
     width: 912,
@@ -56,7 +57,7 @@ export const deskApps = {
   },
   prompts: {
     label: promptsName,
-    entryPath: '/prompts/',
+    entryPath: sitePath('/prompts/'),
     mainId: 'prompts-content',
     icon: 'prompts',
     width: 880,
@@ -66,7 +67,7 @@ export const deskApps = {
   },
   github: {
     label: 'GitHub',
-    entryPath: '/github/',
+    entryPath: sitePath('/github/'),
     mainId: 'github-content',
     icon: 'github',
     width: 960,

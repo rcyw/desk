@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../lib/site-path';
 import { ClientRouter } from 'astro:transitions';
 import { deskApps, siteName } from '../lib/desk-apps';
 import chicagoFont from '../platinum/fonts/ChicagoKare-Regular.woff2?url';
@@ -55,10 +56,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     {robots && <meta name="robots" content={robots} />}
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href={sitePath('/favicon.svg')} />
+    <link rel="manifest" href={sitePath('/manifest.webmanifest')} />
     <meta name="apple-mobile-web-app-title" content="Desk" />
-    <link rel="apple-touch-icon" href="/icons/desk-180.png" />
+    <link rel="apple-touch-icon" href={sitePath('/icons/desk-180.png')} />
     {[chicagoFont, interRegular, interSemiBold].map((font) => (
       <link
         rel="preload"
@@ -70,9 +71,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     ))}
     {surface === 'desktop' && <ClientRouter fallback="swap" />}
     <script>
+      import { sitePath } from '../lib/site-path';
+
       if (import.meta.env.PROD && 'serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('/desk-sw.js', { updateViaCache: 'none' })
+          .register(sitePath('/desk-sw.js'), { updateViaCache: 'none' })
           .catch((error) =>
             console.warn('Unable to register Desk offline support.', error),
           );

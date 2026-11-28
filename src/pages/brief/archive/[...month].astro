@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../../../lib/site-path';
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import { briefHref, readBriefs } from '../../../lib/briefs';
 import type { Brief } from '../../../lib/briefs';
@@ -51,7 +52,7 @@ const monthSteps = [
             month ? (
               <a
                 class="p9-button surface-button brief-month-step"
-                href={`/brief/archive/${month}/`}
+                href={sitePath(`/brief/archive/${month}/`)}
                 aria-label={label}
                 title={label}
                 data-month-direction={direction}
@@ -74,7 +75,7 @@ const monthSteps = [
               {months.map((id) => (
                 <li>
                   <a
-                    href={`/brief/archive/${id}/`}
+                    href={sitePath(`/brief/archive/${id}/`)}
                     aria-current={id === month ? 'date' : undefined}
                   >
                     <time datetime={id}>{id}</time>

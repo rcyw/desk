@@ -13,7 +13,7 @@ sources:
 
 Starship 是一个用 Rust 编写的跨 Shell 提示符。开发者可以给 Bash、Zsh、Fish、PowerShell 等支持的 Shell 使用同一套提示符配置，让当前目录、版本控制状态、语言版本或上一条命令的结果出现在下一次输入之前。Shell 知道刚刚发生了什么，Starship 把这些信息和当前目录里能查到的事实组合成一行文字，终端负责显示。[项目定位](https://github.com/starship/starship/blob/622c83e8061318c1e24937a69f7a697ea00e0ef8/README.md) · [各 Shell 的初始化入口](https://github.com/starship/starship/blob/622c83e8061318c1e24937a69f7a697ea00e0ef8/src/init/mod.rs)
 
-以同事轮流维护两个工具为例，一个是 Node.js 项目，一个目录里只有会议纪要。他希望在前者看到当前 Node 版本，版本不满足项目要求时有明显提示；进入会议纪要目录后，这一段应当消失。团队若主要想统一这类提示，可以共享 Starship 配置。若还要管理 Zsh 插件、别名和补全的装载顺序，则属于另一层工作。[Node.js 模块与用例](https://github.com/starship/starship/blob/622c83e8061318c1e24937a69f7a697ea00e0ef8/src/modules/nodejs.rs) · [Oh My Zsh 的配置装载方式](/github/ohmyzsh-ohmyzsh/)
+以同事轮流维护两个工具为例，一个是 Node.js 项目，一个目录里只有会议纪要。他希望在前者看到当前 Node 版本，版本不满足项目要求时有明显提示；进入会议纪要目录后，这一段应当消失。团队若主要想统一这类提示，可以共享 Starship 配置。若还要管理 Zsh 插件、别名和补全的装载顺序，则属于另一层工作。[Node.js 模块与用例](https://github.com/starship/starship/blob/622c83e8061318c1e24937a69f7a697ea00e0ef8/src/modules/nodejs.rs) · [Oh My Zsh 的配置装载方式](../../github/ohmyzsh-ohmyzsh/)
 
 ## 一次安装接入，每次绘制重新取数
 

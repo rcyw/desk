@@ -11,7 +11,7 @@ sources:
     revision: fac5e6005b6b747889ef01193a64601bb14f53ad
 ---
 
-工作站上的 Agent 已经生成了报告，使用者离开桌面后想在手机上看看进度。文件、工具和会话历史都在工作站，为了一次查看就把整套目录、模型设置和运行环境同步到手机，既费时又容易产生两个版本。DSH Remote 选择让 **Host** 继续拥有运行环境，另一台设备充当 **Client**，通过远程接口读取历史、发送操作和查看结果。DeepSeek Harness 提供运行能力，本仓库主要提供远程接入所需的插件、客户端、协议及通信层。[项目定位与客户端范围](https://github.com/liguobao/ds-harness-remote/blob/fac5e6005b6b747889ef01193a64601bb14f53ad/README.zh.md) · [DeepSeek Harness 项目参考](/github/deepseek-ai-deepseek-harness/)
+工作站上的 Agent 已经生成了报告，使用者离开桌面后想在手机上看看进度。文件、工具和会话历史都在工作站，为了一次查看就把整套目录、模型设置和运行环境同步到手机，既费时又容易产生两个版本。DSH Remote 选择让 **Host** 继续拥有运行环境，另一台设备充当 **Client**，通过远程接口读取历史、发送操作和查看结果。DeepSeek Harness 提供运行能力，本仓库主要提供远程接入所需的插件、客户端、协议及通信层。[项目定位与客户端范围](https://github.com/liguobao/ds-harness-remote/blob/fac5e6005b6b747889ef01193a64601bb14f53ad/README.zh.md) · [DeepSeek Harness 项目参考](../../github/deepseek-ai-deepseek-harness/)
 
 ## 哪些信息需要交给服务端
 

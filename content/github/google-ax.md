@@ -12,7 +12,7 @@ sources:
     revision: 241bc4d0c682a6898da5f718a9ec84fe7c9197f9
 ---
 
-假设一个团队要在许多仓库上运行相同的兼容性检查。每个任务都要拿到正确的源码、配置和运行工具，拥有独立的执行环境，还要让操作者知道卡在环境准备还是业务检查。Google AX 为这件事提供声明式控制平面。调用方提交任务和工作区描述，AX 负责协调准备与启动，底层的 Agent Substrate 分配 Worker 并运行隔离的 Actor。任务里面可以是编码 Agent，也可以是一个普通命令。[项目定位与最小示例](https://github.com/google/ax/blob/241bc4d0c682a6898da5f718a9ec84fe7c9197f9/README.md) · [Agent Substrate 项目参考](/github/substrate-agent-workspaces/)
+假设一个团队要在许多仓库上运行相同的兼容性检查。每个任务都要拿到正确的源码、配置和运行工具，拥有独立的执行环境，还要让操作者知道卡在环境准备还是业务检查。Google AX 为这件事提供声明式控制平面。调用方提交任务和工作区描述，AX 负责协调准备与启动，底层的 Agent Substrate 分配 Worker 并运行隔离的 Actor。任务里面可以是编码 Agent，也可以是一个普通命令。[项目定位与最小示例](https://github.com/google/ax/blob/241bc4d0c682a6898da5f718a9ec84fe7c9197f9/README.md) · [Agent Substrate 项目参考](../../github/substrate-agent-workspaces/)
 
 ## 任务、工作区和模型配置有不同的拥有者
 

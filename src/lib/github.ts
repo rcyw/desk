@@ -1,8 +1,9 @@
+import { sitePath } from './site-path';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { groupTopics } from './topics';
 
 export type Project = CollectionEntry<'github'>;
-export const projectHref = (id: string) => `/github/${id}/`;
+export const projectHref = (id: string) => sitePath(`/github/${id}/`);
 
 export async function readGitHub() {
   const [projects, topics] = await Promise.all([
