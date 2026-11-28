@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../../lib/site-path';
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { promptsName } from '../../lib/desk-apps';
@@ -16,7 +17,11 @@ const prompts = (await getCollection('prompts')).sort(
     <ol class="post-list" role="list">
       {prompts.map(({ id, data }) => (
         <li>
-          <a class="post-preview" href={`/prompts/${id}/`} data-astro-reload>
+          <a
+            class="post-preview"
+            href={sitePath(`/prompts/${id}/`)}
+            data-astro-reload
+          >
             <div class="post-preview-copy" lang={data.lang}>
               <h2 class="post-preview-title">{data.title}</h2>
               <p>{data.description}</p>

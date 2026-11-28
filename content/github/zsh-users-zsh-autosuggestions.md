@@ -101,6 +101,6 @@ sequenceDiagram
 
 ## 哪些交互值得借用
 
-它适合经常重复输入命令、愿意自己确认候选的交互式 Zsh 用户。只偶尔检索长命令时，原生历史搜索已足够。Oh My Zsh 可以管理这类插件的装载，Starship 则在新命令开始前绘制提示符；三者可以承担不同工作。采用行内建议的实际成本在于每次输入后的候选计算，以及与其他包装 ZLE 动作的插件协调。关闭自动重绑可以减少提示符前的工作，但随后新增或改写的 widget 要等用户手动重绑才走新的分类。[重绑策略](https://github.com/zsh-users/zsh-autosuggestions/blob/85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5/src/start.zsh) · [Oh My Zsh 的插件装载](/github/ohmyzsh-ohmyzsh/) · [Starship 的提示符渲染](/github/starship-starship/)
+它适合经常重复输入命令、愿意自己确认候选的交互式 Zsh 用户。只偶尔检索长命令时，原生历史搜索已足够。Oh My Zsh 可以管理这类插件的装载，Starship 则在新命令开始前绘制提示符；三者可以承担不同工作。采用行内建议的实际成本在于每次输入后的候选计算，以及与其他包装 ZLE 动作的插件协调。关闭自动重绑可以减少提示符前的工作，但随后新增或改写的 widget 要等用户手动重绑才走新的分类。[重绑策略](https://github.com/zsh-users/zsh-autosuggestions/blob/85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5/src/start.zsh) · [Oh My Zsh 的插件装载](../../github/ohmyzsh-ohmyzsh/) · [Starship 的提示符渲染](../../github/starship-starship/)
 
 给 SQL 编辑器设计行内建议时，先把“实际查询”和“淡色补全”建成两份状态，用只读的测试文本验证。输入 `SELECT` 并让系统预览 ` COUNT(*) FROM demo`，直接提交时检查捕获到的文本仍只有 `SELECT`。返回编辑器，用按词接受动作检查只增加光标经过的文本，再全量接受并核对整条查询。最后对旧前缀人为延迟响应，在新前缀已显示候选之后才交付旧结果，验证旧结果被舍弃。这里检验的是提交边界、局部接受和异步一致性，单靠对比屏幕截图无法判断前两项是否真的生效。

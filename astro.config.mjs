@@ -22,6 +22,7 @@ const notoFontDisplay = {
 
 export default defineConfig({
   site: 'https://rcyw.github.io',
+  base: '/desk',
   output: 'static',
   trailingSlash: 'always',
   integrations: [react()],

@@ -13,7 +13,7 @@ sources:
 
 维护者在一个 GitHub Issue 里请 Agent 修订安装文档。同事补充了适用版本，CI 机器人发来状态，另一位成员在飞书里引用了原讨论。团队想得到的是一份可审阅的修订和一条回到原线程的结果，而不是让每个渠道各启动一个 Agent，再请人辨认哪份工作算数。
 
-`dsh-superagent` 是为**单个 GitHub 仓库**编写的 DeepSeek Harness Bundle，可以加接飞书。Harness 提供会话、模型与工具运行时，这个 Bundle 实现来源监听、工作受理、仓库执行、回复和监管面板。作者把团队成员的注意力视作稀缺资源：有明确请求或成文规则才开工，需要人决定或已有可用结果时才出声。本文依据公开研究原型，作者说明其实现与内部版本和研究文章中的设想有差异。[项目定位](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/6337fc823ce20251c8de8085948165c81aaa701e/README.md) · [团队的设计出发点](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/6337fc823ce20251c8de8085948165c81aaa701e/docs/000-philosophy.md) · [DeepSeek Harness 的组件与边界](/github/deepseek-ai-deepseek-harness/)
+`dsh-superagent` 是为**单个 GitHub 仓库**编写的 DeepSeek Harness Bundle，可以加接飞书。Harness 提供会话、模型与工具运行时，这个 Bundle 实现来源监听、工作受理、仓库执行、回复和监管面板。作者把团队成员的注意力视作稀缺资源：有明确请求或成文规则才开工，需要人决定或已有可用结果时才出声。本文依据公开研究原型，作者说明其实现与内部版本和研究文章中的设想有差异。[项目定位](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/6337fc823ce20251c8de8085948165c81aaa701e/README.md) · [团队的设计出发点](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/6337fc823ce20251c8de8085948165c81aaa701e/docs/000-philosophy.md) · [DeepSeek Harness 的组件与边界](../../github/deepseek-ai-deepseek-harness/)
 
 ## 从来源到交付，谁能改变哪类事实
 

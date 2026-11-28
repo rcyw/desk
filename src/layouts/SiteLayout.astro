@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../lib/site-path';
 import DeskSurface from '../components/DeskSurface.astro';
 import ReadingControls from '../components/ReadingControls.astro';
 import type { EntryPage } from '../lib/pagination';
@@ -21,8 +22,8 @@ const { app = 'blog', title, description, robots, pagination } = Astro.props;
 const pathname = Astro.url.pathname;
 const { label, mainId, height } = deskApps[app];
 const appLinks = deskAppIds.filter((id) => id !== app);
-const home = pathname === '/';
-const homeArchive = pathname.startsWith('/page/');
+const home = pathname === sitePath('/');
+const homeArchive = pathname.startsWith(sitePath('/page/'));
 const desktopHeight =
   app === 'blog'
     ? Math.max(height, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
@@ -44,7 +45,7 @@ function sectionLink(label: string, href: string, descendants = href): NavLink {
 }
 const links: Record<DeskApp, NavLink[]> = {
   blog: [
-    sectionLink('Home', deskApps.blog.entryPath, '/page/'),
+    sectionLink('Home', deskApps.blog.entryPath, sitePath('/page/')),
     sectionLink('Topics', topicIndexes.blog),
   ],
   brief: [
@@ -53,7 +54,7 @@ const links: Record<DeskApp, NavLink[]> = {
       href: deskApps.brief.entryPath,
       current: pathname === deskApps.brief.entryPath ? 'page' : undefined,
     },
-    sectionLink('Archive', '/brief/archive/'),
+    sectionLink('Archive', sitePath('/brief/archive/')),
   ],
   papers: [
     {

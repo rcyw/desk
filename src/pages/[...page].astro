@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../lib/site-path';
 import ArticleList from '../components/ArticleList.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { postHref, readBlog } from '../lib/blog';
@@ -7,8 +8,9 @@ import { paginateEntries, type EntryPage } from '../lib/pagination';
 
 export async function getStaticPaths() {
   const { posts } = await readBlog();
-  return paginateEntries(posts, '/').map((page) => ({
-    params: { page: page.path === '/' ? undefined : page.path.slice(1, -1) },
+  const base = sitePath('/');
+  return paginateEntries(posts, base).map((page) => ({
+    params: { page: page.path.slice(base.length, -1) || undefined },
     props: { page },
   }));
 }

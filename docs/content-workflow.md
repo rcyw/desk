@@ -33,6 +33,6 @@ Blog 和 Papers 共用 `content/topics/<id>.md`，GitHub 项目参考使用 `con
 1. 在任务分支用 `pnpm dev` 本地预览稿件直链、相应的专题或日期归档入口、配图和 Mermaid。提交前格式化改动的文件并运行[仓库验证](../README.md#verification)。
 2. 未完成或暂不宜公开的稿件留在本地或私有位置。构建会拒绝带 `draft` 字段的稿件。旧稿准备好公开后再移除该字段并提交。稿件可发布且已获授权时开普通 PR，写清整理目标、稿件路径、来源版本和验证结果，时讯附上统计窗口。需要提前征求公开意见时可用 GitHub Draft PR，完成后转为 Ready for review。公开仓库的 Draft PR 和分支源文件均可读。
 3. CI 检查新增或修改的稿件能否生成可发布页面，为通过检查的就绪 PR 保留构建产物。按最终 diff 核对关键陈述的出处、工程推断和待验证结论。通读受影响的稿件，确认读者能仅凭正文说清问题、主要结论、依据和适用条件。正文或来源有实质变化时重新核对。
-4. 审阅和 CI 通过后，维护者用 Squash and merge 合并到 `main`。在 `rcyw/desk` 启用 `PAGES_AUTO_PUBLISH` 时，最新的 `main` 提交通过推送 CI 后会自动触发 GitHub Pages 部署。[部署工作流](../.github/workflows/dispatch-pages.yml)
+4. 审阅和 CI 通过后，维护者用 Squash and merge 合并到 `main`。每次推送到 `main`，Desk 自己的 CI 会检查并部署同一份静态产物到 `https://rcyw.github.io/desk/`。文章之间使用相对于公开文章 URL 的链接。[部署工作流](../.github/workflows/ci.yml)
 
 Bot 可根据审阅意见修稿、重跑检查并更新 PR。常规栏目如需自动合并，先约定来源、发布范围和独立审阅者，再让 GitHub 在必需的审阅和 CI 通过后执行合并。

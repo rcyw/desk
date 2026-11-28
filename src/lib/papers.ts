@@ -1,9 +1,10 @@
+import { sitePath } from './site-path';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 export type Paper = CollectionEntry<'papers'>;
 
-export const paperHref = (id: string) => `/papers/${id}/`;
+export const paperHref = (id: string) => sitePath(`/papers/${id}/`);
 
 export async function readPapers(): Promise<{
   papers: Paper[];

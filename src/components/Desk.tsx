@@ -1,3 +1,4 @@
+import { sitePath } from '../lib/site-path';
 import { navigate } from 'astro:transitions/client';
 import {
   createContext,
@@ -176,7 +177,9 @@ export function Desk({ page }: { page: DeskPage }) {
   function showAbout() {
     void desktop.current?.dialog({
       title: siteName,
-      icon: <img src="/favicon.svg" alt="" width={32} height={32} />,
+      icon: (
+        <img src={sitePath('/favicon.svg')} alt="" width={32} height={32} />
+      ),
       message: (
         <>
           Personal writing and project notes.
@@ -254,7 +257,10 @@ export function Desk({ page }: { page: DeskPage }) {
       ],
       brief: [
         { label: 'Latest', action: () => openApplication('brief') },
-        { label: 'Archive', action: () => navigate('/brief/archive/') },
+        {
+          label: 'Archive',
+          action: () => navigate(sitePath('/brief/archive/')),
+        },
       ],
       papers: [{ label: 'Library', action: () => openApplication('papers') }],
       prompts: [{ label: 'Library', action: () => openApplication('prompts') }],
@@ -306,7 +312,7 @@ export function Desk({ page }: { page: DeskPage }) {
           onOpen: () => launchApplication(app),
         }))}
         systemMenuIcon={
-          <img src="/favicon.svg" alt="" width={16} height={16} />
+          <img src={sitePath('/favicon.svg')} alt="" width={16} height={16} />
         }
         desktopDecoration={
           showPaperBird && (

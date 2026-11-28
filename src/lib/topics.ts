@@ -1,7 +1,11 @@
+import { sitePath } from './site-path';
 import type { CollectionEntry } from 'astro:content';
 
 export type Topic = CollectionEntry<'topics' | 'githubTopics'>;
-export const topicIndexes = { blog: '/topics/', github: '/github/topics/' };
+export const topicIndexes = {
+  blog: sitePath('/topics/'),
+  github: sitePath('/github/topics/'),
+};
 
 export function topicHref(topic: Topic) {
   const base =

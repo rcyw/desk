@@ -92,11 +92,11 @@ sources:
       server: { host: '127.0.0.1', port: 0 },
     });
     const origin = `http://127.0.0.1:${server.port}`;
-    const articlePath = '/posts/published-note/';
-    const topicPath = '/topics/research/';
-    const latestBriefPath = '/brief/2026-11-18/';
-    const olderBriefPath = '/brief/2026-10-20/';
-    const paperPath = '/papers/local-summary-retrieval/';
+    const articlePath = '/desk/posts/published-note/';
+    const topicPath = '/desk/topics/research/';
+    const latestBriefPath = '/desk/brief/2026-11-18/';
+    const olderBriefPath = '/desk/brief/2026-10-20/';
+    const paperPath = '/desk/papers/local-summary-retrieval/';
 
     async function readPage(path, status = 200) {
       const response = await fetch(new URL(path, origin), {
@@ -114,8 +114,8 @@ sources:
 
     try {
       const [home, topics, topic, article] = await Promise.all([
-        readPage('/'),
-        readPage('/topics/'),
+        readPage('/desk/'),
+        readPage('/desk/topics/'),
         readPage(topicPath),
         readPage(articlePath),
       ]);
@@ -147,24 +147,26 @@ sources:
         async () => {
           for (const html of [home, topics, topic, article]) {
             assert.ok(
-              html.includes('rel="manifest" href="/manifest.webmanifest"'),
+              html.includes('rel="manifest" href="/desk/manifest.webmanifest"'),
             );
             assert.ok(
               html.includes('name="apple-mobile-web-app-title" content="Desk"'),
             );
             assert.ok(
               html.includes(
-                'rel="apple-touch-icon" href="/icons/desk-180.png"',
+                'rel="apple-touch-icon" href="/desk/icons/desk-180.png"',
               ),
             );
           }
 
-          const manifest = JSON.parse(await readPage('/manifest.webmanifest'));
-          assert.equal(manifest.id, '/');
+          const manifest = JSON.parse(
+            await readPage('/desk/manifest.webmanifest'),
+          );
+          assert.equal(manifest.id, './');
           assert.equal(manifest.name, 'Desk');
           assert.equal(manifest.short_name, 'Desk');
-          assert.equal(manifest.start_url, '/');
-          assert.equal(manifest.scope, '/');
+          assert.equal(manifest.start_url, './');
+          assert.equal(manifest.scope, './');
           assert.equal(manifest.display, 'standalone');
           const icons = manifest.icons.filter(
             ({ purpose }) => purpose === 'any',
@@ -179,9 +181,9 @@ sources:
           );
           for (const { src, sizes } of [
             ...manifest.icons,
-            { src: '/icons/desk-180.png', sizes: '180x180' },
+            { src: './icons/desk-180.png', sizes: '180x180' },
           ]) {
-            const icon = await readFile(new URL(`dist${src}`, root));
+            const icon = await readFile(new URL(`dist/${src}`, root));
             assert.equal(icon.toString('ascii', 1, 4), 'PNG');
             assert.equal(
               `${icon.readUInt32BE(16)}x${icon.readUInt32BE(20)}`,
@@ -189,8 +191,11 @@ sources:
             );
           }
 
-          await readPage('/desk-sw.js');
-          assert.match(await readPage('/offline.html'), /<h1>Offline<\/h1>/);
+          await readPage('/desk/desk-sw.js');
+          assert.match(
+            await readPage('/desk/offline.html'),
+            /<h1>Offline<\/h1>/,
+          );
         },
       );
 
@@ -208,7 +213,7 @@ sources:
           const imagePath = article.match(
             /<img\b(?=[^>]*\balt="Fixture diagram")[^>]*\bsrc="([^"]+)"/,
           )?.[1];
-          assert.ok(imagePath?.startsWith('/_astro/'));
+          assert.ok(imagePath?.startsWith('/desk/_astro/'));
           assert.match(await readPage(imagePath), /<svg\b/);
         },
       );
@@ -226,25 +231,25 @@ sources:
         for (const html of [home, topics, topic, article]) {
           assert.doesNotMatch(html, /Empty Topic|\/topics\/empty-topic\//);
         }
-        await readPage('/topics/empty-topic/', 404);
+        await readPage('/desk/topics/empty-topic/', 404);
       });
 
       await t.test(
         'GitHub has its own window, paginated project library and reading pages',
         async () => {
-          const projectPath = '/github/temporal-worker-restart/';
+          const projectPath = '/desk/github/temporal-worker-restart/';
           const [library, secondPage, document, sharedSlug] = await Promise.all(
             [
-              readPage('/github/'),
-              readPage('/github/page/2/'),
+              readPage('/desk/github/'),
+              readPage('/desk/github/page/2/'),
               readPage(projectPath),
-              readPage('/github/published-note/'),
+              readPage('/desk/github/published-note/'),
             ],
           );
           assert.match(home, /data-icon-id="github" aria-label="GitHub"/);
           assert.match(
             blogToolbar,
-            /href="\/github\/"[^>]*data-desk-app="github"/,
+            /href="\/desk\/github\/"[^>]*data-desk-app="github"/,
           );
           assert.doesNotMatch(
             blogToolbar,
@@ -260,9 +265,9 @@ sources:
           assert.match(library, /aria-label="GitHub navigation"/);
           assert.ok(library.includes(`href="${projectPath}"`));
           assert.match(library, /<p>从运行历史跟踪一次恢复。<\/p>/);
-          assert.ok(library.includes('href="/github/page/2/" rel="next"'));
-          assert.ok(secondPage.includes('href="/github/" rel="prev"'));
-          assert.ok(secondPage.includes('href="/github/published-note/"'));
+          assert.ok(library.includes('href="/desk/github/page/2/" rel="next"'));
+          assert.ok(secondPage.includes('href="/desk/github/" rel="prev"'));
+          assert.ok(secondPage.includes('href="/desk/github/published-note/"'));
           for (const html of [library, secondPage]) {
             assert.ok(!html.includes(`href="${articlePath}"`));
           }
@@ -274,21 +279,21 @@ sources:
           assert.ok(
             document.includes(`href="https://rcyw.github.io${projectPath}"`),
           );
-          assert.ok(document.includes('href="/github/"'));
-          assert.doesNotMatch(document, /href="\/topics\//);
+          assert.ok(document.includes('href="/desk/github/"'));
+          assert.doesNotMatch(document, /href="\/desk\/topics\//);
           assert.match(document, /Repository Research/);
           assert.match(document, /data-language="mermaid"/);
-          await readPage('/posts/project-1/', 404);
+          await readPage('/desk/posts/project-1/', 404);
         },
       );
 
       await t.test(
         'GitHub topics keep their own definitions, counts, pages and article links',
         async () => {
-          const base = '/github/topics/';
+          const base = '/desk/github/topics/';
           const research = base + 'research/';
           const workflow = base + 'workflow-systems/';
-          const project = '/github/temporal-worker-restart/';
+          const project = '/desk/github/temporal-worker-restart/';
           const [index, first, next, single, detail] = await Promise.all([
             readPage(base),
             readPage(research),
@@ -299,7 +304,7 @@ sources:
           assert.ok(index.includes('aria-label="GitHub navigation"'));
           assert.match(
             index,
-            /href="\/github\/topics\/"[^>]*aria-current="page"/,
+            /href="\/desk\/github\/topics\/"[^>]*aria-current="page"/,
           );
           const rows = [
             ...index.matchAll(
@@ -321,11 +326,11 @@ sources:
           );
           assert.match(
             first,
-            /href="\/github\/topics\/"[^>]*aria-current="location"/,
+            /href="\/desk\/github\/topics\/"[^>]*aria-current="location"/,
           );
           assert.ok(first.includes(`href="${research}page/2/" rel="next"`));
           assert.ok(next.includes(`href="${research}" rel="prev"`));
-          assert.ok(next.includes('href="/github/published-note/"'));
+          assert.ok(next.includes('href="/desk/github/published-note/"'));
           assert.ok(first.includes(`href="${project}"`));
           assert.ok(single.includes(`href="${project}"`));
           assert.equal((single.match(/class="post-preview"/g) ?? []).length, 1);
@@ -334,18 +339,18 @@ sources:
           for (const html of [index, first, next, single, detail]) {
             assert.doesNotMatch(
               html,
-              /href="\/topics\/|href="\/posts\/|Unused Project Topic/,
+              /href="\/desk\/topics\/|href="\/desk\/posts\/|Unused Project Topic/,
             );
           }
           for (const html of [topics, topic, article]) {
             assert.doesNotMatch(
               html,
-              /Repository Research|Workflow Systems|href="\/github\/topics\//,
+              /Repository Research|Workflow Systems|href="\/desk\/github\/topics\//,
             );
           }
           await readPage(base + 'unused/', 404);
           await readPage(base + 'empty-topic/', 404);
-          await readPage('/topics/workflow-systems/', 404);
+          await readPage('/desk/topics/workflow-systems/', 404);
         },
       );
 
@@ -353,13 +358,16 @@ sources:
         'the Blog toolbar opens AI Brief and its latest issue has a reading page',
         async () => {
           const [brief, issue] = await Promise.all([
-            readPage('/brief/'),
+            readPage('/desk/brief/'),
             readPage(latestBriefPath),
           ]);
 
-          assert.ok(blogToolbar.includes('href="/brief/"'));
-          assert.equal(home.match(/<a\b[^>]*href="\/brief\/"/g)?.length, 1);
-          assert.doesNotMatch(home, /Latest Issue|href="\/brief\/2026-/);
+          assert.ok(blogToolbar.includes('href="/desk/brief/"'));
+          assert.equal(
+            home.match(/<a\b[^>]*href="\/desk\/brief\/"/g)?.length,
+            1,
+          );
+          assert.doesNotMatch(home, /Latest Issue|href="\/desk\/brief\/2026-/);
 
           assert.ok(brief.includes(`href="${latestBriefPath}"`));
           assert.ok(!brief.includes(`href="${olderBriefPath}"`));
@@ -374,7 +382,7 @@ sources:
           );
           assert.match(issue, /data-language="mermaid"/);
           for (const html of [topics, topic, article]) {
-            assert.doesNotMatch(html, /href="\/brief\/2026-/);
+            assert.doesNotMatch(html, /href="\/desk\/brief\/2026-/);
           }
         },
       );
@@ -382,9 +390,9 @@ sources:
       await t.test(
         'the brief archive groups published issues by coverage month',
         async () => {
-          const olderMonthPath = '/brief/archive/2026-10/';
+          const olderMonthPath = '/desk/brief/archive/2026-10/';
           const [archive, olderMonth] = await Promise.all([
-            readPage('/brief/archive/'),
+            readPage('/desk/brief/archive/'),
             readPage(olderMonthPath),
           ]);
           assert.ok(archive.includes(`href="${latestBriefPath}"`));
@@ -392,7 +400,7 @@ sources:
           assert.ok(!archive.includes(`href="${olderBriefPath}"`));
           assert.ok(olderMonth.includes(`href="${olderBriefPath}"`));
           assert.ok(!olderMonth.includes(`href="${latestBriefPath}"`));
-          await readPage('/brief/archive/2026-12/', 404);
+          await readPage('/desk/brief/archive/2026-12/', 404);
         },
       );
 
@@ -400,11 +408,11 @@ sources:
         'Papers opens published notes with their original source and version',
         async () => {
           const [papers, note] = await Promise.all([
-            readPage('/papers/'),
+            readPage('/desk/papers/'),
             readPage(paperPath),
           ]);
           assert.match(home, /data-icon-id="papers"/);
-          assert.ok(home.includes('href="/papers/"'));
+          assert.ok(home.includes('href="/desk/papers/"'));
           assert.ok(papers.includes(`href="${paperPath}"`));
           assert.match(papers, /用局部摘要理解分层检索/);
           assert.match(papers, /Example Preprint/);
@@ -417,7 +425,7 @@ sources:
             note,
             /<h1 id="article-title">用局部摘要理解分层检索<\/h1>/,
           );
-          assert.ok(note.includes('href="/papers/"'));
+          assert.ok(note.includes('href="/desk/papers/"'));
           assert.ok(
             note.includes(
               'href="https://example.com/papers/local-summary-retrieval-v2"',
@@ -433,19 +441,19 @@ sources:
       await t.test(
         'Prompts opens an independent reading page with copyable template text',
         async () => {
-          const promptPath = '/prompts/decision-fixture/';
+          const promptPath = '/desk/prompts/decision-fixture/';
           const [library, document] = await Promise.all([
-            readPage('/prompts/'),
+            readPage('/desk/prompts/'),
             readPage(promptPath),
           ]);
           assert.match(home, /data-icon-id="prompts"/);
-          assert.ok(home.includes('href="/prompts/"'));
+          assert.ok(home.includes('href="/desk/prompts/"'));
           assert.ok(library.includes(`href="${promptPath}" data-astro-reload`));
           assert.match(library, /判断练习/);
           assert.doesNotMatch(home, /判断练习/);
           assert.match(document, /<html\b[^>]*\blang="zh-CN"/);
           assert.match(document, /<h1 id="article-title">判断练习<\/h1>/);
-          assert.ok(document.includes('href="/prompts/"'));
+          assert.ok(document.includes('href="/desk/prompts/"'));
           const template = document.match(
             /<pre\b[^>]*data-language="text"[^>]*>[\s\S]*?<\/pre>/,
           )?.[0];

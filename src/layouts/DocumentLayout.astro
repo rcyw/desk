@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../lib/site-path';
 import { topicHref, topicIndexes, type Topic } from '../lib/topics';
 import { deskApps } from '../lib/desk-apps';
 import { PixelIcon } from '../platinum';
@@ -70,7 +71,7 @@ const backLabel = library || issueDate ? app.label : 'Home';
           {issueDate && (
             <a
               class="document-toolbar-link"
-              href={`/brief/archive/${issueDate.slice(0, 7)}/`}
+              href={sitePath(`/brief/archive/${issueDate.slice(0, 7)}/`)}
             >
               Archive
             </a>

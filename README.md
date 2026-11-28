@@ -4,7 +4,7 @@
 
 Desk is a Platinum9-style web desktop built with Astro. It opens **Blog** for personal articles and their topics. **GitHub** opens a separate library of repository references for developers and agents designing products or implementing features. **AI Brief** organizes daily issues by coverage date, and **Papers** collects paper reading notes with links to the original versions. **Prompts** provides reusable instructions for working with agents.
 
-[Open Desk](https://rcyw.github.io/)
+[Open Desk](https://rcyw.github.io/desk/)
 
 Install Desk from your browser’s menu. On iPhone or iPad, use Safari’s **Add to Home Screen** and enable **Open as Web App**.
 
@@ -25,11 +25,11 @@ Use the content workflow to choose a writing guide, manage topics, and prepare e
 
 | Collection | Markdown file | Published URL |
 | --- | --- | --- |
-| Blog articles | `content/posts/<slug>.md` or `content/posts/<category>/<slug>.md` | `/posts/<slug>/` |
-| GitHub project references | `content/github/<slug>.md` | `/github/<slug>/` |
-| AI Brief daily issues | `content/briefs/YYYY/MM/YYYY-MM-DD.md` | `/brief/YYYY-MM-DD/` |
-| Paper notes | `content/papers/<slug>.md` | `/papers/<slug>/` |
-| Prompt collections | `content/prompts/<slug>.md` | `/prompts/<slug>/` |
+| Blog articles | `content/posts/<slug>.md` or `content/posts/<category>/<slug>.md` | `/desk/posts/<slug>/` |
+| GitHub project references | `content/github/<slug>.md` | `/desk/github/<slug>/` |
+| AI Brief daily issues | `content/briefs/YYYY/MM/YYYY-MM-DD.md` | `/desk/brief/YYYY-MM-DD/` |
+| Paper notes | `content/papers/<slug>.md` | `/desk/papers/<slug>/` |
+| Prompt collections | `content/prompts/<slug>.md` | `/desk/prompts/<slug>/` |
 
 ## Verification
 

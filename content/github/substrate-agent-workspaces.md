@@ -14,7 +14,7 @@ sources:
 
 一个在线开发平台给每个用户一个独立会话。用户运行一次分析，再过半小时才回来。如果始终为每个会话保留一个运行中的 Pod，大部分容量都在等待；如果直接终止进程，用户回到的可能是全新的解释器。Agent Substrate 在 Kubernetes 上给每个工作负载一个可长期寻址的 **Actor**。需要执行时，平台把 Actor 分配给已准备好的 Worker Pod；显式挂起后，状态转为快照，Worker 可以接待其他 Actor。这里的 Actor 可以是普通 HTTP 服务，也可以是需要隔离运行的 Agent。[架构与设计前提](https://github.com/agent-substrate/substrate/blob/94e0a26ac90151886a76410568aaac2664a54d90/docs/concepts/architecture.md)
 
-项目没有规定 Agent 的计划方式或模型接口。应用作者提交 OCI 工作负载定义，平台管理员提供已准备好的沙箱类型与容量，上层产品按稳定身份创建、访问或挂起实例。平台交付的是可路由、可隔离、可按所选精度恢复的执行环境。作者把 Kubernetes 用于较慢、声明式的基础设施协调，把频繁的 Actor 状态变更放在专门的控制平面，目的在于让“下一次执行”不必从排队创建新 Pod 开始。上层如 Google AX 还需描述工作任务、启动命令及业务结果。[作者的工作负载假设与分工](https://github.com/agent-substrate/substrate/blob/94e0a26ac90151886a76410568aaac2664a54d90/docs/concepts/architecture.md#L22-L67) · [上层产品 Google AX](/github/google-ax/)
+项目没有规定 Agent 的计划方式或模型接口。应用作者提交 OCI 工作负载定义，平台管理员提供已准备好的沙箱类型与容量，上层产品按稳定身份创建、访问或挂起实例。平台交付的是可路由、可隔离、可按所选精度恢复的执行环境。作者把 Kubernetes 用于较慢、声明式的基础设施协调，把频繁的 Actor 状态变更放在专门的控制平面，目的在于让“下一次执行”不必从排队创建新 Pod 开始。上层如 Google AX 还需描述工作任务、启动命令及业务结果。[作者的工作负载假设与分工](https://github.com/agent-substrate/substrate/blob/94e0a26ac90151886a76410568aaac2664a54d90/docs/concepts/architecture.md#L22-L67) · [上层产品 Google AX](../../github/google-ax/)
 
 ## 两种调度，以及一条单独的业务流量路径
 
@@ -134,6 +134,6 @@ sequenceDiagram
 
 ## 给在线开发产品划出保存边界
 
-如果会话始终繁忙，或每次请求都能从数据库快速重建状态，常驻 Pod 或无状态服务更容易运营。如果只要给多个试验保留可分支、可比对的文件树，可以参考 LayerFS。如果要求同一个可寻址的会话长期休眠，回来时连进程内存都能继续，而且已有 Kubernetes 运维能力，Agent Substrate 的预热池、稳定身份与快照精度就是直接相关的设计。[LayerFS 项目参考](/github/layerfs-workspaces/) · [Substrate 架构](https://github.com/agent-substrate/substrate/blob/94e0a26ac90151886a76410568aaac2664a54d90/docs/concepts/architecture.md)
+如果会话始终繁忙，或每次请求都能从数据库快速重建状态，常驻 Pod 或无状态服务更容易运营。如果只要给多个试验保留可分支、可比对的文件树，可以参考 LayerFS。如果要求同一个可寻址的会话长期休眠，回来时连进程内存都能继续，而且已有 Kubernetes 运维能力，Agent Substrate 的预热池、稳定身份与快照精度就是直接相关的设计。[LayerFS 项目参考](../../github/layerfs-workspaces/) · [Substrate 架构](https://github.com/agent-substrate/substrate/blob/94e0a26ac90151886a76410568aaac2664a54d90/docs/concepts/architecture.md)
 
 迁移到自己的产品时，可以先写下用户按“保存”后必须找回什么。用一份笔记、一个未落盘的变量和一次已经提交到外部数据库的修改做实验，分别执行同节点恢复、远端快照恢复和应用重新启动。前两份结果能验证选择的快照范围；第三份提醒产品团队，恢复沙箱时外部数据库仍沿着自己的历史前进。对可能重做的外部写入，应用需要单独记录业务操作身份和结果。

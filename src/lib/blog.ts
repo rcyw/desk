@@ -1,3 +1,4 @@
+import { sitePath } from './site-path';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { postId } from './content-paths';
@@ -5,7 +6,7 @@ import { groupTopics } from './topics';
 
 export type BlogPost = CollectionEntry<'posts'>;
 
-export const postHref = (entry: string) => `/posts/${postId(entry)}/`;
+export const postHref = (entry: string) => sitePath(`/posts/${postId(entry)}/`);
 
 export async function readBlog() {
   const [posts, topics] = await Promise.all([

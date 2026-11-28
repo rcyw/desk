@@ -1,8 +1,9 @@
-const cachePrefix = 'desk-pwa-';
+const scope = new URL(self.registration.scope);
+const cachePrefix = 'desk-pwa:' + scope.pathname + ':';
 const shellCache = cachePrefix + 'shell-v1';
 const pageCache = cachePrefix + 'pages-v1';
 const assetCache = cachePrefix + 'assets-v1';
-const offlinePath = '/offline.html';
+const offlinePath = new URL('offline.html', scope).href;
 const pagePath =
   /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/|\/(?:brief|papers|prompts|github)(?:\/|$))/;
 
@@ -94,14 +95,18 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const { origin, pathname } = new URL(request.url);
-  if (origin !== self.location.origin) return;
+  if (origin !== scope.origin || !pathname.startsWith(scope.pathname)) return;
+  const localPath = '/' + pathname.slice(scope.pathname.length);
 
   if (
-    pagePath.test(pathname) &&
+    pagePath.test(localPath) &&
     (request.mode === 'navigate' || !request.destination)
   ) {
     event.respondWith(readPage(event));
-  } else if (pathname.startsWith('/_astro/') && !request.headers.has('range')) {
+  } else if (
+    localPath.startsWith('/_astro/') &&
+    !request.headers.has('range')
+  ) {
     event.respondWith(readAsset(event));
   }
 });

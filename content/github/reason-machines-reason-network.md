@@ -128,6 +128,6 @@ sequenceDiagram
 
 ## 把会话投递借给其他产品
 
-若团队主要需要长期追踪负责人、产出和验收，工单更适合保存那些状态；Reason Network 的长处是找到已有上下文并递交一则问题。只有两个人偶尔同步时，带样例的普通聊天消息通常足够。引入设备信箱的成本包括每台机的常驻进程、团队目录中可见的工作信息，以及每种 Agent 不同的交付时机。[会话适配与工作边界](https://github.com/reason-machines/reason-network/blob/5442c8b551a6897b596c7695e51b0329551aaa6c/DESIGN.md#getting-messages-into-agents) · [Multica 的工单和运行记录](/github/multica-ai-multica/)
+若团队主要需要长期追踪负责人、产出和验收，工单更适合保存那些状态；Reason Network 的长处是找到已有上下文并递交一则问题。只有两个人偶尔同步时，带样例的普通聊天消息通常足够。引入设备信箱的成本包括每台机的常驻进程、团队目录中可见的工作信息，以及每种 Agent 不同的交付时机。[会话适配与工作边界](https://github.com/reason-machines/reason-network/blob/5442c8b551a6897b596c7695e51b0329551aaa6c/DESIGN.md#getting-messages-into-agents) · [Multica 的工单和运行记录](../../github/multica-ai-multica/)
 
 迁移到内部的数据字典助手时，可以先用两个自有测试会话和一个已知答案的字段做验收。让接收端 daemon 在线、暂不让目标会话取信，检查状态停在目的端接受；用同一键重发原问题，确认信箱只有一条。再让接收会话拉取并发出引用原消息的答复，核对回复确实关联到了原问题；最后检查测试样例的值是否符合答复。这样能分别发现寻址错误、重复投递和答非所问，避免用单一的“成功”掩盖三种不同结果。
