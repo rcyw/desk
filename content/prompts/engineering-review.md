@@ -3,6 +3,7 @@ title: 工程审查与交付
 description: 走查项目与页面，审查 Git 历史、状态机、PR 和 CI，处理缺陷、完成交付与复盘。
 lang: zh-CN
 publishedAt: '2026-11-24'
+updatedAt: '2026-11-29'
 sources:
   - label: Khazix · X 原帖
     url: https://x.com/Khazix0918/status/2122268349707219333
@@ -10,6 +11,8 @@ sources:
     url: https://x.com/Voxyz_ai/status/2122011755240984607
   - label: Voxyz · 项目与页面走查
     url: https://x.com/Voxyz_ai/status/2124548469540974596
+  - label: Voxyz · 修复工作流瓶颈
+    url: https://x.com/Voxyz_ai/status/2126692590598627611
 ---
 
 按场景复制对应的提示词。包含 `XX` 的条目可填入你要分析的时间范围。
@@ -54,6 +57,25 @@ Read this entire project and find everything that's broken, inconsistent, ineffi
 ```
 
 来源 [Khazix · X 原帖](https://x.com/Khazix0918/status/2122268349707219333)
+
+## 修复工作流瓶颈
+
+可以把这条规则写进全局 `CLAUDE.md` 或 `AGENTS.md`，让 Agent 在重复运行缓慢的流程前先处理瓶颈。
+
+```text
+运行缓慢就是一个缺陷。别把耐心等待误当成进展。工作流运行缓慢时，就别再干等：找出瓶颈，在下次运行前修好它，并把可复用的发现记在项目笔记里。
+```
+
+<details class="prompt-language" lang="en">
+<summary>English</summary>
+
+```text
+Slowness is a bug. Never mistake patience for progress. When a workflow drags, stop waiting it out; diagnose the bottleneck, fix it before you run it again, and record reusable findings in your project notes.
+```
+
+</details>
+
+来源 [Voxyz · 修复工作流瓶颈](https://x.com/Voxyz_ai/status/2126692590598627611)
 
 ## 复盘缺陷、返工和回滚
 
