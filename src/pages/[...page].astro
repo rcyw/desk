@@ -1,0 +1,33 @@
+---
+import ArticleList from '../components/ArticleList.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { postHref, readBlog } from '../lib/blog';
+import type { BlogPost } from '../lib/blog';
+import { paginateEntries, type EntryPage } from '../lib/pagination';
+
+export async function getStaticPaths() {
+  const { posts } = await readBlog();
+  return paginateEntries(posts, '/').map((page) => ({
+    params: { page: page.path === '/' ? undefined : page.path.slice(1, -1) },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: EntryPage<BlogPost>;
+}
+
+const { page } = Astro.props;
+---
+
+<SiteLayout
+  title={page.current > 1 ? `Posts · Page ${page.current}` : undefined}
+  pagination={page}
+>
+  <h1 class="visually-hidden">Posts</h1>
+  {page.entries.length ? (
+    <ArticleList entries={page.entries} hrefFor={postHref} />
+  ) : (
+    <p>No posts yet.</p>
+  )}
+</SiteLayout>

@@ -1,0 +1,34 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { papersName } from '../../lib/desk-apps';
+import { paperHref, readPapers } from '../../lib/papers';
+
+const { papers } = await readPapers();
+---
+
+<SiteLayout app="papers" title={papersName}>
+  <h1 class="visually-hidden">{papersName}</h1>
+  {papers.length ? (
+    <ol class="post-list" role="list">
+      {papers.map(({ id, data }) => (
+        <li>
+          <a class="post-preview" href={paperHref(id)} data-astro-reload>
+            <div class="post-preview-copy">
+              <h2 class="post-preview-title" lang={data.lang}>
+                {data.title}
+              </h2>
+              <p>{data.paper.title}</p>
+              <p>
+                {data.paper.source} <span aria-hidden="true">·</span>{' '}
+                {data.paper.version}
+              </p>
+            </div>
+            <time datetime={data.publishedAt}>{data.publishedAt}</time>
+          </a>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p>No paper notes yet.</p>
+  )}
+</SiteLayout>

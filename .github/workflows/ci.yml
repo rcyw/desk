@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm check
+      - run: pnpm build
+      - run: pnpm test
+      - name: Check that changed content has published pages
+        if: >-
+          github.event_name == 'pull_request' || (github.event_name == 'push' && !github.event.created && !github.event.deleted)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/check-published-content.mjs "$BASE_SHA"
+      - name: Upload review build
+        if: github.event_name == 'pull_request' && !github.event.pull_request.draft
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: desk-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7

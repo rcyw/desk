@@ -1,0 +1,55 @@
+---
+import { topicHref, type Topic } from '../lib/topics';
+
+interface Props {
+  topics: Topic[];
+}
+
+const { topics } = Astro.props;
+---
+
+{topics.length > 0 && (
+  <ul class="document-topic-labels" aria-label="Topics" role="list">
+    {topics.map((topic) => (
+      <li lang={topic.data.lang}>
+        {topic.collection === 'githubTopics' ? (
+          <a href={topicHref(topic)}>{topic.data.title}</a>
+        ) : (
+          <span>{topic.data.title}</span>
+        )}
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .document-topic-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 7px;
+    margin: 7px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .document-topic-labels li {
+    min-width: 0;
+  }
+
+  .document-topic-labels :is(a, span) {
+    display: block;
+    padding-inline: 5px;
+    border: 1px solid var(--reading-rule);
+  }
+
+  .document-topic-labels a {
+    color: var(--reading-link);
+    text-underline-offset: 0.14em;
+  }
+
+  @media (pointer: coarse) {
+    .document-topic-labels a {
+      padding-block: 3px;
+    }
+  }
+</style>

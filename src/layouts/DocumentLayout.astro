@@ -1,0 +1,101 @@
+---
+import { topicHref, topicIndexes, type Topic } from '../lib/topics';
+import { deskApps } from '../lib/desk-apps';
+import { PixelIcon } from '../platinum';
+import ReadingControls from '../components/ReadingControls.astro';
+import PageLayout from './PageLayout.astro';
+import '../styles/document.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: 'zh-CN' | 'en';
+  kind: 'article' | 'note';
+  topic?: Topic;
+  issueDate?: string;
+  library?: 'papers' | 'prompts' | 'github';
+}
+
+const { title, description, lang, kind, topic, issueDate, library } =
+  Astro.props;
+const app = deskApps[library ?? (issueDate ? 'brief' : 'blog')];
+const documentName = app.label;
+const documentIcon =
+  library || issueDate ? app.icon : kind === 'note' ? 'notes' : 'document';
+const backLabel = library || issueDate ? app.label : 'Home';
+---
+
+<PageLayout
+  title={title}
+  description={description}
+  lang={lang}
+  surface="document"
+  documentName={documentName}
+>
+  <div class="document-frame">
+    <header class="document-titlebar p9-window-titlebar">
+      <PixelIcon name={documentIcon} size={16} />
+      <div class="p9-title-stripes" aria-hidden="true">
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+      </div>
+      <span class="p9-window-title" lang="en">
+        {documentName}
+      </span>
+      <div class="p9-title-stripes" aria-hidden="true">
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+      </div>
+    </header>
+
+    <div class="document-content">
+      <div class="document-toolbar">
+        <nav
+          class="document-navigation"
+          aria-label="Reading navigation"
+          lang="en"
+        >
+          <a class="p9-button surface-button" href={app.entryPath}>
+            <span aria-hidden="true">←</span> {backLabel}
+          </a>
+          {library === 'github' && (
+            <a class="document-toolbar-link" href={topicIndexes.github}>
+              Topics
+            </a>
+          )}
+          {issueDate && (
+            <a
+              class="document-toolbar-link"
+              href={`/brief/archive/${issueDate.slice(0, 7)}/`}
+            >
+              Archive
+            </a>
+          )}
+          {topic && (
+            <a
+              class="document-folder"
+              href={topicHref(topic)}
+              lang={topic.data.lang}
+            >
+              <PixelIcon name="folder" size={16} />
+              {topic.data.title}
+            </a>
+          )}
+        </nav>
+        <ReadingControls />
+      </div>
+
+      <main id="main-content" class="document-main" tabindex="-1">
+        <slot />
+      </main>
+    </div>
+  </div>
+</PageLayout>
+
+<script>
+  import '../scripts/render-mermaid';
+</script>

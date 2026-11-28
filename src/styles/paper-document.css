@@ -1,0 +1,25 @@
+.paper-reference {
+  max-width: 43rem;
+  margin-top: 12px;
+  padding: 8px 11px;
+  border: 1px solid var(--reading-rule);
+  background: var(--reading-panel);
+  color: var(--reading-muted);
+  font-size: calc(0.8125rem * var(--reading-scale));
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.paper-reference h2 {
+  margin: 0;
+  font: 12px/1.5 var(--p9-font);
+}
+
+.paper-reference p {
+  margin: 3px 0 0;
+}
+
+.paper-reference a {
+  color: var(--reading-link);
+  text-underline-offset: 0.13em;
+}

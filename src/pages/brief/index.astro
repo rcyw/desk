@@ -1,0 +1,39 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { briefHref, briefName, readBriefs } from '../../lib/briefs';
+
+const [latest] = await readBriefs();
+---
+
+<SiteLayout app="brief" title={briefName}>
+  {latest ? (
+    <section class="brief-latest" lang={latest.data.lang}>
+      <header class="brief-heading">
+        <time class="brief-date" datetime={latest.id} lang="en">
+          {latest.id}
+        </time>
+        <h1>{latest.data.title}</h1>
+        <p>{latest.data.description}</p>
+      </header>
+      {latest.data.highlights?.length ? (
+        <ul class="brief-highlights">
+          {latest.data.highlights.map((highlight) => (
+            <li>{highlight}</li>
+          ))}
+        </ul>
+      ) : null}
+      <a
+        class="p9-button surface-button brief-read"
+        href={briefHref(latest.id)}
+        lang="en"
+      >
+        Read Issue <span aria-hidden="true">→</span>
+      </a>
+    </section>
+  ) : (
+    <section class="brief-heading" lang="en">
+      <h1>{briefName}</h1>
+      <p>No issues yet.</p>
+    </section>
+  )}
+</SiteLayout>

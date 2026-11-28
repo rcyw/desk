@@ -1,0 +1,30 @@
+name: Dispatch Pages
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  dispatch:
+    if: >-
+      vars.PAGES_AUTO_PUBLISH == 'true' && github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: pages-dispatch
+    steps:
+      - name: Dispatch the verified Desk revision
+        env:
+          DESK_SHA: ${{ github.event.workflow_run.head_sha }}
+          GH_TOKEN: ${{ secrets.PAGES_DISPATCH_TOKEN }}
+        shell: bash
+        run: |
+          latest_sha=$(git ls-remote https://github.com/rcyw/desk.git refs/heads/main | cut -f1)
+          if [[ "$DESK_SHA" != "$latest_sha" ]]; then
+            echo 'A newer Desk commit superseded this build.'
+            exit 0
+          fi
+          gh workflow run desk-pages.yml --repo rcyw/rcyw.github.io --ref main \
+            --raw-field "desk_sha=$DESK_SHA" --raw-field publish=true

@@ -1,0 +1,17 @@
+---
+import TopicList from '../../../components/TopicList.astro';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { readGitHub } from '../../../lib/github';
+
+const { topics } = await readGitHub();
+---
+
+<SiteLayout app="github" title="GitHub Topics">
+  <section class="project-topics" aria-labelledby="github-topics-heading">
+    <header class="blog-heading">
+      <h1 id="github-topics-heading">Topics</h1>
+      {topics.length > 0 && <span class="topic-count-heading">Projects</span>}
+    </header>
+    {topics.length ? <TopicList topics={topics} /> : <p>No topics yet.</p>}
+  </section>
+</SiteLayout>

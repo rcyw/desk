@@ -1,0 +1,88 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { deskApps, siteName } from '../lib/desk-apps';
+import chicagoFont from '../platinum/fonts/ChicagoKare-Regular.woff2?url';
+import interRegular from '../platinum/fonts/Inter-Regular.woff2?url';
+import interSemiBold from '../platinum/fonts/Inter-SemiBold.woff2?url';
+import readingPreferences from '../scripts/reading-preferences.js?raw';
+import '@fontsource-variable/noto-sans-sc';
+import '../platinum/styles.css';
+import '../styles/common.css';
+import '../styles/reading.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  surface: 'desktop' | 'document';
+  desktopHeight?: number;
+  lang?: 'zh-CN' | 'en';
+  robots?: 'noindex';
+  documentName?: string;
+  mainId?: string;
+}
+
+const {
+  title,
+  description,
+  surface,
+  desktopHeight,
+  lang = 'en',
+  robots,
+  documentName = deskApps.blog.label,
+  mainId = 'main-content',
+} = Astro.props;
+const name = surface === 'document' ? documentName : siteName;
+const pageTitle = title ? `${title} — ${name}` : name;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html
+  lang={lang}
+  data-surface={surface}
+  style={desktopHeight && { '--desk-opening-height': `${desktopHeight}px` }}
+  transition:animate="none"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <script is:inline set:html={readingPreferences}></script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    {description && <meta name="description" content={description} />}
+    <meta name="theme-color" content="#ddd" />
+    {robots && <meta name="robots" content={robots} />}
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Desk" />
+    <link rel="apple-touch-icon" href="/icons/desk-180.png" />
+    {[chicagoFont, interRegular, interSemiBold].map((font) => (
+      <link
+        rel="preload"
+        href={font}
+        as="font"
+        type="font/woff2"
+        crossorigin="anonymous"
+      />
+    ))}
+    {surface === 'desktop' && <ClientRouter fallback="swap" />}
+    <script>
+      if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/desk-sw.js', { updateViaCache: 'none' })
+          .catch((error) =>
+            console.warn('Unable to register Desk offline support.', error),
+          );
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href={`#${mainId}`} lang="en">
+      Skip to content
+    </a>
+    <slot />
+  </body>
+</html>

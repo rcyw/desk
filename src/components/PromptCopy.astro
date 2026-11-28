@@ -1,0 +1,162 @@
+<style is:global>
+  .prompt-block {
+    border: 1px solid var(--reading-edge);
+    background: var(--reading-panel);
+  }
+
+  .prompt-block-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px 8px;
+    padding: 5px 7px;
+    border-bottom: 1px solid var(--reading-rule);
+  }
+
+  .prompt-copy-status {
+    position: relative;
+    color: var(--reading-muted);
+  }
+
+  .prompt-copy-pop {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .prompt-copy-pop {
+      position: absolute;
+      display: block;
+      inset-block-start: 50%;
+      inset-inline-end: calc(100% + 2px);
+      width: 34px;
+      height: 34px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      background: url('./copy-pop.png') 0 0 / auto 100% no-repeat;
+      image-rendering: pixelated;
+      animation: prompt-copy-pop 300ms steps(12, end) both;
+    }
+
+    :root[data-reading-theme='dark'] .prompt-copy-pop {
+      filter: brightness(1.55);
+    }
+  }
+
+  @keyframes prompt-copy-pop {
+    to {
+      background-position: -408px 0;
+    }
+  }
+
+  .prompt-prose pre[data-language='text'] {
+    background: var(--reading-panel) !important;
+    padding: clamp(10px, 2.8vw, 15px);
+    color: var(--reading-ink) !important;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 0.9em;
+    line-height: 1.65;
+  }
+
+  .prompt-block pre[data-language='text'] {
+    margin: 0;
+    border: 0;
+  }
+
+  .prompt-prose pre[data-language='text'] > code {
+    font-family: inherit;
+  }
+
+  .prompt-language {
+    font-family: var(--p9-body-font);
+  }
+
+  .prompt-language > summary {
+    width: fit-content;
+    min-height: 24px;
+    padding-block: 3px;
+    color: var(--reading-link);
+    cursor: pointer;
+    font: 12px/1.5 var(--p9-font);
+  }
+
+  .prompt-language[open] > summary {
+    margin-bottom: 5px;
+  }
+</style>
+
+<script>
+  const reducedMotion = globalThis.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  );
+  let heading = '';
+  for (const block of document.querySelectorAll<HTMLElement>(
+    '.prompt-prose > h2, .prompt-prose > pre[data-language="text"], .prompt-prose > .prompt-language > pre[data-language="text"]',
+  )) {
+    if (block.tagName === 'H2') {
+      heading = block.textContent?.trim() ?? '';
+      continue;
+    }
+
+    const code = block.querySelector('code');
+    const source = code?.textContent?.replace(/\n$/, '');
+    if (!code || !source?.trim()) continue;
+
+    const panel = document.createElement('div');
+    panel.className = 'prompt-block';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'prompt-block-toolbar';
+    toolbar.lang = 'en';
+    const status = document.createElement('span');
+    status.className = 'prompt-copy-status';
+    status.setAttribute('role', 'status');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'p9-button surface-button';
+    button.textContent = 'Copy Prompt';
+    if (heading) {
+      const english =
+        block.parentElement?.classList.contains('prompt-language');
+      button.setAttribute(
+        'aria-label',
+        `Copy Prompt for ${heading}${english ? ' in English' : ''}`,
+      );
+    }
+
+    let copyAttempt = 0;
+    button.addEventListener('click', async () => {
+      const attempt = ++copyAttempt;
+      status.textContent = '';
+      try {
+        await navigator.clipboard.writeText(source);
+      } catch {
+        if (attempt !== copyAttempt) return;
+        const selection = document.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        status.textContent =
+          'Copy unavailable. Copy the selected text manually.';
+        return;
+      }
+
+      if (attempt !== copyAttempt) return;
+      status.textContent = 'Copied';
+      if (reducedMotion.matches) return;
+
+      const pop = document.createElement('span');
+      pop.className = 'prompt-copy-pop';
+      pop.setAttribute('aria-hidden', 'true');
+      const removePop = () => pop.remove();
+      pop.addEventListener('animationend', removePop, { once: true });
+      pop.addEventListener('animationcancel', removePop, { once: true });
+      status.append(pop);
+    });
+
+    toolbar.append(status, button);
+    block.before(panel);
+    panel.append(toolbar, block);
+  }
+</script>

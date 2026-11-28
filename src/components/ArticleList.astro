@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entries: CollectionEntry<'posts' | 'github'>[];
+  hrefFor: (id: string) => string;
+  showDescriptions?: boolean;
+}
+
+const { entries, hrefFor, showDescriptions = false } = Astro.props;
+---
+
+<ol class="post-list" role="list">
+  {entries.map(({ id, data }) => (
+    <li>
+      <a class="post-preview" href={hrefFor(id)} data-astro-reload>
+        <div
+          class={showDescriptions ? 'post-preview-copy' : undefined}
+          lang={data.lang}
+        >
+          <h2 class="post-preview-title">{data.title}</h2>
+          {showDescriptions && <p>{data.description}</p>}
+        </div>
+        <time datetime={data.publishedAt}>{data.publishedAt}</time>
+      </a>
+    </li>
+  ))}
+</ol>

@@ -1,0 +1,20 @@
+---
+import ArticleDocument from '../../components/ArticleDocument.astro';
+import { readBriefs } from '../../lib/briefs';
+import type { Brief } from '../../lib/briefs';
+
+export async function getStaticPaths() {
+  return (await readBriefs()).map((brief) => ({
+    params: { date: brief.id },
+    props: { brief },
+  }));
+}
+
+interface Props {
+  brief: Brief;
+}
+
+const { brief } = Astro.props;
+---
+
+<ArticleDocument entry={brief} issueDate={brief.id} />

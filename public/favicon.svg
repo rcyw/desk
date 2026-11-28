@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" data-variant="favicon">
+  <style>
+    [data-variant="app"] .app,
+    [data-variant="touch"] .touch,
+    [data-variant="maskable"] .maskable,
+    [data-variant="favicon"] .favicon { display: inline; }
+  </style>
+  <defs>
+    <linearGradient id="lavender" x1="0" y1="0" x2=".28" y2="1">
+      <stop stop-color="#c4bedc"/>
+      <stop offset="1" stop-color="#958db9"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#f5f3ee"/>
+      <stop offset="1" stop-color="#e0ddd6"/>
+    </linearGradient>
+    <path id="desk-w" fill="#302e3b" d="M14 26h10v26h11V34h10v18h11V26h10v37H14z"/>
+    <path id="window-edge" d="M2 0h76l2 2v68l-2 2H2l-2-2V2z"/>
+    <g id="desk-window">
+      <use href="#window-edge" fill="#524e63"/>
+      <path fill="#d4d0d5" d="M2 2h76v68H2z"/>
+      <path fill="#faf8fc" d="M2 70V2h76v3H5v65z"/>
+      <path fill="#ada8ba" d="M5 67h70V5h3v65H5z"/>
+      <path fill="#b4aec9" d="M6 6h68v12H6z"/>
+      <path fill="#ddd8e9" d="M6 6h68v2H6z"/>
+      <path fill="#8a859b" d="M6 17h68v1H6z"/>
+      <path fill="url(#paper)" d="M6 19h68v47H6z"/>
+      <use href="#desk-w"/>
+    </g>
+    <g id="desk-window-with-shadow">
+      <use href="#window-edge" x="2" y="4" fill="#3e345a" opacity=".18"/>
+      <use href="#desk-window"/>
+    </g>
+  </defs>
+  <g class="app" display="none">
+    <rect x="8" y="8" width="112" height="112" rx="24" fill="url(#lavender)"/>
+    <use href="#desk-window-with-shadow" x="24" y="27"/>
+  </g>
+  <g class="touch" display="none">
+    <path fill="url(#lavender)" d="M0 0h128v128H0z"/>
+    <use href="#desk-window-with-shadow" x="24" y="27"/>
+  </g>
+  <g class="maskable" display="none">
+    <path fill="url(#lavender)" d="M0 0h128v128H0z"/>
+    <use href="#desk-window-with-shadow" transform="translate(30 32) scale(.85)"/>
+  </g>
+  <g class="favicon" display="none" shape-rendering="crispEdges">
+    <path fill="#454151" d="M0 0h128v128H0z"/>
+    <path fill="#dedbe3" d="M8 8h112v112H8z"/>
+    <path fill="#f9f8fc" d="M8 120V8h112v8H16v104z"/>
+    <path fill="#a5a0b6" d="M16 16h104v16H16z"/>
+    <use href="#desk-w" transform="translate(4 -4) scale(1.5 1.75)"/>
+  </g>
+</svg>
