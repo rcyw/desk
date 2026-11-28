@@ -1,0 +1,43 @@
+{
+  "name": "desk",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "content:move": "node scripts/move-post.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint --max-warnings 0 .",
+    "check": "astro check",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@astrojs/react": "7.1.9",
+    "@fontsource-variable/noto-sans-sc": "5.3.1",
+    "astro": "7.4.12",
+    "mermaid": "12.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@eslint/js": "10.0.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.15.0",
+    "eslint-plugin-astro": "3.2.1",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "prettier-plugin-astro": "1.1.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.73.0"
+  }
+}

@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import ArticleDocument from '../../components/ArticleDocument.astro';
+
+export async function getStaticPaths() {
+  const prompts = await getCollection('prompts');
+  return prompts.map((prompt) => ({
+    params: { slug: prompt.id },
+    props: { prompt },
+  }));
+}
+
+interface Props {
+  prompt: CollectionEntry<'prompts'>;
+}
+
+const { prompt } = Astro.props;
+---
+
+<ArticleDocument entry={prompt} />

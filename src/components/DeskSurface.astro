@@ -1,0 +1,31 @@
+---
+import { Desk } from './Desk';
+import type { DeskApp } from '../lib/desk-apps';
+
+interface Props {
+  app: DeskApp;
+  height: number;
+  mainId: string;
+}
+
+// Pass the rendered page as a prop so Astro can update the persisted island.
+const { app, height, mainId } = Astro.props;
+const page = {
+  app,
+  path: Astro.url.pathname,
+  mainId,
+  height,
+  html: await Astro.slots.render('default'),
+};
+---
+
+<Desk page={page} client:load transition:persist="platinum-desktop" />
+
+<script is:inline>
+  document.addEventListener('astro:before-preparation', (event) => {
+    // Use the normal link until the desktop can accept new props.
+    if (document.querySelector('.p9-desktop[data-viewport-ready="false"]')) {
+      event.preventDefault();
+    }
+  });
+</script>

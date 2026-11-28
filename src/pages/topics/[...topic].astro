@@ -1,0 +1,40 @@
+---
+import ArticleList from '../../components/ArticleList.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import { postHref, readBlog, type BlogPost } from '../../lib/blog';
+import { topicHref, topicIndexes } from '../../lib/topics';
+import { paginateEntries, type EntryPage } from '../../lib/pagination';
+
+export async function getStaticPaths() {
+  const { topics } = await readBlog();
+  return topics.flatMap(({ topic, entries }) =>
+    paginateEntries(entries, topicHref(topic)).map((page) => ({
+      params: { topic: page.path.slice(topicIndexes.blog.length, -1) },
+      props: { topic, page },
+    })),
+  );
+}
+
+interface Props {
+  topic: CollectionEntry<'topics'>;
+  page: EntryPage<BlogPost>;
+}
+
+const { topic, page } = Astro.props;
+const title =
+  page.current > 1
+    ? `${topic.data.title} · Page ${page.current}`
+    : topic.data.title;
+---
+
+<SiteLayout
+  title={title}
+  description={topic.data.description}
+  pagination={page}
+>
+  <header class="blog-heading">
+    <h1 lang={topic.data.lang}>{topic.data.title}</h1>
+  </header>
+  <ArticleList entries={page.entries} hrefFor={postHref} />
+</SiteLayout>
