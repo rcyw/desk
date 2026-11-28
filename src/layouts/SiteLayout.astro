@@ -22,8 +22,8 @@ const { app = 'blog', title, description, robots, pagination } = Astro.props;
 const pathname = Astro.url.pathname;
 const { label, mainId, height } = deskApps[app];
 const appLinks = deskAppIds.filter((id) => id !== app);
-const home = pathname === sitePath('/');
-const homeArchive = pathname.startsWith(sitePath('/page/'));
+const home = pathname === deskApps.blog.entryPath;
+const homeArchive = pathname.startsWith(`${deskApps.blog.entryPath}page/`);
 const desktopHeight =
   app === 'blog'
     ? Math.max(height, Math.min(560, 200 + 40 * (pagination?.maxRows ?? 4))) -
@@ -45,7 +45,11 @@ function sectionLink(label: string, href: string, descendants = href): NavLink {
 }
 const links: Record<DeskApp, NavLink[]> = {
   blog: [
-    sectionLink('Home', deskApps.blog.entryPath, sitePath('/page/')),
+    sectionLink(
+      'Posts',
+      deskApps.blog.entryPath,
+      `${deskApps.blog.entryPath}page/`,
+    ),
     sectionLink('Topics', topicIndexes.blog),
   ],
   brief: [

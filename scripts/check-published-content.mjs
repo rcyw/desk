@@ -25,7 +25,7 @@ const changes = execFileSync(
   { encoding: 'utf8' },
 ).split('\0');
 
-function contentRoute(file, previousPath = false) {
+function contentRoute(file) {
   const [folder, collection, ...parts] = file.split('/');
   if (folder !== 'content' || parts.includes('assets') || !/\.md$/i.test(file))
     return;
@@ -46,14 +46,9 @@ function contentRoute(file, previousPath = false) {
     collection === 'github'
   )
     return `${collection}/${libraryId(entry, collection)}`;
-  if (collection === 'blog' || (previousPath && collection === 'posts'))
-    return `posts/${postId(entry)}`;
+  if (collection === 'blog') return `blog/${postId(entry)}`;
   if (collection === 'briefs') return `brief/${briefId(entry)}`;
-  if (!previousPath && (collection === 'posts' || collection === 'topics')) {
-    const directory =
-      collection === 'posts' ? 'content/blog' : 'content/blog/topics';
-    throw new Error(`Move ${file} to ${directory}/ so Astro can load it.`);
-  }
+  throw new Error(`Unknown content collection for ${file}.`);
 }
 
 function checkPage(file, route, message) {
@@ -82,7 +77,7 @@ for (let index = 0; index < changes.length - 1;) {
   if (kind === 'R') {
     let oldRoute;
     try {
-      oldRoute = contentRoute(source, true);
+      oldRoute = contentRoute(source);
     } catch {
       // A case or path correction can make a previously invalid entry public.
     }

@@ -23,7 +23,6 @@ const app = deskApps[library ?? (issueDate ? 'brief' : 'blog')];
 const documentName = app.label;
 const documentIcon =
   library || issueDate ? app.icon : kind === 'note' ? 'notes' : 'document';
-const backLabel = library || issueDate ? app.label : 'Home';
 ---
 
 <PageLayout
@@ -61,7 +60,7 @@ const backLabel = library || issueDate ? app.label : 'Home';
           lang="en"
         >
           <a class="p9-button surface-button" href={app.entryPath}>
-            <span aria-hidden="true">←</span> {backLabel}
+            <span aria-hidden="true">←</span> {app.label}
           </a>
           {library === 'github' && (
             <a class="document-toolbar-link" href={topicIndexes.github}>

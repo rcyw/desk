@@ -62,35 +62,28 @@ function fixture(t) {
   };
 }
 
-test('Markdown in a retired Blog directory cannot pass unpublished', (t) => {
+test('Markdown outside a known collection cannot pass unpublished', (t) => {
   const repo = fixture(t);
   repo.write('README.md', '# Desk\n');
-  let base = repo.commit();
-  for (const [folder, destination] of [
-    ['posts', 'content/blog/'],
-    ['topics', 'content/blog/topics/'],
-  ]) {
-    const file = `content/${folder}/example.md`;
-    repo.write(file, '# Example\n');
-    const revision = repo.commit();
-    const result = repo.check(base);
-    assert.equal(result.status, 1);
-    assert.ok(result.stderr.includes(`Move ${file} to ${destination}`));
-    base = revision;
-  }
+  const base = repo.commit();
+  repo.write('content/misplaced/example.md', '# Example\n');
+  repo.commit();
+  const result = repo.check(base);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unknown content collection/);
 });
 
 test('a renamed post requires its previous route even when the new page exists', (t) => {
   const repo = fixture(t);
-  repo.write('content/posts/original.md', '# Example\n');
+  repo.write('content/blog/original.md', '# Example\n');
   const base = repo.commit();
-  repo.move('content/posts/original.md', 'content/blog/research/renamed.md');
+  repo.move('content/blog/original.md', 'content/blog/research/renamed.md');
   repo.commit();
-  repo.write('dist/posts/renamed/index.html', '<h1>Example</h1>');
+  repo.write('dist/blog/renamed/index.html', '<h1>Example</h1>');
   const result = repo.check(base);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /must preserve \/posts\/original\//);
-  repo.write('dist/posts/original/index.html', '<h1>Existing route</h1>');
+  assert.match(result.stderr, /must preserve \/blog\/original\//);
+  repo.write('dist/blog/original/index.html', '<h1>Existing route</h1>');
   const preserved = repo.check(base);
   assert.equal(preserved.status, 0, preserved.stderr);
 });
@@ -103,7 +96,7 @@ test('a move into assets still requires the original published route', (t) => {
   repo.commit();
   const result = repo.check(base);
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /must preserve \/posts\/original\//);
+  assert.match(result.stderr, /must preserve \/blog\/original\//);
 });
 
 test('GitHub project references require a page in the GitHub library', (t) => {
@@ -116,7 +109,7 @@ test('GitHub project references require a page in the GitHub library', (t) => {
     '---\ntitle: Workflows\n---\n',
   );
   repo.commit();
-  repo.write('dist/posts/workflow/index.html', '<h1>Blog</h1>');
+  repo.write('dist/blog/workflow/index.html', '<h1>Blog</h1>');
   const missing = repo.check(base);
   assert.equal(missing.status, 1);
   assert.match(
@@ -222,7 +215,7 @@ test('uppercase Markdown extensions outside assets fail validation', (t) => {
   const base = repo.commit();
   repo.write('content/blog/research/example.MD', '# Example\n');
   repo.commit();
-  repo.write('dist/posts/example/index.html', '<h1>Example</h1>');
+  repo.write('dist/blog/example/index.html', '<h1>Example</h1>');
   const result = repo.check(base);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Found research\/example\.MD/);
@@ -234,7 +227,7 @@ test('correcting an invalid source extension only requires the new route', (t) =
   const base = repo.commit();
   repo.move('content/blog/example.MD', 'content/blog/research/example.md');
   repo.commit();
-  repo.write('dist/posts/example/index.html', '<h1>Example</h1>');
+  repo.write('dist/blog/example/index.html', '<h1>Example</h1>');
   const result = repo.check(base);
   assert.equal(result.status, 0, result.stderr);
 });

@@ -25,7 +25,7 @@ Use the content workflow to choose a writing guide, manage topics, and prepare e
 
 | Collection | Markdown file | Published URL |
 | --- | --- | --- |
-| Blog articles | `content/blog/<slug>.md` or `content/blog/<category>/<slug>.md` | `/desk/posts/<slug>/` |
+| Blog articles | `content/blog/<slug>.md` or `content/blog/<category>/<slug>.md` | `/desk/blog/<slug>/` |
 | GitHub project references | `content/github/<slug>.md` | `/desk/github/<slug>/` |
 | AI Brief daily issues | `content/briefs/YYYY/MM/YYYY-MM-DD.md` | `/desk/brief/YYYY-MM-DD/` |
 | Paper notes | `content/papers/<slug>.md` | `/desk/papers/<slug>/` |

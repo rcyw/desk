@@ -1,7 +1,7 @@
 ---
-import TopicList from '../../components/TopicList.astro';
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { readBlog } from '../../lib/blog';
+import TopicList from '../../../components/TopicList.astro';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { readBlog } from '../../../lib/blog';
 
 const { topics } = await readBlog();
 ---

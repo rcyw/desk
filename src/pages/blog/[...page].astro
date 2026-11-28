@@ -1,14 +1,14 @@
 ---
-import { sitePath } from '../lib/site-path';
-import ArticleList from '../components/ArticleList.astro';
-import SiteLayout from '../layouts/SiteLayout.astro';
-import { postHref, readBlog } from '../lib/blog';
-import type { BlogPost } from '../lib/blog';
-import { paginateEntries, type EntryPage } from '../lib/pagination';
+import { deskApps } from '../../lib/desk-apps';
+import ArticleList from '../../components/ArticleList.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { postHref, readBlog } from '../../lib/blog';
+import type { BlogPost } from '../../lib/blog';
+import { paginateEntries, type EntryPage } from '../../lib/pagination';
 
 export async function getStaticPaths() {
   const { posts } = await readBlog();
-  const base = sitePath('/');
+  const base = deskApps.blog.entryPath;
   return paginateEntries(posts, base).map((page) => ({
     params: { page: page.path.slice(base.length, -1) || undefined },
     props: { page },
@@ -23,7 +23,7 @@ const { page } = Astro.props;
 ---
 
 <SiteLayout
-  title={page.current > 1 ? `Posts · Page ${page.current}` : undefined}
+  title={page.current > 1 ? `Blog · Page ${page.current}` : 'Blog'}
   pagination={page}
 >
   <h1 class="visually-hidden">Posts</h1>

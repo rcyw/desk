@@ -2,7 +2,7 @@
 
 ## 文件与专题
 
-博客文章默认存为 `content/blog/<slug>.md`。需要分类时使用 `content/blog/<category>/<slug>.md`，分类目录保留一层，`topics/` 专用于专题定义。两种位置的公开直链都是 `/posts/<slug>/`，博文互链使用这条路径。配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。
+博客文章默认存为 `content/blog/<slug>.md`。需要分类时使用 `content/blog/<category>/<slug>.md`，分类目录保留一层，`topics/` 专用于专题定义。两种位置的公开直链都是 `/blog/<slug>/`，博文互链使用这条路径。`topics` 和 `page` 保留给专题与分页。配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。
 
 分类目录用于组织源文件。`kind` 可填 `article` 或 `note`。站点按 frontmatter 的 `topics` 收录专题，至少填写一个 `content/blog/topics/` 下已建专题的文件名，去掉 `.md` 后缀。一篇文章可关联多个专题，一个专题也可收录多篇文章。[维护专题](../content-workflow.md#维护专题)
 
