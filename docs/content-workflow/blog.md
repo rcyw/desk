@@ -2,9 +2,9 @@
 
 ## 文件与专题
 
-博客文章默认存为 `content/posts/<slug>.md`。需要分类时使用 `content/posts/<category>/<slug>.md`，分类目录保留一层。两种位置的公开直链都是 `/posts/<slug>/`，博文互链使用这条路径。配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。
+博客文章默认存为 `content/blog/<slug>.md`。需要分类时使用 `content/blog/<category>/<slug>.md`，分类目录保留一层，`topics/` 专用于专题定义。两种位置的公开直链都是 `/posts/<slug>/`，博文互链使用这条路径。配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。
 
-分类目录用于组织源文件。`kind` 可填 `article` 或 `note`。站点按 frontmatter 的 `topics` 收录专题，至少填写一个 `content/topics/` 下已建专题的文件名，去掉 `.md` 后缀。一篇文章可关联多个专题，一个专题也可收录多篇文章。[维护专题](../content-workflow.md#维护专题)
+分类目录用于组织源文件。`kind` 可填 `article` 或 `note`。站点按 frontmatter 的 `topics` 收录专题，至少填写一个 `content/blog/topics/` 下已建专题的文件名，去掉 `.md` 后缀。一篇文章可关联多个专题，一个专题也可收录多篇文章。[维护专题](../content-workflow.md#维护专题)
 
 ## 博客原文读解
 
@@ -22,6 +22,6 @@
 
 执行后用 `git status --short` 和 `git diff` 核对变更，运行 `pnpm build`，并预览文章原直链和配图。
 
-如果移动进程被强制终止，先用 `git status --short` 检查源目录和目标目录的 Markdown 与配图，把它们恢复为一份完整的文章。确认原进程已退出后，用 `rmdir content/posts/.move-post-<slug>` 清除残留的空锁目录，再重试。
+如果移动进程被强制终止，先用 `git status --short` 检查源目录和目标目录的 Markdown 与配图，把它们恢复为一份完整的文章。确认原进程已退出后，用 `rmdir content/blog/.move-post-<slug>` 清除残留的空锁目录，再重试。
 
 [共用写作与发布流程](../content-workflow.md)

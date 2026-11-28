@@ -11,7 +11,8 @@ const source = z.object({
   revision: text.optional(),
 });
 const markdownEntries = ['**/*.[mM][dD]', '!**/assets/**'];
-const topicReferences = z.array(reference('topics')).min(1);
+const articleEntries = [...markdownEntries, '!topics/**'];
+const blogTopicReferences = z.array(reference('blogTopics')).min(1);
 
 const publication = z
   .object({
@@ -50,13 +51,13 @@ function defineTopics(base: string) {
   });
 }
 
-const topics = defineTopics('./content/topics');
+const blogTopics = defineTopics('./content/blog/topics');
 const githubTopics = defineTopics('./content/github/topics');
 
 const posts = defineCollection({
   loader: glob({
-    base: './content/posts',
-    pattern: markdownEntries,
+    base: './content/blog',
+    pattern: articleEntries,
     generateId: ({ entry }) => {
       postId(entry);
       return entry;
@@ -64,14 +65,14 @@ const posts = defineCollection({
   }),
   schema: publication.safeExtend({
     kind: z.enum(['article', 'note']),
-    topics: topicReferences,
+    topics: blogTopicReferences,
   }),
 });
 
 const github = defineCollection({
   loader: glob({
     base: './content/github',
-    pattern: [...markdownEntries, '!topics/**'],
+    pattern: articleEntries,
     generateId: ({ entry }) => libraryId(entry, 'github'),
   }),
   schema: publication.safeExtend({
@@ -101,7 +102,7 @@ const papers = defineCollection({
     generateId: ({ entry }) => libraryId(entry, 'papers'),
   }),
   schema: publication.safeExtend({
-    topics: topicReferences,
+    topics: blogTopicReferences,
     paper: z.object({
       title: text,
       source: text,
@@ -124,7 +125,7 @@ export const collections = {
   posts,
   github,
   githubTopics,
-  topics,
+  blogTopics,
   briefs,
   papers,
   prompts,

@@ -11,7 +11,7 @@ export const postHref = (entry: string) => sitePath(`/posts/${postId(entry)}/`);
 export async function readBlog() {
   const [posts, topics] = await Promise.all([
     getCollection('posts'),
-    getCollection('topics'),
+    getCollection('blogTopics'),
   ]);
 
   const filesBySlug = new Map<string, string>();

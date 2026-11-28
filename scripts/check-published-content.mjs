@@ -31,10 +31,10 @@ function contentRoute(file, legacySource = false) {
     return;
 
   if (
-    collection === 'topics' ||
-    (collection === 'github' && parts[0] === 'topics')
+    (collection === 'blog' || collection === 'github') &&
+    parts[0] === 'topics'
   ) {
-    topicId((collection === 'topics' ? parts : parts.slice(1)).join('/'));
+    topicId(parts.slice(1).join('/'));
     // A valid topic only gets a page once an entry uses it.
     return;
   }
@@ -46,8 +46,13 @@ function contentRoute(file, legacySource = false) {
     collection === 'github'
   )
     return `${collection}/${libraryId(entry, collection)}`;
-  if (collection === 'posts') {
-    if (legacySource && parts.length === 2 && parts[1] === 'index.md')
+  if (collection === 'blog' || (legacySource && collection === 'posts')) {
+    if (
+      legacySource &&
+      collection === 'posts' &&
+      parts.length === 2 &&
+      parts[1] === 'index.md'
+    )
       entry = `${parts[0]}.md`;
     return `posts/${postId(entry)}`;
   }

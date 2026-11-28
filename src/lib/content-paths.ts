@@ -21,7 +21,9 @@ export function postId(entry: string): string {
     id === 'index' ||
     parts.length > 2 ||
     (parts.length === 2 &&
-      (category === 'assets' || !slugPattern.test(category)))
+      (category === 'assets' ||
+        category === 'topics' ||
+        !slugPattern.test(category)))
   ) {
     throw new Error(
       `Expected a Blog post at <slug>.md or <category>/<slug>.md. Found ${entry}`,

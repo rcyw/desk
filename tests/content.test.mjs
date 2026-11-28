@@ -533,7 +533,7 @@ sources:
     );
 
     for (const [path, value] of [
-      ['posts/engineering/published-note.md', 'true'],
+      ['blog/engineering/published-note.md', 'true'],
       ['briefs/2026/11/2026-11-18.md', 'false'],
       ['papers/local-summary-retrieval.md', 'null'],
       ['github/temporal-worker-restart.md', 'true'],

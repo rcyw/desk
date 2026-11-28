@@ -32,7 +32,7 @@ function fixture(t) {
     mkdirSync(dirname(target), { recursive: true });
     copyFileSync(new URL(`../${file}`, import.meta.url), target);
   }
-  const post = (path) => join(root, 'content/posts', path);
+  const post = (path) => join(root, 'content/blog', path);
   mkdirSync(dirname(post(sourceAsset)), { recursive: true });
   writeFileSync(post(source), original);
   writeFileSync(post(sourceAsset), 'chart');
@@ -95,7 +95,7 @@ test('rolls back the move when another writer changes the source', (t) => {
   const repo = fixture(t);
   const result = repo.run({
     apply: true,
-    onRename: `fs.appendFileSync(new URL('./content/posts/${source}', import.meta.url), 'edited');`,
+    onRename: `fs.appendFileSync(new URL('./content/blog/${source}', import.meta.url), 'edited');`,
   });
 
   assert.equal(result.status, 1, result.stderr);

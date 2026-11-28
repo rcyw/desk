@@ -24,7 +24,7 @@
 
 ## 维护专题
 
-Blog 和 Papers 共用 `content/topics/<id>.md`，GitHub 项目参考使用 `content/github/topics/<id>.md`。先在对应目录查找已有专题。新建时用小写字母、数字和短横线命名文件，稿件在 `topics` 中引用去掉 `.md` 的文件名。
+Blog 专题维护在 `content/blog/topics/<id>.md`，Papers 引用这些专题。GitHub 项目参考使用 `content/github/topics/<id>.md`。先在对应目录查找已有专题。新建时用小写字母、数字和短横线命名文件，稿件在 `topics` 中引用去掉 `.md` 的文件名。
 
 用 `title` 命名专题，`description` 说明收录范围，`lang` 标明语言。`order` 填非负整数，数值小的排在前面。调整名称、说明或顺序时编辑原文件，已有稿件可继续使用原专题 ID。[专题字段定义](../src/content.config.ts)
 

@@ -19,7 +19,7 @@
 
 通过 Blog 发布的系列用包含频率的系列名加窗口起始日期作为 `slug`，稿件位置和专题沿用 [Blog 的文件与专题规则](blog.md#文件与专题)。
 
-例如，覆盖上海时间 2026-11-09 00:00 至 2026-11-16 00:00 前的 Agent 工程周报，存为 `content/posts/agent-engineering-weekly-2026-11-09.md`。首发时可以这样填写文件头，关联已有的 [Agent 工程专题](../../content/topics/agent-engineering.md)。
+例如，覆盖上海时间 2026-11-09 00:00 至 2026-11-16 00:00 前的 Agent 工程周报，存为 `content/blog/agent-engineering-weekly-2026-11-09.md`。首发时可以这样填写文件头，关联已有的 [Agent 工程专题](../../content/blog/topics/agent-engineering.md)。
 
 ```yaml
 ---
