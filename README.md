@@ -21,17 +21,15 @@ After `pnpm build`, run `pnpm preview --host 127.0.0.1` to test installation and
 
 ## Writing
 
-Start Blog articles at `content/posts/<slug>.md`. Use `content/posts/<category>/<slug>.md` when a single category folder helps. The filename supplies the globally unique lowercase hyphenated slug for `/posts/<slug>/`. Use frontmatter `topics` to list the topics an article belongs to. Topic definitions live in `content/topics/`.
+Use the content workflow to choose a writing guide, manage topics, and prepare entries for review. Agents start with the repository instructions. [Content workflow in Chinese](docs/content-workflow.md) · [AGENTS.md](AGENTS.md)
 
-Store one reference per repository at `content/github/<slug>.md`. Desk lists it at `/github/` and publishes it at `/github/<slug>/`. Record the repository URL and the revision you read together in a `sources` entry. Set `topics` to one or more IDs defined in `content/github/topics/`. Readers can browse those projects at `/github/topics/`. Illustrate the architecture and a core interaction with Mermaid. [Project reference writing guide in Chinese](docs/content-workflow.md#github-项目参考)
-
-Store daily issues at `content/briefs/YYYY/MM/YYYY-MM-DD.md`, with the coverage date matching the parent year and month. The date supplies the URL `/brief/YYYY-MM-DD/`.
-
-Store paper notes at `content/papers/<slug>.md` for `/papers/<slug>/`. Use the shared `topics` and record the original source and version in `paper` metadata. Put images in `./assets/<slug>/` or `./assets/YYYY-MM-DD/` beside the corresponding Markdown file. [Content workflow in Chinese](docs/content-workflow.md)
-
-Store prompt collections at `content/prompts/<slug>.md` for `/prompts/<slug>/`. [Prompt writing guide in Chinese](docs/content-workflow.md#prompts-模板)
-
-Agents start with the repository instructions. [AGENTS.md](AGENTS.md)
+| Collection | Markdown file | Published URL |
+| --- | --- | --- |
+| Blog articles | `content/posts/<slug>.md` or `content/posts/<category>/<slug>.md` | `/posts/<slug>/` |
+| GitHub project references | `content/github/<slug>.md` | `/github/<slug>/` |
+| AI Brief daily issues | `content/briefs/YYYY/MM/YYYY-MM-DD.md` | `/brief/YYYY-MM-DD/` |
+| Paper notes | `content/papers/<slug>.md` | `/papers/<slug>/` |
+| Prompt collections | `content/prompts/<slug>.md` | `/prompts/<slug>/` |
 
 ## Verification
 
