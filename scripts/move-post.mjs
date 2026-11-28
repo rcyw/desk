@@ -15,7 +15,7 @@ import { postId } from '../src/lib/content-paths.ts';
 
 const repo = resolve(import.meta.dirname, '..');
 const content = join(repo, 'content');
-const posts = join(content, 'posts');
+const posts = join(content, 'blog');
 const display = (path) => relative(repo, path);
 const stat = (path) => lstatSync(path, { throwIfNoEntry: false });
 
@@ -177,7 +177,7 @@ async function main() {
   const [slug, category] = positionals;
   postId(`${category}/${slug}.md`);
   if (!directory(content) || !directory(posts))
-    throw new Error('Missing content/posts directory.');
+    throw new Error('Missing content/blog directory.');
   if (!values.apply) return regroup(slug, category, false);
 
   process.once('SIGINT', () => {

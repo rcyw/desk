@@ -14,7 +14,7 @@ Desk 是用 Astro 构建的 Platinum9 风格网页桌面，默认打开 **Blog**
 
 | 栏目 | Markdown 文件 | 公开直链 |
 | --- | --- | --- |
-| Blog 文章 | `content/posts/<slug>.md` 或 `content/posts/<category>/<slug>.md` | `/desk/posts/<slug>/` |
+| Blog 文章 | `content/blog/<slug>.md` 或 `content/blog/<category>/<slug>.md` | `/desk/blog/<slug>/` |
 | GitHub 项目参考 | `content/github/<slug>.md` | `/desk/github/<slug>/` |
 | AI Brief 日报 | `content/briefs/YYYY/MM/YYYY-MM-DD.md` | `/desk/brief/YYYY-MM-DD/` |
 | Papers 论文读解 | `content/papers/<slug>.md` | `/desk/papers/<slug>/` |

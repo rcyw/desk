@@ -1,10 +1,10 @@
 ---
-import ArticleList from '../../components/ArticleList.astro';
-import SiteLayout from '../../layouts/SiteLayout.astro';
+import ArticleList from '../../../components/ArticleList.astro';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
 import type { CollectionEntry } from 'astro:content';
-import { postHref, readBlog, type BlogPost } from '../../lib/blog';
-import { topicHref, topicIndexes } from '../../lib/topics';
-import { paginateEntries, type EntryPage } from '../../lib/pagination';
+import { postHref, readBlog, type BlogPost } from '../../../lib/blog';
+import { topicHref, topicIndexes } from '../../../lib/topics';
+import { paginateEntries, type EntryPage } from '../../../lib/pagination';
 
 export async function getStaticPaths() {
   const { topics } = await readBlog();
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  topic: CollectionEntry<'topics'>;
+  topic: CollectionEntry<'blogTopics'>;
   page: EntryPage<BlogPost>;
 }
 

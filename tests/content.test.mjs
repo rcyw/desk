@@ -72,6 +72,21 @@ sources:
       );
     }
 
+    for (let number = 1; number <= 10; number++) {
+      await writeFile(
+        new URL(`content/blog/archive-${number}.md`, root),
+        `---
+title: Archive note ${number}
+description: Blog pagination fixture.
+kind: note
+lang: en
+publishedAt: '2026-10-01'
+topics: [research]
+---
+`,
+      );
+    }
+
     const require = createRequire(new URL('package.json', root));
     const astroPackage = pathToFileURL(require.resolve('astro/package.json'));
     const { bin } = JSON.parse(await readFile(astroPackage, 'utf8'));
@@ -92,8 +107,8 @@ sources:
       server: { host: '127.0.0.1', port: 0 },
     });
     const origin = `http://127.0.0.1:${server.port}`;
-    const articlePath = '/desk/posts/published-note/';
-    const topicPath = '/desk/topics/research/';
+    const articlePath = '/desk/blog/published-note/';
+    const topicPath = '/desk/blog/topics/research/';
     const latestBriefPath = '/desk/brief/2026-11-18/';
     const olderBriefPath = '/desk/brief/2026-10-20/';
     const paperPath = '/desk/papers/local-summary-retrieval/';
@@ -114,11 +129,41 @@ sources:
 
     try {
       const [home, topics, topic, article] = await Promise.all([
-        readPage('/desk/'),
-        readPage('/desk/topics/'),
+        readPage('/desk/blog/'),
+        readPage('/desk/blog/topics/'),
         readPage(topicPath),
         readPage(articlePath),
       ]);
+      await t.test(
+        'Desk opens Blog and both Blog lists paginate under their own URL',
+        async () => {
+          const launch = await readPage('/desk/');
+          assert.ok(
+            launch.includes('http-equiv="refresh" content="0;url=/desk/blog/"'),
+          );
+          for (const [base, first] of [
+            ['/desk/blog/', home],
+            [topicPath, topic],
+          ]) {
+            const next = base + 'page/2/';
+            assert.ok(first.includes(`href="${next}" rel="next"`));
+            const second = await readPage(next);
+            assert.ok(second.includes(`href="${base}" rel="prev"`));
+            assert.ok(
+              second.includes(
+                `rel="canonical" href="https://rcyw.github.io${next}"`,
+              ),
+            );
+          }
+          for (const path of [
+            '/desk/posts/published-note/',
+            '/desk/topics/research/',
+            '/desk/page/2/',
+          ])
+            await readPage(path, 404);
+        },
+      );
+
       const blogToolbar =
         home.match(
           /<nav\b[^>]*aria-label="Blog navigation"[^>]*>[\s\S]*?<\/nav>/,
@@ -200,7 +245,7 @@ sources:
       );
 
       await t.test(
-        'the homepage links to a categorized article at its original URL',
+        'the Blog index links to a categorized article at its canonical URL',
         async () => {
           assert.ok(home.includes(`href="${articlePath}"`));
           assert.match(home, /class="p9-window-title">Blog<\/span>/);
@@ -231,7 +276,7 @@ sources:
         for (const html of [home, topics, topic, article]) {
           assert.doesNotMatch(html, /Empty Topic|\/topics\/empty-topic\//);
         }
-        await readPage('/desk/topics/empty-topic/', 404);
+        await readPage('/desk/blog/topics/empty-topic/', 404);
       });
 
       await t.test(
@@ -280,10 +325,10 @@ sources:
             document.includes(`href="https://rcyw.github.io${projectPath}"`),
           );
           assert.ok(document.includes('href="/desk/github/"'));
-          assert.doesNotMatch(document, /href="\/desk\/topics\//);
+          assert.doesNotMatch(document, /href="\/desk\/blog\/topics\//);
           assert.match(document, /Repository Research/);
           assert.match(document, /data-language="mermaid"/);
-          await readPage('/desk/posts/project-1/', 404);
+          await readPage('/desk/blog/project-1/', 404);
         },
       );
 
@@ -339,7 +384,7 @@ sources:
           for (const html of [index, first, next, single, detail]) {
             assert.doesNotMatch(
               html,
-              /href="\/desk\/topics\/|href="\/desk\/posts\/|Unused Project Topic/,
+              /href="\/desk\/blog\/topics\/|href="\/desk\/blog\/published-note\/|Unused Project Topic/,
             );
           }
           for (const html of [topics, topic, article]) {
@@ -350,7 +395,7 @@ sources:
           }
           await readPage(base + 'unused/', 404);
           await readPage(base + 'empty-topic/', 404);
-          await readPage('/desk/topics/workflow-systems/', 404);
+          await readPage('/desk/blog/topics/workflow-systems/', 404);
         },
       );
 
@@ -433,7 +478,8 @@ sources:
           );
           assert.match(note, /Hierarchical Retrieval with Local Summaries/);
           assert.match(note, /\bv2\b/);
-          assert.match(note, /Research/);
+          assert.match(note, /<span\b[^>]*>Empty Topic<\/span>/);
+          assert.ok(!note.includes('href="/desk/blog/topics/empty-topic/"'));
           assert.match(note, /data-language="mermaid"/);
         },
       );
@@ -533,7 +579,7 @@ sources:
     );
 
     for (const [path, value] of [
-      ['posts/engineering/published-note.md', 'true'],
+      ['blog/engineering/published-note.md', 'true'],
       ['briefs/2026/11/2026-11-18.md', 'false'],
       ['papers/local-summary-retrieval.md', 'null'],
       ['github/temporal-worker-restart.md', 'true'],

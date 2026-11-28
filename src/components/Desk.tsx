@@ -252,7 +252,7 @@ export function Desk({ page }: { page: DeskPage }) {
   const apps = useMemo<AppDefinition[]>(() => {
     const destinations = {
       blog: [
-        { label: 'Home', action: () => openApplication('blog') },
+        { label: 'Posts', action: () => openApplication('blog') },
         { label: 'Topics', action: () => navigate(topicIndexes.blog) },
       ],
       brief: [

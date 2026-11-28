@@ -1,11 +1,10 @@
 const scope = new URL(self.registration.scope);
 const cachePrefix = 'desk-pwa:' + scope.pathname + ':';
 const shellCache = cachePrefix + 'shell-v1';
-const pageCache = cachePrefix + 'pages-v1';
+const pageCache = cachePrefix + 'pages-v2';
 const assetCache = cachePrefix + 'assets-v1';
 const offlinePath = new URL('offline.html', scope).href;
-const pagePath =
-  /^(?:\/$|\/page\/\d+\/?$|\/topics(?:\/|$)|\/posts\/|\/(?:brief|papers|prompts|github)(?:\/|$))/;
+const pagePath = /^\/(?:$|(?:blog|brief|papers|prompts|github)(?:\/|$))/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

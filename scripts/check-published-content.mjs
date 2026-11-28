@@ -25,39 +25,30 @@ const changes = execFileSync(
   { encoding: 'utf8' },
 ).split('\0');
 
-function contentRoute(file, legacySource = false) {
+function contentRoute(file) {
   const [folder, collection, ...parts] = file.split('/');
   if (folder !== 'content' || parts.includes('assets') || !/\.md$/i.test(file))
     return;
 
   if (
-    collection === 'topics' ||
-    (collection === 'github' && parts[0] === 'topics')
+    (collection === 'blog' || collection === 'github') &&
+    parts[0] === 'topics'
   ) {
-    topicId((collection === 'topics' ? parts : parts.slice(1)).join('/'));
+    topicId(parts.slice(1).join('/'));
     // A valid topic only gets a page once an entry uses it.
     return;
   }
 
-  let entry = parts.join('/');
+  const entry = parts.join('/');
   if (
     collection === 'papers' ||
     collection === 'prompts' ||
     collection === 'github'
   )
     return `${collection}/${libraryId(entry, collection)}`;
-  if (collection === 'posts') {
-    if (legacySource && parts.length === 2 && parts[1] === 'index.md')
-      entry = `${parts[0]}.md`;
-    return `posts/${postId(entry)}`;
-  }
-  if (collection !== 'briefs') return;
-
-  if (legacySource && parts.length === 4 && parts[3] === 'index.md') {
-    const [year, month, day] = parts;
-    entry = `${year}/${month}/${year}-${month}-${day}.md`;
-  }
-  return `brief/${briefId(entry)}`;
+  if (collection === 'blog') return `blog/${postId(entry)}`;
+  if (collection === 'briefs') return `brief/${briefId(entry)}`;
+  throw new Error(`Unknown content collection for ${file}.`);
 }
 
 function checkPage(file, route, message) {
@@ -86,7 +77,7 @@ for (let index = 0; index < changes.length - 1;) {
   if (kind === 'R') {
     let oldRoute;
     try {
-      oldRoute = contentRoute(source, true);
+      oldRoute = contentRoute(source);
     } catch {
       // A case or path correction can make a previously invalid entry public.
     }

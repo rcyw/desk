@@ -6,12 +6,12 @@ import { groupTopics } from './topics';
 
 export type BlogPost = CollectionEntry<'posts'>;
 
-export const postHref = (entry: string) => sitePath(`/posts/${postId(entry)}/`);
+export const postHref = (entry: string) => sitePath(`/blog/${postId(entry)}/`);
 
 export async function readBlog() {
   const [posts, topics] = await Promise.all([
     getCollection('posts'),
-    getCollection('topics'),
+    getCollection('blogTopics'),
   ]);
 
   const filesBySlug = new Map<string, string>();

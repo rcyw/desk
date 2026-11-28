@@ -8,11 +8,11 @@ export const paperHref = (id: string) => sitePath(`/papers/${id}/`);
 
 export async function readPapers(): Promise<{
   papers: Paper[];
-  topics: CollectionEntry<'topics'>[];
+  topics: CollectionEntry<'blogTopics'>[];
 }> {
   const [papers, topics] = await Promise.all([
     getCollection('papers'),
-    getCollection('topics'),
+    getCollection('blogTopics'),
   ]);
   const topicIds = new Set(topics.map(({ id }) => id));
   const usedTopics = new Set<string>();

@@ -4,7 +4,7 @@
 
 论文读解放在 `content/papers/<slug>.md`，直链为 `/papers/<slug>/`。先按论文原题、arXiv ID 或 DOI 查找旧稿。重读同一篇论文有新收获时，把结论和所读版本补进原笔记，有实质更新时填写 `updatedAt`。
 
-配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。用 `topics` 引用至少一个 `content/topics/` 中已建的专题。[维护专题](../content-workflow.md#维护专题)
+配图放在文章旁的 `./assets/<slug>/`，用相对路径引用。用 `topics` 引用至少一个 `content/blog/topics/` 中已建的专题。[维护专题](../content-workflow.md#维护专题)
 
 | 字段            | 填写内容                     |
 | --------------- | ---------------------------- |

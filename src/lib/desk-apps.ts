@@ -27,7 +27,7 @@ interface DeskAppConfig {
 export const deskApps = {
   blog: {
     label: 'Blog',
-    entryPath: sitePath('/'),
+    entryPath: sitePath('/blog/'),
     mainId: 'main-content',
     icon: 'notes',
     width: 1064,
