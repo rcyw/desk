@@ -17,7 +17,8 @@
     "check": "astro check",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "node --test"
+    "test": "node --test",
+    "test:pwa": "node --test scripts/verify-offline-launch.mjs"
   },
   "dependencies": {
     "@astrojs/react": "7.1.9",
@@ -35,6 +36,7 @@
     "eslint": "10.15.0",
     "eslint-plugin-astro": "3.2.1",
     "globals": "17.14.0",
+    "playwright": "1.64.1",
     "prettier": "3.10.1",
     "prettier-plugin-astro": "1.1.2",
     "typescript": "5.9.3",

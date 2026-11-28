@@ -1,5 +1,6 @@
 import react from '@astrojs/react';
 import { defineConfig } from 'astro/config';
+import { offlineShell } from './scripts/build-offline-shell.mjs';
 
 const notoFontDisplay = {
   postcssPlugin: 'noto-font-display',
@@ -25,7 +26,7 @@ export default defineConfig({
   base: '/desk',
   output: 'static',
   trailingSlash: 'always',
-  integrations: [react()],
+  integrations: [react(), offlineShell()],
   devToolbar: { enabled: false },
   vite: { css: { postcss: { plugins: [notoFontDisplay] } } },
   markdown: {

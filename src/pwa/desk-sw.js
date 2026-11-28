@@ -1,16 +1,29 @@
+/* global deskShell */
 const scope = new URL(self.registration.scope);
 const cachePrefix = 'desk-pwa:' + scope.pathname + ':';
-const shellCache = cachePrefix + 'shell-v1';
+const shellCache = cachePrefix + 'shell-' + deskShell.revision;
 const pageCache = cachePrefix + 'pages-v2';
 const assetCache = cachePrefix + 'assets-v1';
 const offlinePath = new URL('offline.html', scope).href;
+const shellAssets = new Set(
+  deskShell.paths
+    .filter((path) => !path.endsWith('/'))
+    .map((path) => new URL(path, scope).pathname),
+);
 const pagePath = /^\/(?:$|(?:blog|brief|papers|prompts|github)(?:\/|$))/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(shellCache);
-      await cache.add(new Request(offlinePath, { cache: 'reload' }));
+      await cache.addAll(
+        deskShell.paths.map(
+          (path) =>
+            new Request(new URL(path, scope), {
+              cache: path.startsWith('_astro/') ? 'force-cache' : 'reload',
+            }),
+        ),
+      );
       await self.skipWaiting();
     })(),
   );
@@ -47,6 +60,12 @@ async function readPage(event) {
   try {
     response = await fetch(request, { cache: 'no-cache' });
   } catch {
+    // The pinned launcher always has a matching set of styles and scripts.
+    const launchPage = await caches.match(request, {
+      cacheName: shellCache,
+      ignoreSearch: true,
+    });
+    if (launchPage) return launchPage;
     const cached = await caches.match(request, { cacheName: pageCache });
     if (cached) return cached;
     const offline = await caches.match(offlinePath, { cacheName: shellCache });
@@ -102,6 +121,17 @@ self.addEventListener('fetch', (event) => {
     (request.mode === 'navigate' || !request.destination)
   ) {
     event.respondWith(readPage(event));
+  } else if (shellAssets.has(pathname) && !request.headers.has('range')) {
+    // Static shell files have one representation, including for CORS font and module loads.
+    event.respondWith(
+      caches
+        .match(request, {
+          cacheName: shellCache,
+          ignoreVary: true,
+          ignoreSearch: true,
+        })
+        .then((cached) => cached ?? fetch(request)),
+    );
   } else if (
     localPath.startsWith('/_astro/') &&
     !request.headers.has('range')
