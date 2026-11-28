@@ -4,7 +4,7 @@ description: 从一份很长的技术文档出发，理解摘要如何缩小候�
 lang: zh-CN
 publishedAt: '2026-11-21'
 topics:
-  - research
+  - empty-topic
 paper:
   title: Hierarchical Retrieval with Local Summaries
   source: Example Preprint

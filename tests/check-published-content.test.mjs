@@ -62,21 +62,22 @@ function fixture(t) {
   };
 }
 
-test('legacy source moves preserve article and brief routes', (t) => {
+test('Markdown in a retired Blog directory cannot pass unpublished', (t) => {
   const repo = fixture(t);
-  repo.write('content/posts/first/index.md', '# First\n');
-  repo.write('content/briefs/2026/11/18/index.md', '# Brief\n');
-  const base = repo.commit();
-  repo.move('content/posts/first/index.md', 'content/blog/research/first.md');
-  repo.move(
-    'content/briefs/2026/11/18/index.md',
-    'content/briefs/2026/11/2026-11-18.md',
-  );
-  repo.commit();
-  repo.write('dist/posts/first/index.html', '<h1>First</h1>');
-  repo.write('dist/brief/2026-11-18/index.html', '<h1>Brief</h1>');
-  const result = repo.check(base);
-  assert.equal(result.status, 0, result.stderr);
+  repo.write('README.md', '# Desk\n');
+  let base = repo.commit();
+  for (const [folder, destination] of [
+    ['posts', 'content/blog/'],
+    ['topics', 'content/blog/topics/'],
+  ]) {
+    const file = `content/${folder}/example.md`;
+    repo.write(file, '# Example\n');
+    const revision = repo.commit();
+    const result = repo.check(base);
+    assert.equal(result.status, 1);
+    assert.ok(result.stderr.includes(`Move ${file} to ${destination}`));
+    base = revision;
+  }
 });
 
 test('a renamed post requires its previous route even when the new page exists', (t) => {

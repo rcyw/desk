@@ -433,7 +433,8 @@ sources:
           );
           assert.match(note, /Hierarchical Retrieval with Local Summaries/);
           assert.match(note, /\bv2\b/);
-          assert.match(note, /Research/);
+          assert.match(note, /<span\b[^>]*>Empty Topic<\/span>/);
+          assert.ok(!note.includes('href="/desk/topics/empty-topic/"'));
           assert.match(note, /data-language="mermaid"/);
         },
       );

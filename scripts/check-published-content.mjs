@@ -25,7 +25,7 @@ const changes = execFileSync(
   { encoding: 'utf8' },
 ).split('\0');
 
-function contentRoute(file, legacySource = false) {
+function contentRoute(file, previousPath = false) {
   const [folder, collection, ...parts] = file.split('/');
   if (folder !== 'content' || parts.includes('assets') || !/\.md$/i.test(file))
     return;
@@ -39,30 +39,21 @@ function contentRoute(file, legacySource = false) {
     return;
   }
 
-  let entry = parts.join('/');
+  const entry = parts.join('/');
   if (
     collection === 'papers' ||
     collection === 'prompts' ||
     collection === 'github'
   )
     return `${collection}/${libraryId(entry, collection)}`;
-  if (collection === 'blog' || (legacySource && collection === 'posts')) {
-    if (
-      legacySource &&
-      collection === 'posts' &&
-      parts.length === 2 &&
-      parts[1] === 'index.md'
-    )
-      entry = `${parts[0]}.md`;
+  if (collection === 'blog' || (previousPath && collection === 'posts'))
     return `posts/${postId(entry)}`;
+  if (collection === 'briefs') return `brief/${briefId(entry)}`;
+  if (!previousPath && (collection === 'posts' || collection === 'topics')) {
+    const directory =
+      collection === 'posts' ? 'content/blog' : 'content/blog/topics';
+    throw new Error(`Move ${file} to ${directory}/ so Astro can load it.`);
   }
-  if (collection !== 'briefs') return;
-
-  if (legacySource && parts.length === 4 && parts[3] === 'index.md') {
-    const [year, month, day] = parts;
-    entry = `${year}/${month}/${year}-${month}-${day}.md`;
-  }
-  return `brief/${briefId(entry)}`;
 }
 
 function checkPage(file, route, message) {
